@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:pattoomobile/views/pages/LoginScreen.dart';
+import 'package:pattoomobile/views/pages/HomeScreen.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(MaterialApp(
+  initialRoute: '/home',
+  routes: {
+    '/': (context) => LoginScreen(),
+    '/Homescreen': (context) => HomeScreen(),
+  },
 
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: new LoginScreen(),
-    );
-  }
-}
+));
