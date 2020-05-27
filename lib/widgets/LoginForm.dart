@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:pattoomobile/models/view_models/login_form_model.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginForm extends StatefulWidget {
 
   @override
-  State<StatefulWidget> createState() => new _LoginScreenState();
+  State<StatefulWidget> createState() => new _LoginFormState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginFormState extends State<LoginForm> {
   final _formKey = new GlobalKey<FormState>();
 
-  String _email;
-  String _password;
+  LoginFormModel userLogin = new LoginFormModel();
   String _errorMessage;
-
   bool _isLoginForm;
   bool _isLoading;
 
@@ -128,7 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
               color: Colors.lightBlue,
             )),
         validator: (value) => value.isEmpty ? 'Email can\'t be empty' : null,
-        onSaved: (value) => _email = value.trim(),
+        onSaved: (value) => this.userLogin.email = value.trim(),
       ),
     );
   }
@@ -147,36 +146,36 @@ class _LoginScreenState extends State<LoginScreen> {
               color: Colors.lightBlue,
             )),
         validator: (value) => value.isEmpty ? 'Password can\'t be empty' : null,
-        onSaved: (value) => _password = value.trim(),
+        onSaved: (value) => this.userLogin.password = value.trim(),
       ),
     );
   }
 
   Widget showSecondaryButton() {
     return new FlatButton(
-        child: Container(
-          child: Align(
-            alignment: Alignment.centerRight,
-            child: new Text(
-                'Forget Password?',
-                style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300,color: Colors.lightBlue)),
-          ),
+      child: Container(
+        child: Align(
+          alignment: Alignment.centerRight,
+          child: new Text(
+              'Forget Password?',
+              style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300,color: Colors.lightBlue)),
         ),
-        onPressed: (){
-          // Do something
-        },);
+      ),
+      onPressed: (){
+        // Do something
+      },);
   }
   Widget showPrimaryButton() {
     return new Padding(
-        padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
-        child: RaisedButton(
-          elevation: 5.0,
-          shape: new RoundedRectangleBorder(
-              borderRadius: new BorderRadius.circular(30.0)),
-          color: Colors.blue,
+      padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
+      child: RaisedButton(
+        elevation: 5.0,
+        shape: new RoundedRectangleBorder(
+            borderRadius: new BorderRadius.circular(30.0)),
+        color: Colors.blue,
         onPressed: () {},
-    child: const Text('Login', style: TextStyle(fontSize: 20, color: Colors.white)),
-        ),
+        child: const Text('Login', style: TextStyle(fontSize: 20, color: Colors.white)),
+      ),
     );
   }
 }
