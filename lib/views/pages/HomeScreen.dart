@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pattoomobile/models/view_models/home_screen_listview.dart';
+import 'package:pattoomobile/widgets/AgentsList.dart';
 
 class HomeScreen extends StatefulWidget {
   @override

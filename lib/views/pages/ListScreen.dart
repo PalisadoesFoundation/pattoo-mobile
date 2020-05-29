@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:pattoomobile/models/view_models/table_tile.dart';
 
-class ListScreen extends StatelessWidget {
+class List extends StatefulWidget {
+
+  @override
+  _ListState createState() => _ListState(5);
+}
+
+class _ListState extends State<List> {
   final int index;
 
-  ListScreen(this.index);
+  _ListState(this.index);
+    tileTable tile = new tileTable();
 
   @override
   Widget build(BuildContext context) {

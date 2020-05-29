@@ -6,9 +6,8 @@ import 'package:pattoomobile/views/pages/ListScreen.dart';
 void main() => runApp(MaterialApp(
   initialRoute: '/home',
   routes: {
-    '/': (context) => ListScreen(6),
+    '/': (context) => List(),
     '/Homescreen': (context) => HomeScreen(),
-    '/Listscreen': (context) => ListScreen(6),
+    '/Listscreen': (context) => List(),
   },
-
 ));
