@@ -1,13 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:pattoomobile/controllers/theme_manager.dart';
+import 'package:pattoomobile/views/pages/HomeScreen.dart';
 import 'package:pattoomobile/views/pages/LoginScreen.dart';
+void main() => runApp(App());
 
-void main() => runApp(MyApp());
+class App extends StatelessWidget{
 
-class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: new LoginScreen(),
-    );
-  }
-}
+   return ChangeNotifierProvider<ThemeManager>(
+     //Here we provide our ThemeManager to child widget tree
+     create: (_) => ThemeManager(),
+     //Consumer will call builder method each time ThemeManager
+     //calls notifyListeners()
+     child: Consumer<ThemeManager>(builder: (context, manager, _) {
+       return MaterialApp(
+           debugShowCheckedModeBanner: false,
+           theme: manager.themeData,
+           initialRoute: '/home',
+           routes: {
+              '/': (context) => LoginScreen(),
+              '/Homescreen': (context) => HomeScreen(),
+              });
+            }),
+          );
+        }
+        }

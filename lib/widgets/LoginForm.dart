@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pattoomobile/models/view_models/login_form_model.dart';
-
+import 'package:provider/provider.dart';
+import 'package:pattoomobile/controllers/theme_manager.dart';
+import 'package:pattoomobile/utils/app_themes.dart';
 class LoginForm extends StatefulWidget {
 
   @override
@@ -9,7 +11,7 @@ class LoginForm extends StatefulWidget {
 
 class _LoginFormState extends State<LoginForm> {
   final _formKey = new GlobalKey<FormState>();
-
+  AppTheme theme = AppTheme.Light;
   LoginFormModel userLogin = new LoginFormModel();
   String _errorMessage;
   bool _isLoginForm;
@@ -22,7 +24,7 @@ class _LoginFormState extends State<LoginForm> {
     final form = _formKey.currentState;
     if (form.validate()) {
       form.save();
-      return true;
+      return true;  
     }
     return false;
   }
@@ -124,7 +126,6 @@ class _LoginFormState extends State<LoginForm> {
             hintText: 'Email',
             icon: new Icon(
               Icons.mail,
-              color: Colors.lightBlue,
             )),
         validator: (value) => value.isEmpty ? 'Email can\'t be empty' : null,
         onSaved: (value) => this.userLogin.email = value.trim(),
@@ -143,7 +144,6 @@ class _LoginFormState extends State<LoginForm> {
             hintText: 'Password',
             icon: new Icon(
               Icons.lock,
-              color: Colors.lightBlue,
             )),
         validator: (value) => value.isEmpty ? 'Password can\'t be empty' : null,
         onSaved: (value) => this.userLogin.password = value.trim(),
@@ -153,29 +153,42 @@ class _LoginFormState extends State<LoginForm> {
 
   Widget showSecondaryButton() {
     return new FlatButton(
-        child: Container(
-          child: Align(
-            alignment: Alignment.centerRight,
-            child: new Text(
-                'Forget Password?',
-                style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300,color: Colors.lightBlue)),
-          ),
+      child: Container(
+        child: Align(
+          alignment: Alignment.centerRight,
+          child: new Text(
+              'Forget Password?',
+              style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300,color: Colors.lightBlue)),
         ),
-        onPressed: (){
-          // Do something
-        },);
+      ),
+      onPressed: (){
+        this.changeTheme();
+      },);
   }
   Widget showPrimaryButton() {
     return new Padding(
-        padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
-        child: RaisedButton(
-          elevation: 5.0,
-          shape: new RoundedRectangleBorder(
-              borderRadius: new BorderRadius.circular(30.0)),
-          color: Colors.blue,
-        onPressed: () {},
-    child: const Text('Login', style: TextStyle(fontSize: 20, color: Colors.white)),
-        ),
+      padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
+      child: RaisedButton(
+        elevation: 5.0,
+        shape: new RoundedRectangleBorder(
+            borderRadius: new BorderRadius.circular(30.0)),
+        onPressed: () {
+          Navigator.pushNamed(context, '/Homescreen');
+        },
+        child: const Text('Login', style: TextStyle(fontSize: 20, color: Colors.white)),
+      ),
     );
+  }
+
+  void changeTheme(){
+    if (this.theme == AppTheme.Light){
+      this.theme = AppTheme.Dark;
+      Provider.of<ThemeManager>(context).setTheme(this.theme);
+    }
+    else{
+      
+      this.theme = AppTheme.Light;
+      Provider.of<ThemeManager>(context).setTheme(this.theme);
+    }
   }
 }
