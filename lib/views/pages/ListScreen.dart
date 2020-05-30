@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pattoomobile/models/view_models/tileItem.dart';
+import 'package:pattoomobile/widgets/circleMenu.dart';
 
 class List extends StatefulWidget {
 
@@ -20,21 +21,7 @@ class _ListState extends State<List> {
 
         title: Text('Reports'),
         backgroundColor: Colors.blue,
-
-        actions: <Widget>[
-          SizedBox(height: 10),
-          ClipOval(
-            child: Material(
-              color: Colors.white, // button color
-              child: InkWell(
-                splashColor: Colors.blueAccent, // inkwell color
-                child: SizedBox(width: 56, height: 56, child: Icon(Icons.menu,
-                  color: Colors.blue,)),
-                onTap: () {},
-              ),
-            ),
-          ),
-        ],
+        actions: <Widget>[Menu(),],
       ),
       body: ListView.builder(
         itemCount: 10,
