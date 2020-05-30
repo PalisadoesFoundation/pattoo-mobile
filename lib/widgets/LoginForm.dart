@@ -5,19 +5,26 @@ import 'package:pattoomobile/controllers/theme_manager.dart';
 import 'package:pattoomobile/utils/app_themes.dart';
 
 class LoginForm extends StatefulWidget {
-
   @override
   State<StatefulWidget> createState() => new _LoginFormState();
 }
 
 class _LoginFormState extends State<LoginForm> {
-  final _formKey = new GlobalKey<FormState>();
-  AppTheme theme = AppTheme.Light;
-
+  AppTheme theme;
   LoginFormModel userLogin = new LoginFormModel();
+
   String _errorMessage;
-  bool _isLoginForm;
+  final _formKey = new GlobalKey<FormState>();
   bool _isLoading;
+  bool _isLoginForm;
+
+  @override
+  void initState() {
+    _errorMessage = "";
+    _isLoading = false;
+    _isLoginForm = true;
+    super.initState();
+  }
 
   get validateAndSubmit => null;
 
@@ -31,30 +38,9 @@ class _LoginFormState extends State<LoginForm> {
     return false;
   }
 
-  @override
-  void initState() {
-    _errorMessage = "";
-    _isLoading = false;
-    _isLoginForm = true;
-    super.initState();
-  }
-
   void resetForm() {
     _formKey.currentState.reset();
     _errorMessage = "";
-  }
-
-
-  @override
-  Widget build(BuildContext context) {
-    return new Scaffold(
-
-        body: Stack(
-          children: <Widget>[
-            _showForm(),
-            _showCircularProgress(),
-          ],
-        ));
   }
 
   Widget _showCircularProgress() {
@@ -104,6 +90,7 @@ class _LoginFormState extends State<LoginForm> {
   }
 
   Widget showLogo() {
+    var logo = this.theme == AppTheme.Light ? 'images/pattoo-light.png': 'images/pattoo-dark.png';
     return new Hero(
       tag: 'hero',
       child: Padding(
@@ -111,7 +98,7 @@ class _LoginFormState extends State<LoginForm> {
         child: CircleAvatar(
           backgroundColor: Colors.transparent,
           radius: 100.0,
-          child: Image.asset('images/pattoo-rtd.png'),
+          child: Image.asset(logo),
         ),
       ),
     );
@@ -167,6 +154,7 @@ class _LoginFormState extends State<LoginForm> {
         this.changeTheme();
       },);
   }
+
   Widget showPrimaryButton() {
     return new Padding(
       padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
@@ -185,12 +173,24 @@ class _LoginFormState extends State<LoginForm> {
   void changeTheme(){
     if (this.theme == AppTheme.Light){
       this.theme = AppTheme.Dark;
-      Provider.of<ThemeManager>(context).setTheme(this.theme);
+      Provider.of<ThemeManager>(context,listen: false).setTheme(this.theme);
     }
     else{
       
       this.theme = AppTheme.Light;
-      Provider.of<ThemeManager>(context).setTheme(this.theme);
+      Provider.of<ThemeManager>(context,listen: false).setTheme(this.theme);
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+
+        body: Stack(
+          children: <Widget>[
+            _showForm(),
+            _showCircularProgress(),
+          ],
+        ));
   }
 }

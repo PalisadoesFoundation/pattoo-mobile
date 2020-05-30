@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pattoomobile/models/view_models/tileItem.dart';
 import 'package:pattoomobile/widgets/circleMenu.dart';
-
+import 'package:provider/provider.dart';
+import 'package:pattoomobile/controllers/theme_manager.dart' ;
 class List extends StatefulWidget {
 
   @override
@@ -20,7 +21,7 @@ class _ListState extends State<List> {
       appBar: AppBar(
 
         title: Text('Reports'),
-        backgroundColor: Colors.blue,
+        backgroundColor: Provider.of<ThemeManager>(context,listen: false).themeData.backgroundColor,
         actions: <Widget>[Menu(),],
       ),
       body: ListView.builder(

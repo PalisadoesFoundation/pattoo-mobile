@@ -20,7 +20,7 @@ class App extends StatelessWidget{
        return MaterialApp(
            debugShowCheckedModeBanner: false,
            theme: manager.themeData,
-           initialRoute: '/home',
+           initialRoute: '/',
            routes: {
               '/': (context) => LoginScreen(),
               '/Homescreen': (context) => HomeScreen(),
