@@ -3,6 +3,7 @@ import 'package:pattoomobile/models/view_models/login_form_model.dart';
 import 'package:provider/provider.dart';
 import 'package:pattoomobile/controllers/theme_manager.dart';
 import 'package:pattoomobile/utils/app_themes.dart';
+
 class LoginForm extends StatefulWidget {
 
   @override
@@ -12,6 +13,7 @@ class LoginForm extends StatefulWidget {
 class _LoginFormState extends State<LoginForm> {
   final _formKey = new GlobalKey<FormState>();
   AppTheme theme = AppTheme.Light;
+
   LoginFormModel userLogin = new LoginFormModel();
   String _errorMessage;
   bool _isLoginForm;
@@ -24,7 +26,7 @@ class _LoginFormState extends State<LoginForm> {
     final form = _formKey.currentState;
     if (form.validate()) {
       form.save();
-      return true;  
+      return true;
     }
     return false;
   }
