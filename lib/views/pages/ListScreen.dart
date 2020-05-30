@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pattoomobile/models/view_models/table_tile.dart';
+import 'package:pattoomobile/models/view_models/tileItem.dart';
 
 class List extends StatefulWidget {
 
@@ -11,13 +11,30 @@ class _ListState extends State<List> {
   final int index;
 
   _ListState(this.index);
-    tileTable tile = new tileTable();
+  TileItem tile = new TileItem();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+
         title: Text('Reports'),
+        backgroundColor: Colors.blue,
+
+        actions: <Widget>[
+          SizedBox(height: 10),
+          ClipOval(
+            child: Material(
+              color: Colors.white, // button color
+              child: InkWell(
+                splashColor: Colors.blueAccent, // inkwell color
+                child: SizedBox(width: 56, height: 56, child: Icon(Icons.menu,
+                  color: Colors.blue,)),
+                onTap: () {},
+              ),
+            ),
+          ),
+        ],
       ),
       body: ListView.builder(
         itemCount: 10,

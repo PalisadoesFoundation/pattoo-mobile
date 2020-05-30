@@ -1,18 +1,17 @@
 import 'package:flutter/cupertino.dart';
+import 'package:meta/meta.dart';
 
-class tileTable{
+class TileItem{
   int id;
   Image tileImage;
   String chartTitle;
   String chartDescription;
 
   //Constructor
-  tileTable({
+  TileItem({
     @required this.id,
     @required this.tileImage,
     @required this.chartTitle,
     @required this.chartDescription,
-
-
-});
+  });
 }
