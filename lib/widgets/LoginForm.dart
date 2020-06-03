@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:pattoomobile/models/view_models/login_form_model.dart';
 import 'package:provider/provider.dart';
 import 'package:pattoomobile/controllers/theme_manager.dart';
+import 'package:pattoomobile/controllers/agent_controller.dart';
 import 'package:pattoomobile/utils/app_themes.dart';
-
+import 'package:pattoomobile/models/timestamp.dart';
 class LoginForm extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => new _LoginFormState();
 }
 
 class _LoginFormState extends State<LoginForm> {
-  AppTheme theme;
   LoginFormModel userLogin = new LoginFormModel();
-
+  TimeStamp time = new TimeStamp(timestamp: 1591211730580, value: 10);
   String _errorMessage;
   final _formKey = new GlobalKey<FormState>();
   bool _isLoading;
@@ -90,7 +90,9 @@ class _LoginFormState extends State<LoginForm> {
   }
 
   Widget showLogo() {
-    var logo = this.theme == AppTheme.Light ? 'images/pattoo-light.png': 'images/pattoo-dark.png';
+    AppTheme theme = Provider.of<ThemeManager>(context).getTheme();
+
+    var logo = theme == AppTheme.Light ? 'images/pattoo-light.png': 'images/pattoo-dark.png';
     return new Hero(
       tag: 'hero',
       child: Padding(
@@ -150,8 +152,9 @@ class _LoginFormState extends State<LoginForm> {
               style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300,color: Colors.lightBlue)),
         ),
       ),
-      onPressed: (){
-        this.changeTheme();
+      onPressed: (){ 
+        Provider.of<AgentsManager>(context,listen:false).updateAgents();
+        print(Provider.of<AgentsManager>(context,listen: false).agentsList);
       },);
   }
 
@@ -170,17 +173,7 @@ class _LoginFormState extends State<LoginForm> {
     );
   }
 
-  void changeTheme(){
-    if (this.theme == AppTheme.Light){
-      this.theme = AppTheme.Dark;
-      Provider.of<ThemeManager>(context,listen: false).setTheme(this.theme);
-    }
-    else{
-      
-      this.theme = AppTheme.Light;
-      Provider.of<ThemeManager>(context,listen: false).setTheme(this.theme);
-    }
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -193,4 +186,10 @@ class _LoginFormState extends State<LoginForm> {
           ],
         ));
   }
+
+
+
+
+
 }
+
