@@ -4,6 +4,7 @@ import 'package:pattoomobile/controllers/theme_manager.dart';
 import 'package:pattoomobile/views/pages/HomeScreen.dart';
 import 'package:pattoomobile/views/pages/LoginScreen.dart';
 import 'package:pattoomobile/views/pages/ListScreen.dart';
+import 'package:pattoomobile/views/pages/SettingsScreen.dart';
 
 void main() => runApp(App());
 
