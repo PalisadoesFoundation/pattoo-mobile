@@ -4,6 +4,7 @@ import 'package:pattoomobile/views/pages/HomeScreen.dart';
 import 'package:pattoomobile/views/pages/ListScreen.dart';
 import 'package:pattoomobile/views/pages/SettingsScreen.dart';
 
+
 void main() => runApp(MaterialApp(
   initialRoute: '/home',
   routes: {
