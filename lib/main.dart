@@ -8,7 +8,7 @@ import 'package:pattoomobile/views/pages/SettingsScreen.dart';
 void main() => runApp(MaterialApp(
   initialRoute: '/home',
   routes: {
-    '/': (context) => SettingsScreen(),
+    '/': (context) => LoginScreen(),
     '/Homescreen': (context) => HomeScreen(),
     '/Listscreen': (context) => List(),
   },
