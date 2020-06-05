@@ -24,8 +24,9 @@ class _agentoptionState extends State<agentoption> {
         color: Provider.of<ThemeManager>(context).themeData.backgroundColor,
         onPressed: () {
           Navigator.pushNamed(context, '/Listscreen');
-        },        child: new Text(agentName,
-            style: TextStyle(fontSize: 20, color: Colors.white)),
+        },        
+        child: new Text(agentName,
+        style: TextStyle(fontSize: 20, color: Colors.white)),
       ),
     );
   }

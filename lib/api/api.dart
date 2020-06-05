@@ -10,15 +10,38 @@ query{
         agentId
         agentPolledTarget
         agentProgram
+      }
+    }
+  }
+}
+""";
+
+
+
+
+static String getDataPointAgents = """
+ query{ 
+  allAgent(idxAgent:\$id) {
+    edges {
+      node {
+        idxAgent
+        idxPairXlateGroup
+        agentId
+        agentPolledTarget
+        agentProgram
         datapointAgent {
           edges {
             node {
-              agent {
-                idxAgent
-                idxPairXlateGroup
-                agentId
-                agentPolledTarget
-                agentProgram
+              idxAgent
+              glueDatapoint {
+                edges {
+                  node {
+                    pair {
+                      key
+                      value
+                    }
+                  }
+                }
               }
             }
           }
@@ -28,6 +51,6 @@ query{
   }
 }
 
-
 """;
+
 }

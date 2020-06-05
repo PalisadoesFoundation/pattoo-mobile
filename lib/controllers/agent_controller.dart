@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:pattoomobile/models/datapoint.dart';
+import 'package:pattoomobile/models/dataPointAgent.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pattoomobile/api/api.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -22,7 +25,19 @@ QueryResult result;
      this.agents.add(agent);
     } }
 
-
+  updateDatapoints(int id) async{
+    QueryOptions options = QueryOptions(
+    documentNode: gql(AgentFetch.getDataPointAgents), variables: {"id": id.toString()},    );
+    GraphQLClient _client = GraphQLClient(
+        cache: InMemoryCache(),
+        link: _httpLink,
+    );
+    QueryResult result = await _client.query(options);  
+    for(var i in result.data["allAgent"]["edges"][0]["node"]["datapointAgent"]["Edges"]){
+     DataPointAgent datapointagent = new DataPointAgent(id.toString(),i["node"]["id"]);  
+     this.agents[id-1].addTarget(datapointagent);
+    }    
+  }
   List get agentsList{
     return this.agents;
   }
