@@ -5,6 +5,8 @@ import 'package:pattoomobile/widgets/DarkModeSwitch.dart';
 import 'package:pattoomobile/widgets/ShowFavSwitch.dart';
 import 'package:pattoomobile/widgets/SettingsContainer.dart';
 import 'package:pattoomobile/widgets/DropdownWidget.dart';
+import 'package:pattoomobile/widgets/LoginForm.dart';
+import 'package:pattoomobile/widgets/AgentInput.dart';
 
 class SettingsScreen extends StatefulWidget {
   @override
@@ -38,18 +40,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                  child: ShowFavWidget(),
                ),
              ),
-            Container(
-              margin: const EdgeInsets.only(top: 100.0),
-              child: Padding(
-                padding: EdgeInsets.all(30.0),
-                child: ShowFavWidget(),
-              ),
-            ),
-            Container(
+             Container(
               margin: const EdgeInsets.only(top: 150.0),
               child: Padding(
                 padding: EdgeInsets.fromLTRB(46, 30, 0, 0),
-                child:Row(
+                child: Row(
                   children: <Widget>[
                     Icon(Icons.business,
                       color: Colors.grey,),
@@ -68,7 +63,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       height: MediaQuery.of(context).size.height * .05,
                       width: MediaQuery.of(context).size.width * .3,
                     ),
-                    DropdownWidget(),
+
                   ],
                 ),
               ),

@@ -30,7 +30,7 @@ class _ShowFavWidgetState extends State<ShowFavWidget> {
   @override
   Widget build(BuildContext context) {
     return SwitchListTile(
-      title: const Text('Dark Mode'),
+      title: const Text('Show Favourites'),
       value: _lights,
       onChanged: (bool value) {
         setState(() {
