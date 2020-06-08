@@ -63,7 +63,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       height: MediaQuery.of(context).size.height * .05,
                       width: MediaQuery.of(context).size.width * .3,
                     ),
-
                   ],
                 ),
               ),
