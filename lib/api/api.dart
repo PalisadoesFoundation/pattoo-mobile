@@ -1,56 +1,84 @@
 
 class AgentFetch{
-static String getAgents = """
-query{
-  allAgent {
+String getAllAgents="""
+query getAllAgents(\$cursor:String){
+  allAgentXlate(first: 12, after:\$cursor) {
     edges {
       node {
-        idxAgent
-        idxPairXlateGroup
-        agentId
-        agentPolledTarget
+        id
+        idxAgentXlate
+        idxLanguage
         agentProgram
+        translation
+        enabled
+        tsCreated
+        tsModified
+        language {
+          id
+          name
+          code
+          idxLanguage
+        }
+      }
+    }
+    pageInfo {
+      startCursor
+      endCursor
+      hasNextPage
+      hasPreviousPage
+    }
+  }
+}
+
+""";
+
+
+String getTranslatedDataPointAgentName = """
+query getTranslatedDataPoints(\$id: String){
+  allPairXlate(idxPairXlate:\$id) {
+    edges {
+      node {
+        id
+        translation
       }
     }
   }
 }
+
+
+
 """;
 
 
-
-
-static String getDataPointAgents = """
- query{ 
-  allAgent(idxAgent:\$id) {
+String getDataPointAgents = """
+query getDataPoints(\$id: String, \$cursor: String){
+  allDatapoints(idxAgent:\$id, first:12, after:\$cursor) {
     edges {
       node {
         idxAgent
-        idxPairXlateGroup
-        agentId
-        agentPolledTarget
-        agentProgram
-        datapointAgent {
-          edges {
-            node {
-              idxAgent
-              glueDatapoint {
-                edges {
-                  node {
-                    pair {
-                      key
-                      value
-                    }
-                  }
-                }
+        idxDatapoint
+				glueDatapoint{
+          edges{
+            node{
+      				idxPair
+              idxDatapoint
+              pair{
+                key
+                value
               }
             }
           }
         }
       }
     }
+    pageInfo{
+      startCursor
+      endCursor
+      hasNextPage
+      hasPreviousPage
+    }
   }
 }
 
 """;
-
 }

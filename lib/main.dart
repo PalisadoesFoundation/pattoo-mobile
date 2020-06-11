@@ -22,16 +22,17 @@ class App extends StatelessWidget{
        ],
       child: Consumer<AgentsManager>(builder: (context,agent,_){
         return Consumer<ThemeManager>(builder: (context, manager,_) {
-          return MaterialApp(
+          return ClientProvider(
+            uri: Provider.of<AgentsManager>(context,listen: false).link,
+            child: MaterialApp(
            debugShowCheckedModeBanner: false,
            theme: manager.themeData,
            initialRoute: '/',
            routes: {
               '/': (context) => LoginScreen(),
               '/Homescreen': (context) => HomeScreen(),
-              '/Listscreen': (context) => List(),
               '/Settings': (context) => SettingsScreen()
-              });
+              }));
         });
             }));
             }

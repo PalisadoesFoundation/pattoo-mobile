@@ -1,50 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:pattoomobile/utils/app_themes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 class ThemeManager with ChangeNotifier {
- ThemeData _themeData;
- AppTheme localTheme;
+  ThemeData _themeData;
+  AppTheme localTheme;
   final _kThemePreference = "theme_preference";
- /// Use this method on UI to get selected theme.
- ThemeData get themeData {
-   if (_themeData == null) {
-     _themeData = appThemeData[AppTheme.Light];
-     localTheme = AppTheme.Light;
-   }
-   return _themeData;
- }
 
- ThemeManager() {
-   // We load theme at the start
-   _loadTheme();
- }
+  ThemeManager() {
+    // We load theme at the start
+    _loadTheme();
+  }
 
- AppTheme getTheme(){
-   return this.localTheme;
- }
- /// Sets theme and notifies listeners about change. 
- setTheme(AppTheme theme) async {
-   _themeData = appThemeData[theme];
-   localTheme = theme;
-   var prefs = await SharedPreferences.getInstance();
-   prefs.setInt(_kThemePreference, AppTheme.values.indexOf(theme));
-   // Here we notify listeners that theme changed 
-   // so UI have to be rebuild
-   notifyListeners();
- }
+  /// Use this method on UI to get selected theme.
+  ThemeData get themeData {
+    if (_themeData == null) {
+      _themeData = appThemeData[AppTheme.Light];
+      localTheme = AppTheme.Light;
+    }
+    return _themeData;
+  }
 
+  AppTheme getTheme() {
+    return this.localTheme;
+  }
 
+  /// Sets theme and notifies listeners about change.
+  setTheme(AppTheme theme) async {
+    _themeData = appThemeData[theme];
+    localTheme = theme;
+    var prefs = await SharedPreferences.getInstance();
+    prefs.setInt(_kThemePreference, AppTheme.values.indexOf(theme));
+    // Here we notify listeners that theme changed
+    // so UI have to be rebuild
+    notifyListeners();
+  }
 
- void _loadTheme() {
-   debugPrint("Entered loadTheme()");
-   SharedPreferences.getInstance().then((prefs) {
-     int preferredTheme = prefs.getInt(_kThemePreference) ?? 0;
-     _themeData = appThemeData[AppTheme.values[preferredTheme]];
-     // Once theme is loaded - notify listeners to update UI
-     notifyListeners();
-   });
- }
-
-
-
+  void _loadTheme() {
+    debugPrint("Entered loadTheme()");
+    SharedPreferences.getInstance().then((prefs) {
+      int preferredTheme = prefs.getInt(_kThemePreference) ?? 0;
+      _themeData = appThemeData[AppTheme.values[preferredTheme]];
+      // Once theme is loaded - notify listeners to update UI
+      notifyListeners();
+    });
+  }
 }

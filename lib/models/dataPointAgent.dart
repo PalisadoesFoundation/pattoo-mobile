@@ -1,49 +1,21 @@
-import 'dart:convert';
 
 import './datapoint.dart';
 class DataPointAgent {
   String agent_id;
-  String id;
+  String datapoint_id;
+  Map<String,dynamic> agent_struct = new Map<String,dynamic>();
   DataPointAgent(
     this.agent_id,
-    this.id,
+    this.datapoint_id
   );
-  List datapoints = new List();
+  DataPoint datapoints;
 
 
 addDataPoint(DataPoint datapoint){
-    this.datapoints.add(datapoint);
+    this.datapoints = datapoint;
   }
 
 
-  Map<String, dynamic> toMap() {
-    return {
-      'agent_id': agent_id,
-      'id': id,
-    };
-  }
-
-
-
-  String toJson() => json.encode(toMap());
-
-
   @override
-  String toString() => 'DataPointAgent(agent_id: $agent_id, id: $id)';
-
-  @override
-  bool operator ==(Object o) {
-    if (identical(this, o)) return true;
-  
-    return o is DataPointAgent &&
-      o.agent_id == agent_id &&
-      o.id == id;
-  }
-
-  @override
-  int get hashCode => agent_id.hashCode ^ id.hashCode;
+  String toString() => 'DataPointAgent(Agent ID: $agent_id,  ID: $datapoint_id)';
 }
-
-
-
-

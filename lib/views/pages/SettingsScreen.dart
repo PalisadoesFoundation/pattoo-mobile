@@ -5,6 +5,9 @@ import 'package:pattoomobile/widgets/DarkModeSwitch.dart';
 import 'package:pattoomobile/widgets/ShowFavSwitch.dart';
 import 'package:pattoomobile/widgets/SettingsContainer.dart';
 import 'package:pattoomobile/widgets/DropdownWidget.dart';
+import 'package:pattoomobile/controllers/theme_manager.dart';
+import 'package:pattoomobile/controllers/agent_controller.dart';
+import 'package:provider/provider.dart';
 
 class SettingsScreen extends StatefulWidget {
   @override
@@ -18,6 +21,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Settings"),
+        backgroundColor:  Provider.of<ThemeManager>(context,listen: false).themeData.backgroundColor,
+
       ),
       body:
       Center(
@@ -52,7 +57,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 child:Row(
                   children: <Widget>[
                     Icon(Icons.business,
-                      color: Colors.grey,),
+                      ),
                     SizedBox(
                       width: 33.0,
                       height: 10.0,

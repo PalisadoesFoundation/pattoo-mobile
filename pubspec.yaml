@@ -52,6 +52,17 @@ flutter:
   
   assets:
     - images/
+  fonts:
+    - family: OpenSans
+      fonts:
+        - asset: fonts/OpenSans-Regular.ttf
+        - asset: fonts/OpenSans-Bold.ttf
+          weight: 700
+    - family: Quicksand
+      fonts:
+        - asset: fonts/Quicksand-Regular.ttf
+        - asset: fonts/Quicksand-Bold.ttf
+          weight: 700  
   # To add assets to your application, add an assets section, like this:
   # assets:
   #  - images/a_dot_burr.jpeg

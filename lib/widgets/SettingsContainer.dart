@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:pattoomobile/controllers/theme_manager.dart';
+import 'package:provider/provider.dart';
 
 class SettingsContainer extends StatefulWidget {
 
@@ -29,7 +31,7 @@ Widget _buildVerticalLayout()
   child: new Container(
   margin: EdgeInsets.fromLTRB(20, 50, 20, 250),
   decoration: new BoxDecoration(
-  color: Colors.white,
+  color:  Provider.of<ThemeManager>(context,listen: false).themeData.backgroundColor,
   borderRadius: new BorderRadius.only(
   topLeft: const Radius.circular(40.0),
   topRight: const Radius.circular(40.0),
@@ -55,11 +57,9 @@ Widget _buildHorizontalLayout() {
     body: Container(
       height: MediaQuery.of(context).size.height * .7,
       width: MediaQuery.of(context).size.width * 1,
-      color: Colors.transparent,
       child: new Container(
         margin: EdgeInsets.fromLTRB(10, 30, 10, 10),
         decoration: new BoxDecoration(
-          color: Colors.white,
           borderRadius: new BorderRadius.only(
             topLeft: const Radius.circular(40.0),
             topRight: const Radius.circular(40.0),
@@ -68,7 +68,6 @@ Widget _buildHorizontalLayout() {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
               spreadRadius: 5,
               blurRadius: 7,
               offset: Offset(0, 3), // changes position of shadow

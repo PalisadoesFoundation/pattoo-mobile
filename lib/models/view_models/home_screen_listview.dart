@@ -15,11 +15,10 @@ class AgentsList extends StatelessWidget {
           ],
         ),
       ),
-
     );
   }
-  Widget showOptions()
-  {
+
+  Widget showOptions() {
     return new Container(
       padding: EdgeInsets.all(16.0),
       child: new ListView(
@@ -32,7 +31,4 @@ class AgentsList extends StatelessWidget {
       ),
     );
   }
-
 }
-
-

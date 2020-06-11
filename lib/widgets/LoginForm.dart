@@ -152,10 +152,7 @@ class _LoginFormState extends State<LoginForm> {
               style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300,color: Colors.lightBlue)),
         ),
       ),
-      onPressed: (){ 
-        Provider.of<AgentsManager>(context,listen:false).updateAgents();
-        print(Provider.of<AgentsManager>(context,listen: false).agentsList);
-      },);
+);
   }
 
   Widget showPrimaryButton() {
