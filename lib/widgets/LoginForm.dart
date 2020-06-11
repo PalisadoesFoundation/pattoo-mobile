@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pattoomobile/util/validator.dart';
 import 'package:pattoomobile/models/view_models/login_form_model.dart';
 import 'package:provider/provider.dart';
 import 'package:pattoomobile/controllers/theme_manager.dart';
@@ -118,7 +119,7 @@ class _LoginFormState extends State<LoginForm> {
             icon: new Icon(
               Icons.mail,
             )),
-        validator: (value) => value.isEmpty ? 'Email can\'t be empty' : null,
+        validator: FieldValidator.validateEmail,
         onSaved: (value) => this.userLogin.email = value.trim(),
       ),
     );
@@ -136,7 +137,7 @@ class _LoginFormState extends State<LoginForm> {
             icon: new Icon(
               Icons.lock,
             )),
-        validator: (value) => value.isEmpty ? 'Password can\'t be empty' : null,
+        validator: FieldValidator.validatePassword,
         onSaved: (value) => this.userLogin.password = value.trim(),
       ),
     );

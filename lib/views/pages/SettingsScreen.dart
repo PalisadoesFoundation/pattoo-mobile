@@ -8,6 +8,8 @@ import 'package:pattoomobile/widgets/DropdownWidget.dart';
 import 'package:pattoomobile/controllers/theme_manager.dart';
 import 'package:pattoomobile/controllers/agent_controller.dart';
 import 'package:provider/provider.dart';
+import 'package:pattoomobile/widgets/LoginForm.dart';
+import 'package:pattoomobile/widgets/AgentInput.dart';
 
 class SettingsScreen extends StatefulWidget {
   @override
@@ -29,57 +31,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: Stack(
           children: <Widget>[
             SettingsContainer(),
-            Container(
-              margin: const EdgeInsets.only(top: 50.0),
-                child: Padding(
-                padding: EdgeInsets.all(30.0),
-                child: DarkModeWidget(),
-              ),
-            ),
-             Container(
-               margin: const EdgeInsets.only(top: 100.0),
-               child: Padding(
-                 padding: EdgeInsets.all(30.0),
-                 child: ShowFavWidget(),
-               ),
-             ),
-            Container(
-              margin: const EdgeInsets.only(top: 100.0),
-              child: Padding(
-                padding: EdgeInsets.all(30.0),
-                child: ShowFavWidget(),
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.only(top: 150.0),
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(46, 30, 0, 0),
-                child:Row(
-                  children: <Widget>[
-                    Icon(Icons.business,
-                      ),
-                    SizedBox(
-                      width: 33.0,
-                      height: 10.0,
-                    ),
-                    Container(
-                      child:
-                      Text(
-                        'Source',
-                        style: TextStyle(fontSize: 15.5),
-                      ),
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * .05,
-                      width: MediaQuery.of(context).size.width * .3,
-                    ),
-                    DropdownWidget(),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
+  ],
+      ),
       ),
 
     );
