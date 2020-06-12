@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pattoomobile/util/AspectRation.dart';
-
+import 'package:pattoomobile/util/validator.dart';
 import 'DarkModeSwitch.dart';
 import 'ShowFavSwitch.dart';
 
@@ -13,7 +13,7 @@ class SettingsContainer extends StatefulWidget {
 
 class _SettingsContainerState extends State<SettingsContainer> {
   final formKey = GlobalKey<FormState>();
-  String _email, _password;
+  String _source;
 
 
   @override
@@ -36,6 +36,7 @@ class _SettingsContainerState extends State<SettingsContainer> {
         body: Container(
           height: SizeConfig.blockSizeVertical * 51,
           width: SizeConfig.blockSizeHorizontal * 150,
+          
           color: Colors.transparent,
           child: Card(
             elevation:5,
@@ -70,7 +71,7 @@ class _SettingsContainerState extends State<SettingsContainer> {
                                 )
                             ),
                             validator: (input) => input.length < 8 ? 'You need at least 8 characters' : null, //add validator for the type of data source
-                            onSaved: (input) => _password = input,
+                            onSaved: (input) => _source = input,
                           ),
 
                         )
@@ -139,8 +140,8 @@ class _SettingsContainerState extends State<SettingsContainer> {
                                 color: Colors.grey,
                               )
                           ),
-                          validator: (input) => input.length < 8 ? 'You need at least 8 characters' : null, //add validator for the type of data source
-                          onSaved: (input) => _password = input,
+                          validator: FieldValidator.validateSourceInput,
+
                         ),
 
                       )
@@ -174,10 +175,9 @@ class _SettingsContainerState extends State<SettingsContainer> {
   void _submit(){
     if(formKey.currentState.validate()){
       formKey.currentState.save();
-      print(_email);
-      print(_password);
+      print(_source);
+
     }
   }
 }
-
 

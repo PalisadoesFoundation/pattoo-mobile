@@ -30,4 +30,11 @@ class FieldValidator{
     }
     return null;
   }
+
+  static String validateSourceInput(String value)
+  {
+    if(value.isEmpty) return 'Enter valid source';
+
+    return null;
+  }
 }
