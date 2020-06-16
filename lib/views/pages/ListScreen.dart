@@ -20,17 +20,18 @@ class List extends StatefulWidget {
 class _ListState extends State<List> {
   Agent agent;
   TileItem tile = new TileItem();
-  
-    _ListState(this.agent);
+  _ListState(this.agent);
   String cursor = "";
   ScrollController _scrollController = new ScrollController();
 
   @override
   Widget build(BuildContext context) {
     this.agent.target_agents = [];
+    MediaQueryData queryData;
+    queryData = MediaQuery.of(context);
     return Scaffold(
         appBar: AppBar(
-          title: Text('Reports'),
+          title: Text('Reports(${agent.program})',style: TextStyle(color:Colors.white)),
           backgroundColor: Provider.of<ThemeManager>(context, listen: false)
               .themeData
               .backgroundColor,
@@ -101,7 +102,6 @@ class _ListState extends State<List> {
                               "idxPair": j["node"]["idxPair"]
                             });
                   }
-
                   if (this.agent.target_agents.contains(datapointagent) ==
                       false) {
                     this.agent.addTarget(datapointagent);
@@ -171,16 +171,28 @@ class _ListState extends State<List> {
                             itemCount: this.agent.target_agents.length,
                             itemBuilder: (context, index) {
                               return Card(
+                                color: Provider.of<ThemeManager>(context)
+                                    .themeData
+                                    .buttonColor,
                                 child: ListTile(
-                                  title: Text(this
-                                      .agent
-                                      .target_agents[index]
-                                      .agent_struct["name"]),
-                                  leading: Image(
-                                    image: NetworkImage(
-                                        'https://www.fusioncharts.com/blog/wp-content/uploads/2013/06/Line-chart.png'),
+                                  title: Text(
+                                    this
+                                        .agent
+                                        .target_agents[index]
+                                        .agent_struct["name"],
+                                    style: TextStyle(color: Colors.white),
                                   ),
-                                  trailing: Icon(Icons.arrow_forward),
+                                  leading: SizedBox(
+                                    height: queryData.size.height * 0.09,
+                                    width: queryData.size.width *0.09,
+                                      child: FittedBox(
+                                          child: Image(
+                                            image: AssetImage(
+                                                'images/bar-chart.png'),
+                                          ),
+                                          fit: BoxFit.contain)),
+                                  trailing: Icon(Icons.arrow_forward,
+                                      color: Colors.white),
                                   onTap: () {},
                                 ),
                               );

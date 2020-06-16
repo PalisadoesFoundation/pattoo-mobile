@@ -1,24 +1,12 @@
 
 class AgentFetch{
-String getAllAgents="""
-query getAllAgents(\$cursor:String){
-  allAgentXlate(first: 12, after:\$cursor) {
+String translateAgent="""
+query{
+  allAgentXlate {
     edges {
       node {
-        id
-        idxAgentXlate
-        idxLanguage
         agentProgram
         translation
-        enabled
-        tsCreated
-        tsModified
-        language {
-          id
-          name
-          code
-          idxLanguage
-        }
       }
     }
     pageInfo {
@@ -29,6 +17,28 @@ query getAllAgents(\$cursor:String){
     }
   }
 }
+
+""";
+
+String getAllAgents="""
+query getAllAgents(\$cursor: String) {
+  allAgent(first: 12, after: \$cursor) {
+    edges {
+      node {
+        idxAgent
+        agentId
+        agentProgram
+      }
+    }
+    pageInfo {
+      startCursor
+      endCursor
+      hasNextPage
+      hasPreviousPage
+    }
+  }
+}
+
 
 """;
 

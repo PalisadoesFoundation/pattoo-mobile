@@ -11,25 +11,57 @@ class AgentsManager with ChangeNotifier {
   List agents = new List();
   String _httpLink = "http://calico.palisadoes.org/pattoo/api/v1/web/graphql";
   QueryResult result;
-
+  bool loading;
+  QueryOptions current_options;
   /// Use this method on UI to get selected theme.
   String get link {
     return this._httpLink;
   }
-  /* updateAgents() async{
-   QueryOptions options = QueryOptions(
-    documentNode: gql(AgentFetch.getAgents),
+
+/*   updateAgents() async {
+    QueryOptions options = QueryOptions(
+      documentNode: gql(AgentFetch().getAllAgents),
+      variables: <String, String>{
+        // set cursor to null so as to start at the beginning
+        // 'cursor': 10
+      },
     );
     GraphQLClient _client = GraphQLClient(
-        cache: InMemoryCache(),
-        link: _httpLink,
+      cache: InMemoryCache(),
+      link: new HttpLink(uri: this._httpLink),
     );
-    QueryResult result = await _client.query(options);  
-    for(var i in result.data["allAgentXlate"]["edges"]){
-     Agent agent = new Agent(i["node"]["id"],i["node"]["translation"]);  
-     this.agents.add(agent);
-    } }
- */
+    QueryResult result = await _client.query(options);
+    if (result.loading && result.data == null) {
+      this.loading = true;
+    }
+
+    if (result.hasException) {
+      print(result.exception.toString());
+    }
+
+    if (result.data["allAgentXlate"]["edges"].length == 0 &&
+        result.exception == null) {
+      print("Empty Data");
+    } else {
+      for (var i in result.data["allAgent"]["edges"]) {
+        Agent agent;
+        QueryOptions options2 = QueryOptions(
+          documentNode: gql(AgentFetch().translateAgent),
+          variables: <String, String>{"program": i["node"]["agentProgram"]},
+        );
+        GraphQLClient _client2 = GraphQLClient(
+          cache: InMemoryCache(),
+          link: new HttpLink(uri: this._httpLink),
+        );
+        QueryResult result2 = await _client2.query(options2);
+        agent = new Agent(i["node"]["idxAgent"],
+            result2.data["allAgentXlate"]["edges"][0]["node"]["translation"]);
+        this.agents.add(agent);
+      }
+      this.loading = false;
+    }
+  } */
+
 /*   updateDatapoints(int id) async{
     QueryOptions options = QueryOptions(
     documentNode: gql(AgentFetch().getDataPointAgents(id)));
@@ -57,20 +89,25 @@ class AgentsManager with ChangeNotifier {
     } 
   } */
 
-    Future<String> getTranslatedName(Map agent) async {
+  Future<String> getTranslatedName(Map agent) async {
     var name = "";
-      String id_pair = agent["idxPair"];
-      QueryOptions options_ = QueryOptions(
-          documentNode: gql(AgentFetch().getTranslatedDataPointAgentName),
-          variables: <String, dynamic>{"id": id_pair});
-      GraphQLClient _client = GraphQLClient(
-        cache: InMemoryCache(),
-        link: new HttpLink(uri: _httpLink),
-      );
-      QueryResult result2 = await _client.query(options_);
-      name = result2.data["allPairXlate"]["edges"][0]["node"]["translation"];
+    String id_pair = agent["idxPair"];
+    QueryOptions options_ = QueryOptions(
+        documentNode: gql(AgentFetch().getTranslatedDataPointAgentName),
+        variables: <String, dynamic>{"id": id_pair});
+    GraphQLClient _client = GraphQLClient(
+      cache: InMemoryCache(),
+      link: new HttpLink(uri: _httpLink),
+    );
+    QueryResult result2 = await _client.query(options_);
+    if (result2.data["allPairXlate"]["edges"].length == 0){
+      return agent["value"];
+    }
+    else{
+    name = result2.data["allPairXlate"]["edges"][0]["node"]["translation"];
     
     return name;
+    }
   }
 
   List get agentsList {
