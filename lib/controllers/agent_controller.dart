@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:pattoomobile/models/datapoint.dart';
-import 'package:pattoomobile/models/dataPointAgent.dart';
-
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pattoomobile/api/api.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:pattoomobile/models/agent.dart';
 
 class AgentsManager with ChangeNotifier {
   List agents = new List();
   String _httpLink = "http://calico.palisadoes.org/pattoo/api/v1/web/graphql";
   QueryResult result;
-  bool loading;
+  bool loaded = false;
   QueryOptions current_options;
   /// Use this method on UI to get selected theme.
   String get link {
@@ -113,4 +108,6 @@ class AgentsManager with ChangeNotifier {
   List get agentsList {
     return this.agents;
   }
+  
+  
 }

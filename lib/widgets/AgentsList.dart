@@ -8,12 +8,13 @@ import 'package:provider/provider.dart';
 import 'package:pattoomobile/controllers/theme_manager.dart';
 import 'package:pattoomobile/controllers/agent_controller.dart';
 import 'package:pattoomobile/widgets/circleMenu.dart';
+
+import 'Display-Messages.dart';
 class AgentsList extends StatelessWidget {
   Widget showOptions(BuildContext context) {
-    Provider.of<AgentsManager>(context).agents = [];
     Map translationMap = new Map();
     ScrollController _scrollController = new ScrollController();
-    return Query(
+    return (Provider.of<AgentsManager>(context).loaded == false) ? DisplayMessage() : Query(
         options: QueryOptions(
           documentNode: gql(AgentFetch().translateAgent),
           variables: <String, String>{
@@ -75,6 +76,8 @@ class AgentsList extends StatelessWidget {
                     ],
                   );
                 }
+                Provider.of<AgentsManager>(context).agents = new List();;
+
                 for (var i in result.data['allAgent']['edges']){
                       Agent agent = new Agent(i["node"]["idxAgent"],
                           translationMap[i["node"]["agentProgram"]]);

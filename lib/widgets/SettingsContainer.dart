@@ -14,7 +14,7 @@ class SettingsContainer extends StatefulWidget {
 
 class _SettingsContainerState extends State<SettingsContainer> {
   final formKey = GlobalKey<FormState>();
-  String _email, _password;
+  String _url, _email, _password;
 
   @override
   Widget build(BuildContext context) {
@@ -66,10 +66,10 @@ class _SettingsContainerState extends State<SettingsContainer> {
                             Icons.assessment,
                             color: Colors.grey,
                           )),
-                      validator: (input) => input.length < 8
-                          ? 'You need at least 8 characters'
-                          : null, //add validator for the type of data source
-                      onSaved: (input) => _password = input,
+                      validator: (input) => Validator(input)
+                          ? 'You need to enter a valid pattoo Website'
+                          : 'Valid Pattoo', //add validator for the type of data source
+                      onSaved: (input) => _url = input,
                     ),
                   )),
                   Row(
@@ -126,10 +126,10 @@ class _SettingsContainerState extends State<SettingsContainer> {
                   Container(
                       child: Padding(
                     padding: EdgeInsets.fromLTRB(15, 10, 20, 0),
-                    child: new TextFormField(
+                    child:  TextFormField(
                       decoration: InputDecoration(
-                          labelText: 'Select Source',
-                          icon: new Icon(
+                          labelText: 'Enter Source',
+                          icon: Icon(
                             Icons.assessment,
                             color: Colors.grey,
                           )),
@@ -170,5 +170,9 @@ class _SettingsContainerState extends State<SettingsContainer> {
       print(_email);
       print(_password);
     }
+  }
+
+  bool Validator(String input){
+    String url = "http:${input}/pattoo/api/v1/web/graphql";
   }
 }
