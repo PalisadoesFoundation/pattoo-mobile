@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:pattoomobile/controllers/theme_manager.dart';
 import 'package:provider/provider.dart';
 import 'package:pattoomobile/util/AspectRation.dart';
-
+import 'package:pattoomobile/util/validator.dart';
 import 'DarkModeSwitch.dart';
 import 'ShowFavSwitch.dart';
+import 'package:pattoomobile/models/view_models/listItem.dart';
 
 class SettingsContainer extends StatefulWidget {
   @override
@@ -14,8 +15,9 @@ class SettingsContainer extends StatefulWidget {
 
 class _SettingsContainerState extends State<SettingsContainer> {
   final formKey = GlobalKey<FormState>();
-  String _url, _email, _password;
-
+  String _source;
+  String dropdownValue = 'HTTP';
+  String dropdownValue2 = '/pattoo/api/v1/';
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -67,9 +69,69 @@ class _SettingsContainerState extends State<SettingsContainer> {
                             color: Colors.grey,
                           )),
                       validator: (input) => Validator(input)
-                          ? 'You need to enter a valid pattoo Website'
-                          : 'Valid Pattoo', //add validator for the type of data source
-                      onSaved: (input) => _url = input,
+                              child: new TextField(
+                                decoration:  const InputDecoration(helperText: "Select Source",
+                                 ),
+                              ),
+                            ),
+                           SizedBox(width: 20,),
+                           new DropdownButton<String>(
+
+                             value: dropdownValue,
+                             icon: Icon(Icons.arrow_downward),
+                             iconSize: 24,
+                             elevation: 16,
+                             style: TextStyle(
+                                 color: Colors.deepPurple
+                             ),
+                             underline: Container(
+                               height: 2,
+                               color: Colors.deepPurpleAccent,
+                             ),
+                             onChanged: (String newValue) {
+                               setState(() {
+                                 dropdownValue = newValue;
+                               });
+                             },
+                             items: <String>['HTTP', 'HTTPS',]
+                                 .map<DropdownMenuItem<String>>((String value) {
+                               return DropdownMenuItem<String>(
+                                 value: value,
+                                 child: Text(value),
+                               );
+                             })
+                                 .toList(),
+                           ),
+                           SizedBox(width: 20,),
+                           new DropdownButton<String>(
+
+                             value: dropdownValue2,
+                             icon: Icon(Icons.arrow_downward),
+                             iconSize: 24,
+                             elevation: 16,
+                             style: TextStyle(
+                                 color: Colors.deepPurple
+                             ),
+                             underline: Container(
+                               height: 2,
+                               color: Colors.deepPurpleAccent,
+                             ),
+                             onChanged: (String newValue) {
+                               setState(() {
+                                 dropdownValue2 = newValue;
+                               });
+                             },
+                             items: <String>['/pattoo/api/v1/']
+                                 .map<DropdownMenuItem<String>>((String value) {
+                               return DropdownMenuItem<String>(
+                                 value: value,
+                                 child: Text(value),
+                               );
+                             })
+                                 .toList(),
+                           ),
+                         ],
+                       ),
                     ),
                   )),
                   Row(
@@ -91,7 +153,6 @@ class _SettingsContainerState extends State<SettingsContainer> {
                 ],
               ),
             ),
-          ),
         ),
       ),
     );
@@ -125,20 +186,20 @@ class _SettingsContainerState extends State<SettingsContainer> {
                   ShowFavWidget(),
                   Container(
                       child: Padding(
-                    padding: EdgeInsets.fromLTRB(15, 10, 20, 0),
-                    child:  TextFormField(
-                      decoration: InputDecoration(
-                          labelText: 'Enter Source',
-                          icon: Icon(
-                            Icons.assessment,
-                            color: Colors.grey,
-                          )),
-                      validator: (input) => input.length < 8
-                          ? 'You need at least 8 characters'
-                          : null, //add validator for the type of data source
-                      onSaved: (input) => _password = input,
-                    ),
-                  )),
+                        padding: EdgeInsets.fromLTRB(15, 10, 20, 0),
+                        child: new TextFormField(
+                          decoration: InputDecoration(
+                              labelText: 'Select Source 2',
+                              icon: new Icon(
+                                Icons.assessment,
+                                color: Colors.grey,
+                              )
+                          ),
+                          validator: FieldValidator.validateSourceInput,
+                        ),
+
+                      )
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
@@ -157,22 +218,3 @@ class _SettingsContainerState extends State<SettingsContainer> {
                   )
                 ],
               ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _submit() {
-    if (formKey.currentState.validate()) {
-      formKey.currentState.save();
-      print(_email);
-      print(_password);
-    }
-  }
-
-  bool Validator(String input){
-    String url = "http:${input}/pattoo/api/v1/web/graphql";
-  }
-}

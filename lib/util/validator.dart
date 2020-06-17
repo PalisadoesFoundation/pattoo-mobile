@@ -26,8 +26,19 @@ class FieldValidator{
 
     if(value.length <7)
     {
-      return 'Passeord must be more than 6 characters';
+      return 'Password must be more than 6 characters';
     }
+    return null;
+  }
+
+  static String validateSourceInput(String value)
+  {
+    if(value.isEmpty) return 'Enter Source!';
+
+    if(value.length <3)
+      {
+        return 'Enter Valid Source!';
+      }
     return null;
   }
 }

@@ -24,7 +24,7 @@ void main() {
 
   test('Invalid Password Test', () {
     var result = FieldValidator.validatePassword('123');
-    expect(result, 'Passeord must be more than 6 characters');
+    expect(result, 'Password must be more than 6 characters');
   });
 
   test('Valid Password Test', () {
@@ -36,4 +36,17 @@ void main() {
     var result = FieldValidator.validateEmail('ajay');
     expect(result, 'Enter Valid Email!');
   });
+
+  test('Empty Source Test', ()
+  {
+    var result = FieldValidator.validateSourceInput('');
+    expect(result, 'Enter Source!');
+  });
+
+  test('Valid Source Test', ()
+  {
+    var result = FieldValidator.validateSourceInput('abc');
+    expect(result, null);
+  });
+
 }
