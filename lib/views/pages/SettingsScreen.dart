@@ -1,12 +1,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:pattoomobile/widgets/DarkModeSwitch.dart';
-import 'package:pattoomobile/widgets/ShowFavSwitch.dart';
 import 'package:pattoomobile/widgets/SettingsContainer.dart';
-import 'package:pattoomobile/widgets/DropdownWidget.dart';
-import 'package:pattoomobile/widgets/LoginForm.dart';
-import 'package:pattoomobile/widgets/AgentInput.dart';
 
 class SettingsScreen extends StatefulWidget {
   @override

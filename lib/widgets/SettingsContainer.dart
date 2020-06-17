@@ -4,6 +4,7 @@ import 'package:pattoomobile/util/AspectRation.dart';
 import 'package:pattoomobile/util/validator.dart';
 import 'DarkModeSwitch.dart';
 import 'ShowFavSwitch.dart';
+import 'package:pattoomobile/models/view_models/listItem.dart';
 
 class SettingsContainer extends StatefulWidget {
 
@@ -14,8 +15,8 @@ class SettingsContainer extends StatefulWidget {
 class _SettingsContainerState extends State<SettingsContainer> {
   final formKey = GlobalKey<FormState>();
   String _source;
-
-
+  String dropdownValue = 'HTTP';
+  String dropdownValue2 = '/pattoo/api/v1/';
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -60,21 +61,81 @@ class _SettingsContainerState extends State<SettingsContainer> {
                     DarkModeWidget(),
                     ShowFavWidget(),
                     Container(
-                        child: Padding(
-                          padding: EdgeInsets.fromLTRB(15, 10, 20, 0),
-                          child: new TextFormField(
-                            decoration: InputDecoration(
-                                labelText: 'Select Source',
-                                icon: new Icon(
-                                  Icons.assessment,
-                                  color: Colors.grey,
-                                )
+                       child: Row(
+                         children: <Widget>[
+                           SizedBox(width: 15,),
+                          new Flexible(child:
+                          Icon(
+                            Icons.assessment,
+                            color: Colors.grey,
+                            size: 25.0,
+                          ),),
+                           SizedBox(width: 10,),
+                            new Flexible(
+                                 // flex:1,
+                              child: new TextField(
+                                decoration:  const InputDecoration(helperText: "Select Source",
+                                 ),
+                              ),
                             ),
-                            validator: (input) => input.length < 8 ? 'You need at least 8 characters' : null, //add validator for the type of data source
-                            onSaved: (input) => _source = input,
-                          ),
+                           SizedBox(width: 20,),
+                           new DropdownButton<String>(
 
-                        )
+                             value: dropdownValue,
+                             icon: Icon(Icons.arrow_downward),
+                             iconSize: 24,
+                             elevation: 16,
+                             style: TextStyle(
+                                 color: Colors.deepPurple
+                             ),
+                             underline: Container(
+                               height: 2,
+                               color: Colors.deepPurpleAccent,
+                             ),
+                             onChanged: (String newValue) {
+                               setState(() {
+                                 dropdownValue = newValue;
+                               });
+                             },
+                             items: <String>['HTTP', 'HTTPS',]
+                                 .map<DropdownMenuItem<String>>((String value) {
+                               return DropdownMenuItem<String>(
+                                 value: value,
+                                 child: Text(value),
+                               );
+                             })
+                                 .toList(),
+                           ),
+                           SizedBox(width: 20,),
+                           new DropdownButton<String>(
+
+                             value: dropdownValue2,
+                             icon: Icon(Icons.arrow_downward),
+                             iconSize: 24,
+                             elevation: 16,
+                             style: TextStyle(
+                                 color: Colors.deepPurple
+                             ),
+                             underline: Container(
+                               height: 2,
+                               color: Colors.deepPurpleAccent,
+                             ),
+                             onChanged: (String newValue) {
+                               setState(() {
+                                 dropdownValue2 = newValue;
+                               });
+                             },
+                             items: <String>['/pattoo/api/v1/']
+                                 .map<DropdownMenuItem<String>>((String value) {
+                               return DropdownMenuItem<String>(
+                                 value: value,
+                                 child: Text(value),
+                               );
+                             })
+                                 .toList(),
+                           ),
+                         ],
+                       ),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -134,14 +195,13 @@ class _SettingsContainerState extends State<SettingsContainer> {
                         padding: EdgeInsets.fromLTRB(15, 10, 20, 0),
                         child: new TextFormField(
                           decoration: InputDecoration(
-                              labelText: 'Select Source',
+                              labelText: 'Select Source 2',
                               icon: new Icon(
                                 Icons.assessment,
                                 color: Colors.grey,
                               )
                           ),
                           validator: FieldValidator.validateSourceInput,
-
                         ),
 
                       )
