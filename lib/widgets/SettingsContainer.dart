@@ -19,14 +19,16 @@ class _SettingsContainerState extends State<SettingsContainer> {
   String dropdownValue2 = '/pattoo/api/v1/';
   @override
   Widget build(BuildContext context) {
-    SizeConfig().init(context);
-    return Scaffold(
-      body: OrientationBuilder(
-        builder: (context, orientation) {
-          return orientation == Orientation.portrait
-              ? _buildVerticalLayout()
-              : _buildHorizontalLayout();
-        },
+        final size = MediaQuery.of(context).size;
+    return MaterialApp(
+      home: Scaffold(
+        body: OrientationBuilder(
+          builder: (context, orientation) {
+            return orientation == Orientation.portrait
+                ? _buildVerticalLayout()
+                : _buildHorizontalLayout();
+          },
+        ),
       ),
     );
   }
