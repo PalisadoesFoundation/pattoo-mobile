@@ -179,7 +179,7 @@ final appThemeData = {
         fontStyle: FontStyle.normal,
       ),
       headline6: TextStyle(
-        color: Colors.white,
+        color: Colors.black54,
         fontSize: null,
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
@@ -675,7 +675,7 @@ final appThemeData = {
         fontStyle: FontStyle.normal,
       ),
       headline6: TextStyle(
-        color: Colors.black87,
+        color: Colors.white,
         fontSize: null,
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,

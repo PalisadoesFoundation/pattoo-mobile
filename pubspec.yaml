@@ -24,6 +24,8 @@ dependencies:
    # The following adds the Cupertino Icons font to your application.
   charts_flutter: ^0.9.0
   modal_progress_hud: ^0.1.3
+  flutter_launcher_icons: ^0.7.5
+
 
   bloc_pattern:
   rxdart:
@@ -42,6 +44,10 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+flutter_icons:
+    android: true
+    ios: true
+    image_path: "images/pattoo-rtd.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
