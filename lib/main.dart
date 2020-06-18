@@ -9,7 +9,7 @@ void main() => runApp(MaterialApp(
   initialRoute: '/',
   routes: {
     '/': (context) => SettingsScreen(),
-    '/Homescreen': (context) => HomeScreen(),
+    '/HomeScreen': (context) => HomeScreen(),
   },
 
 ),
