@@ -1,17 +1,22 @@
+
 import 'package:flutter/material.dart';
 import 'package:pattoomobile/api/api.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 class AgentsManager with ChangeNotifier {
   List agents = new List();
-  String _httpLink = "http://calico.palisadoes.org/pattoo/api/v1/web/graphql";
+  String httpLink;
   QueryResult result;
   bool loaded = false;
   QueryOptions current_options;
   /// Use this method on UI to get selected theme.
   String get link {
-    return this._httpLink;
+    return this.httpLink;
   }
+  setLink(String link){
+    this.httpLink = link;
+  }
+
 
 /*   updateAgents() async {
     QueryOptions options = QueryOptions(
@@ -92,7 +97,7 @@ class AgentsManager with ChangeNotifier {
         variables: <String, dynamic>{"id": id_pair});
     GraphQLClient _client = GraphQLClient(
       cache: InMemoryCache(),
-      link: new HttpLink(uri: _httpLink),
+      link: new HttpLink(uri: httpLink),
     );
     QueryResult result2 = await _client.query(options_);
     if (result2.data["allPairXlate"]["edges"].length == 0){

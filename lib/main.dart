@@ -8,33 +8,36 @@ import 'package:pattoomobile/views/pages/ListScreen.dart';
 import 'package:pattoomobile/views/pages/SettingsScreen.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:pattoomobile/controllers/client_provider.dart';
-void main(){
-  runApp(App());  
+
+void main() {
+  runApp(App());
 }
 
-class App extends StatelessWidget{
+class App extends StatefulWidget {
+  @override
+  _AppState createState() => _AppState();
+}
+
+class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
-   return MultiProvider(
-     providers:[
-       ChangeNotifierProvider<ThemeManager>(create: (_) => ThemeManager()),
-       ChangeNotifierProvider<AgentsManager>(create:(_)=>AgentsManager())
-       ],
-      child: Consumer<AgentsManager>(builder: (context,agent,_){
-        return Consumer<ThemeManager>(builder: (context, manager,_) {
-          return ClientProvider(
-            uri: Provider.of<AgentsManager>(context,listen: false).link,
-            child: MaterialApp(
-           debugShowCheckedModeBanner: false,
-           theme: manager.themeData,
-           initialRoute: '/',
-           routes: {
-              '/': (context) => LoginScreen(),
-              '/Homescreen': (context) => HomeScreen(),
-              '/Settings': (context) => SettingsScreen()
-              }));
-        });
-            }));
-            }
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider<ThemeManager>(create: (_) => ThemeManager()),
+          ChangeNotifierProvider<AgentsManager>(create: (_) => AgentsManager())
+        ],
+        child: Consumer<AgentsManager>(builder: (context, agent, _) {
+          return Consumer<ThemeManager>(builder: (context, manager, _) {
+            return MaterialApp(
+                debugShowCheckedModeBanner: false,
+                theme: manager.themeData,
+                initialRoute: '/',
+                routes: {
+                  '/': (context) => LoginScreen(),
+                  '/Homescreen': (context) => HomeScreen(),
+                  '/Settings': (context) => SettingsScreen()
+                });
+          });
+        }));
+  }
 }
-

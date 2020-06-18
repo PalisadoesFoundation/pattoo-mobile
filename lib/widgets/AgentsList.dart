@@ -14,6 +14,8 @@ class AgentsList extends StatelessWidget {
   Widget showOptions(BuildContext context) {
     Map translationMap = new Map();
     ScrollController _scrollController = new ScrollController();
+    print("Loaded = ");
+    print(Provider.of<AgentsManager>(context).loaded);
     return (Provider.of<AgentsManager>(context).loaded == false) ? DisplayMessage() : Query(
         options: QueryOptions(
           documentNode: gql(AgentFetch().translateAgent),
