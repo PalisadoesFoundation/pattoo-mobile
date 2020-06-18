@@ -53,9 +53,14 @@ class _SettingsContainerState extends State<SettingsContainer> {
                          SizedBox(width: 10,),
                          new Flexible(
                            // flex:1,
-                           child: new TextField(
+                           child: new TextFormField(
+                             maxLines: 1,
+                             obscureText: false,
+                             autofocus: false,
                              decoration:  const InputDecoration(helperText: "Select Source",
                              ),
+                             validator: FieldValidator.validateSourceInput,
+
                            ),
                          ),
                          SizedBox(width: 20,),

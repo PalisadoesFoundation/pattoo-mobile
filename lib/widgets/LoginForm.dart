@@ -175,7 +175,7 @@ class _LoginFormState extends State<LoginForm> {
             borderRadius: new BorderRadius.circular(30.0)),
         color: Colors.blue,
         onPressed: () {
-          Navigator.pushNamed(context, '/Homescreen');
+          Navigator.pushNamed(context, '/HomeScreen');
         },
         child: const Text('Login', style: TextStyle(fontSize: 20, color: Colors.white)),
       ),
