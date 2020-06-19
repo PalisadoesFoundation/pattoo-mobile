@@ -4,7 +4,6 @@ import 'package:pattoomobile/util/validator.dart';
 import 'DarkModeSwitch.dart';
 import 'ShowFavSwitch.dart';
 
-
 class SettingsContainer extends StatefulWidget {
 
   @override
@@ -150,7 +149,6 @@ class _SettingsContainerState extends State<SettingsContainer> {
     if(formKey.currentState.validate()){
       formKey.currentState.save();
       print(_source);
-
     }
   }
 }
