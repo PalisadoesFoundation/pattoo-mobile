@@ -15,17 +15,92 @@ class _SettingsContainerState extends State<SettingsContainer> {
   String _source;
   String dropdownValue = 'HTTP';
   String dropdownValue2 = '/pattoo/api/v1/';
+  bool isSwitched = false;
+  bool status = false;
+
   @override
   Widget build(BuildContext context) {
         final size = MediaQuery.of(context).size;
     return MaterialApp(
       home: Scaffold(
         body: Container(
-            child: _buildVerticalLayout(),
+          child: Column(
+            children: <Widget>[
+              FavSwitch(),
+              DarkSwitch(),
+            ],
+          )
         ),
       ),
     );
   }
+
+  Widget FavSwitch()
+  {
+    bool _isSwitched = true;
+    return MaterialApp(
+      home: Scaffold
+        (
+        body: Container(
+          child: Row(
+            children: <Widget>[
+              Icon(
+                Icons.favorite_border,
+                color:Colors.grey,
+                size: 25.0,
+                semanticLabel: 'Text to announce in accessibility modes',
+              ),
+              Text(
+                'Show Favourites',
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              Switch(
+                onChanged: (val) => setState(() => _isSwitched = val),
+                value: _isSwitched,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget DarkSwitch()
+  {
+    bool _isSwitched = true;
+    return MaterialApp(
+      home: Scaffold
+        (
+        body: Container(
+          child: Row(
+            children: <Widget>[
+              Icon(
+                Icons.lightbulb_outline,
+                color:Colors.grey,
+                size: 25.0,
+                semanticLabel: 'Text to announce in accessibility modes',
+              ),
+              Text(
+                'Dark Mode',
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              Switch(
+                onChanged: (val) => setState(() => _isSwitched = val),
+                value: _isSwitched,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+
+
   Widget _buildVerticalLayout()
   {
     return new Container(
@@ -59,7 +134,6 @@ class _SettingsContainerState extends State<SettingsContainer> {
                              decoration:  const InputDecoration(helperText: "Select Source",
                              ),
                              validator: FieldValidator.validateSourceInput,
-
                            ),
                          ),
                          SizedBox(width: 20,),
@@ -152,4 +226,3 @@ class _SettingsContainerState extends State<SettingsContainer> {
     }
   }
 }
-

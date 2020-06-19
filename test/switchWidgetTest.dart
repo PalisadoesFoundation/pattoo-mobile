@@ -1,16 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pattoomobile/widgets/Settings.dart';
 import 'package:pattoomobile/widgets/ShowFavSwitch.dart';
+import 'package:pattoomobile/widgets/DarkModeSwitch.dart';
+
 
 void main() {
-  Widget buildTestableWidget(Widget widget) {
+  final Key switchKey = UniqueKey();
+  bool value = false;
+  Widget buildTestableWidget(Widget widget)
+  {
     return MediaQuery(data: MediaQueryData(), child: MaterialApp(home: widget));
   }
 
-  testWidgets('Show Fav Switch', (WidgetTester tester)
-  async{
+  testWidgets('Switch test', (WidgetTester tester) async {
+    // Build our app and trigger a frame.
     await tester.pumpWidget(buildTestableWidget(ShowFavWidget()));
 
-    expect(find.byType(Switch), findsNothing);
+    // Verify that our counter starts at 0.
+    expect(find.byType(SwitchListTile), findsOneWidget);
+
+
   });
 }
