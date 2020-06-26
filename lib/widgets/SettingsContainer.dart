@@ -211,7 +211,6 @@ class _SettingsContainerState extends State<SettingsContainer> {
         this.isInvalidURL = true;
         this.inAsyncCall = false;
       });
-      print("done1");
     }
     setState(() {
       this.inAsyncCall = false;
@@ -231,7 +230,7 @@ class _SettingsContainerState extends State<SettingsContainer> {
       print(Provider.of<AgentsManager>(context,listen:false).loaded);
       print(Provider.of<AgentsManager>(context,listen:false).link);
       Future.delayed(Duration(seconds: 3), () {
-       Navigator.pushNamed(context, '/Homescreen');
+       Navigator.pushNamed(context, '/HomeScreen');
       });
     }
   }

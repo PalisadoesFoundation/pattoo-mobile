@@ -1,5 +1,4 @@
 
-import './datapoint.dart';
 class DataPointAgent {
   String agent_id;
   String datapoint_id;
@@ -8,12 +7,8 @@ class DataPointAgent {
     this.agent_id,
     this.datapoint_id
   );
-  DataPoint datapoints;
 
 
-addDataPoint(DataPoint datapoint){
-    this.datapoints = datapoint;
-  }
 
 
   @override

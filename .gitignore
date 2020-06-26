@@ -24,6 +24,14 @@ lib/generated_plugin_registrant.dart
 #
 ##############################################################################
 
+#Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
 
 # Miscellaneous
 *.class

@@ -3,7 +3,6 @@ import 'package:pattoomobile/util/validator.dart';
 import 'package:pattoomobile/models/view_models/login_form_model.dart';
 import 'package:provider/provider.dart';
 import 'package:pattoomobile/controllers/theme_manager.dart';
-import 'package:pattoomobile/controllers/agent_controller.dart';
 import 'package:pattoomobile/utils/app_themes.dart';
 import 'package:pattoomobile/models/timestamp.dart';
 class LoginForm extends StatefulWidget {
@@ -153,6 +152,7 @@ class _LoginFormState extends State<LoginForm> {
               style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300,color: Colors.lightBlue)),
         ),
       ),
+      onPressed: (){},
 );
   }
 

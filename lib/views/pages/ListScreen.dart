@@ -7,7 +7,6 @@ import 'package:pattoomobile/controllers/client_provider.dart';
 import 'package:pattoomobile/controllers/theme_manager.dart';
 import 'package:pattoomobile/models/agent.dart';
 import 'package:pattoomobile/models/dataPointAgent.dart';
-import 'package:pattoomobile/models/view_models/tileItem.dart';
 import 'package:pattoomobile/widgets/circleMenu.dart';
 import 'package:provider/provider.dart';
 
@@ -20,7 +19,6 @@ class List extends StatefulWidget {
 
 class _ListState extends State<List> {
   Agent agent;
-  TileItem tile = new TileItem();
   _ListState(this.agent);
   String cursor = "";
   ScrollController _scrollController = new ScrollController();
