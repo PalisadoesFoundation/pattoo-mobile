@@ -2,7 +2,7 @@
 
 
 
-.. image:: images/logo.png
+.. image:: images/pattoo-rtd.png
 About Pattoo
 ==================================
 

@@ -11,7 +11,7 @@ class Menu extends StatelessWidget {
               splashColor: Colors.blueAccent, // inkwell color
               child: SizedBox(width: 56, height: 56, child: Icon(Icons.menu,
                 color: Colors.blue,)),
-              onTap: () {},
+              onTap: () {Navigator.pushNamed(context, '/Settings');},
             ),
           ),
         ),
