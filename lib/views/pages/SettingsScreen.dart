@@ -2,6 +2,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pattoomobile/widgets/SettingsContainer.dart';
+import 'package:pattoomobile/widgets/BottomNavBar.dart';
 
 class SettingsScreen extends StatefulWidget {
   @override
@@ -21,11 +22,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: Stack(
           children: <Widget>[
             SettingsContainer(),
+
   ],
       ),
+
       ),
 
     );
   }
 }
-//MyStatefulWidget(),
+
