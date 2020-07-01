@@ -35,6 +35,7 @@ class _SettingsContainerState extends State<SettingsContainer> {
     );
   }
 
+  // ignore: non_constant_identifier_names
   Widget FavSwitch()
   {
     bool _isSwitched = true;
@@ -67,6 +68,7 @@ class _SettingsContainerState extends State<SettingsContainer> {
     );
   }
 
+  // ignore: non_constant_identifier_names
   Widget DarkSwitch()
   {
     bool _isSwitched = true;

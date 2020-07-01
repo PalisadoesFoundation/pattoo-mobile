@@ -14,21 +14,21 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'I am a chart'),
+      home: ChartPage(title: 'I am a chart'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+class ChartPage extends StatefulWidget {
+  ChartPage({Key key, this.title}) : super(key: key);
 
   final String title;
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _ChartPageState createState() => _ChartPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _ChartPageState extends State<ChartPage> {
   List<Series> vibrationData;
 
   @override
