@@ -11,5 +11,10 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return LoginForm();
   }
+<<<<<<< HEAD
 
 }
+=======
+    
+  }
+>>>>>>> repo-a/master

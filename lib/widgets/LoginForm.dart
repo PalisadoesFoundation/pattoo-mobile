@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+<<<<<<< HEAD
 import 'package:pattoomobile/util/validator.dart';
+=======
+>>>>>>> repo-a/master
 import 'package:pattoomobile/models/view_models/login_form_model.dart';
 
 class LoginForm extends StatefulWidget {
@@ -127,7 +130,11 @@ class _LoginFormState extends State<LoginForm> {
               Icons.mail,
               color: Colors.lightBlue,
             )),
+<<<<<<< HEAD
         validator: FieldValidator.validateEmail,
+=======
+        validator: (value) => value.isEmpty ? 'Email can\'t be empty' : null,
+>>>>>>> repo-a/master
         onSaved: (value) => this.userLogin.email = value.trim(),
       ),
     );
@@ -146,7 +153,11 @@ class _LoginFormState extends State<LoginForm> {
               Icons.lock,
               color: Colors.lightBlue,
             )),
+<<<<<<< HEAD
         validator: FieldValidator.validatePassword,
+=======
+        validator: (value) => value.isEmpty ? 'Password can\'t be empty' : null,
+>>>>>>> repo-a/master
         onSaved: (value) => this.userLogin.password = value.trim(),
       ),
     );
@@ -154,6 +165,7 @@ class _LoginFormState extends State<LoginForm> {
 
   Widget showSecondaryButton() {
     return new FlatButton(
+<<<<<<< HEAD
       child: Container(
         child: Align(
           alignment: Alignment.centerRight,
@@ -179,6 +191,31 @@ class _LoginFormState extends State<LoginForm> {
         },
         child: const Text('Login', style: TextStyle(fontSize: 20, color: Colors.white)),
       ),
+=======
+        child: Container(
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: new Text(
+                'Forget Password?',
+                style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300,color: Colors.lightBlue)),
+          ),
+        ),
+        onPressed: (){
+          // Do something
+        },);
+  }
+  Widget showPrimaryButton() {
+    return new Padding(
+        padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
+        child: RaisedButton(
+          elevation: 5.0,
+          shape: new RoundedRectangleBorder(
+              borderRadius: new BorderRadius.circular(30.0)),
+          color: Colors.blue,
+        onPressed: () {},
+    child: const Text('Login', style: TextStyle(fontSize: 20, color: Colors.white)),
+        ),
+>>>>>>> repo-a/master
     );
   }
 }
