@@ -158,6 +158,23 @@ class AgentsList extends StatelessWidget {
           ],
         ),
       ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: 0, // this will be set when a new tab is tapped
+        items: [
+          BottomNavigationBarItem(
+            icon: new Icon(Icons.home),
+            title: new Text('Home'),
+          ),
+          BottomNavigationBarItem(
+            icon: new Icon(Icons.favorite),
+            title: new Text('Favorites'),
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.settings),
+              title: Text('Settings')
+          )
+        ],
+      ),
     );
   }
 

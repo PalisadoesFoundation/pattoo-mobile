@@ -43,7 +43,25 @@ class _SettingsContainerState extends State<SettingsContainer> {
       inAsyncCall: inAsyncCall,
       opacity: 0.5,
       progressIndicator: CircularProgressIndicator(),
-    ));
+    ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: 2, // this will be set when a new tab is tapped
+        items: [
+          BottomNavigationBarItem(
+            icon: new Icon(Icons.home),
+            title: new Text('Home'),
+          ),
+          BottomNavigationBarItem(
+            icon: new Icon(Icons.favorite),
+            title: new Text('Favorites'),
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.settings),
+              title: Text('Settings')
+          )
+        ],
+      ),
+    );
   }
 
   Widget _buildVerticalLayout(context) {
@@ -53,17 +71,6 @@ class _SettingsContainerState extends State<SettingsContainer> {
         height: SizeConfig.blockSizeVertical * 51,
         width: SizeConfig.blockSizeHorizontal * 220,
         color: Colors.transparent,
-        child: Card(
-          elevation: 5,
-          margin: EdgeInsets.fromLTRB(20, 30, 20, 40),
-          shape: RoundedRectangleBorder(
-            borderRadius: new BorderRadius.only(
-              topLeft: const Radius.circular(40.0),
-              topRight: const Radius.circular(40.0),
-              bottomLeft: const Radius.circular(40.0),
-              bottomRight: const Radius.circular(40.0),
-            ),
-          ),
           child: Padding(
             padding: EdgeInsets.all(8.0),
             child: Form(
@@ -152,8 +159,7 @@ class _SettingsContainerState extends State<SettingsContainer> {
               ),
             ),
           ),
-        ),
-      ),
+       ),
     );
   }
 

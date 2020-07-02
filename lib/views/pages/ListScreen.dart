@@ -39,9 +39,7 @@ class _ListState extends State<List> {
             backgroundColor: Provider.of<ThemeManager>(context, listen: false)
                 .themeData
                 .backgroundColor,
-            actions: <Widget>[
-              Menu(),
-            ],
+
           ),
           body: Query(
               options: QueryOptions(
@@ -219,7 +217,24 @@ class _ListState extends State<List> {
                         }),
                   )
                 ]);
-              })),
+              }),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: 0, // this will be set when a new tab is tapped
+          items: [
+            BottomNavigationBarItem(
+              icon: new Icon(Icons.home),
+              title: new Text('Home'),
+            ),
+            BottomNavigationBarItem(
+              icon: new Icon(Icons.favorite),
+              title: new Text('Favorites'),
+            ),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.settings),
+                title: Text('Settings')
+            )
+          ],
+        ),),
     );
   }
 
