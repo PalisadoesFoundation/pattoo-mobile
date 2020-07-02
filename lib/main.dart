@@ -1,33 +1,40 @@
 import 'package:flutter/material.dart';
-import 'package:pattoomobile/views/pages/LoginScreen.dart';
-<<<<<<< HEAD
+import 'package:pattoomobile/controllers/agent_controller.dart';
+import 'package:provider/provider.dart';
+import 'package:pattoomobile/controllers/theme_manager.dart';
 import 'package:pattoomobile/views/pages/HomeScreen.dart';
+import 'package:pattoomobile/views/pages/LoginScreen.dart';
 import 'package:pattoomobile/views/pages/SettingsScreen.dart';
-import 'package:pattoomobile/views/pages/ChartScreen.dart';
-import 'package:flutter_test/flutter_test.dart';
-=======
->>>>>>> repo-a/master
 
-void main() => runApp(MaterialApp(
+void main() {
+  runApp(App());
+}
 
-<<<<<<< HEAD
-  initialRoute: '/',
-  routes: {
-    '/': (context) => SettingsScreen(),
-    '/HomeScreen': (context) => HomeScreen(),
-  },
+class App extends StatefulWidget {
+  @override
+  _AppState createState() => _AppState();
+}
 
-),
-);
-
-
-=======
-class MyApp extends StatelessWidget {
+class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: new LoginScreen(),
-    );
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider<ThemeManager>(create: (_) => ThemeManager()),
+          ChangeNotifierProvider<AgentsManager>(create: (_) => AgentsManager())
+        ],
+        child: Consumer<AgentsManager>(builder: (context, agent, _) {
+          return Consumer<ThemeManager>(builder: (context, manager, _) {
+            return MaterialApp(
+                debugShowCheckedModeBanner: false,
+                theme: manager.themeData,
+                initialRoute: '/',
+                routes: {
+                  '/': (context) => LoginScreen(),
+                  '/HomeScreen': (context) => HomeScreen(),
+                  '/Settings': (context) => SettingsScreen()
+                });
+          });
+        }));
   }
 }
->>>>>>> repo-a/master

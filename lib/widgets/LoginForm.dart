@@ -1,23 +1,30 @@
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
 import 'package:pattoomobile/util/validator.dart';
-=======
->>>>>>> repo-a/master
 import 'package:pattoomobile/models/view_models/login_form_model.dart';
-
+import 'package:provider/provider.dart';
+import 'package:pattoomobile/controllers/theme_manager.dart';
+import 'package:pattoomobile/utils/app_themes.dart';
+import 'package:pattoomobile/models/timestamp.dart';
 class LoginForm extends StatefulWidget {
-
   @override
   State<StatefulWidget> createState() => new _LoginFormState();
 }
 
 class _LoginFormState extends State<LoginForm> {
-  final _formKey = new GlobalKey<FormState>();
-
   LoginFormModel userLogin = new LoginFormModel();
+  TimeStamp time = new TimeStamp(timestamp: 1591211730580, value: 10);
   String _errorMessage;
-  bool _isLoginForm;
+  final _formKey = new GlobalKey<FormState>();
   bool _isLoading;
+  bool _isLoginForm;
+
+  @override
+  void initState() {
+    _errorMessage = "";
+    _isLoading = false;
+    _isLoginForm = true;
+    super.initState();
+  }
 
   get validateAndSubmit => null;
 
@@ -31,30 +38,9 @@ class _LoginFormState extends State<LoginForm> {
     return false;
   }
 
-  @override
-  void initState() {
-    _errorMessage = "";
-    _isLoading = false;
-    _isLoginForm = true;
-    super.initState();
-  }
-
   void resetForm() {
     _formKey.currentState.reset();
     _errorMessage = "";
-  }
-
-
-  @override
-  Widget build(BuildContext context) {
-    return new Scaffold(
-
-        body: Stack(
-          children: <Widget>[
-            _showForm(),
-            _showCircularProgress(),
-          ],
-        ));
   }
 
   Widget _showCircularProgress() {
@@ -104,6 +90,9 @@ class _LoginFormState extends State<LoginForm> {
   }
 
   Widget showLogo() {
+    AppTheme theme = Provider.of<ThemeManager>(context).getTheme();
+
+    var logo = theme == AppTheme.Light ? 'images/pattoo-light.png': 'images/pattoo-dark.png';
     return new Hero(
       tag: 'hero',
       child: Padding(
@@ -111,7 +100,7 @@ class _LoginFormState extends State<LoginForm> {
         child: CircleAvatar(
           backgroundColor: Colors.transparent,
           radius: 100.0,
-          child: Image.asset('images/pattoo-rtd.png'),
+          child: Image.asset(logo),
         ),
       ),
     );
@@ -128,13 +117,8 @@ class _LoginFormState extends State<LoginForm> {
             hintText: 'Email',
             icon: new Icon(
               Icons.mail,
-              color: Colors.lightBlue,
             )),
-<<<<<<< HEAD
         validator: FieldValidator.validateEmail,
-=======
-        validator: (value) => value.isEmpty ? 'Email can\'t be empty' : null,
->>>>>>> repo-a/master
         onSaved: (value) => this.userLogin.email = value.trim(),
       ),
     );
@@ -151,13 +135,8 @@ class _LoginFormState extends State<LoginForm> {
             hintText: 'Password',
             icon: new Icon(
               Icons.lock,
-              color: Colors.lightBlue,
             )),
-<<<<<<< HEAD
         validator: FieldValidator.validatePassword,
-=======
-        validator: (value) => value.isEmpty ? 'Password can\'t be empty' : null,
->>>>>>> repo-a/master
         onSaved: (value) => this.userLogin.password = value.trim(),
       ),
     );
@@ -165,7 +144,6 @@ class _LoginFormState extends State<LoginForm> {
 
   Widget showSecondaryButton() {
     return new FlatButton(
-<<<<<<< HEAD
       child: Container(
         child: Align(
           alignment: Alignment.centerRight,
@@ -174,10 +152,10 @@ class _LoginFormState extends State<LoginForm> {
               style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300,color: Colors.lightBlue)),
         ),
       ),
-      onPressed: (){
-        // Do something
-      },);
+      onPressed: (){},
+);
   }
+
   Widget showPrimaryButton() {
     return new Padding(
       padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
@@ -185,37 +163,31 @@ class _LoginFormState extends State<LoginForm> {
         elevation: 5.0,
         shape: new RoundedRectangleBorder(
             borderRadius: new BorderRadius.circular(30.0)),
-        color: Colors.blue,
         onPressed: () {
           Navigator.pushNamed(context, '/HomeScreen');
         },
         child: const Text('Login', style: TextStyle(fontSize: 20, color: Colors.white)),
       ),
-=======
-        child: Container(
-          child: Align(
-            alignment: Alignment.centerRight,
-            child: new Text(
-                'Forget Password?',
-                style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300,color: Colors.lightBlue)),
-          ),
-        ),
-        onPressed: (){
-          // Do something
-        },);
-  }
-  Widget showPrimaryButton() {
-    return new Padding(
-        padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
-        child: RaisedButton(
-          elevation: 5.0,
-          shape: new RoundedRectangleBorder(
-              borderRadius: new BorderRadius.circular(30.0)),
-          color: Colors.blue,
-        onPressed: () {},
-    child: const Text('Login', style: TextStyle(fontSize: 20, color: Colors.white)),
-        ),
->>>>>>> repo-a/master
     );
   }
+
+
+
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+
+        body: Stack(
+          children: <Widget>[
+            _showForm(),
+            _showCircularProgress(),
+          ],
+        ));
+  }
+
+
+
+
+
 }
+
