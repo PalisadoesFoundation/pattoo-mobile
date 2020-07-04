@@ -159,7 +159,7 @@ class AgentsList extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0, // this will be set when a new tab is tapped
+        currentIndex: 0,
         items: [
           BottomNavigationBarItem(
             icon: new Icon(Icons.home),
