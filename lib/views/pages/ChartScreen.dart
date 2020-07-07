@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart';
 import 'package:pattoomobile/chartdir/chart_util.dart';
-
+import 'package:flutter/src/painting/basic_types.dart' as ax;
 
 void main() => runApp(Chart());
 
@@ -74,7 +74,7 @@ class _ChartScreenState extends State<ChartScreen> {
 
               child: Expanded(
                   child:  ListView(
-                    //scrollDirection: Axis.horizontal,
+                    scrollDirection: ax.Axis.horizontal,
                     children: <Widget>[
                       RaisedButton(
                         color: Colors.blue,
