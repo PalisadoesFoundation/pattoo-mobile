@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart';
-import 'package:pattoomobile/chartdir/chart_util.dart';
 import 'package:flutter/src/painting/basic_types.dart' as ax;
+import 'package:pattoomobile/chartdir/chart_util.dart';
+
+
 
 void main() => runApp(Chart());
 
@@ -44,16 +46,17 @@ class _ChartScreenState extends State<ChartScreen> {
 
       appBar: AppBar(
         title: Text("Title of Chart",
-          ),
+        ),
         elevation: 0.0,
         backgroundColor: Colors.transparent,
       ),
       body:Container(
-        height: 1000.0,
+        height: 1000,
         padding: EdgeInsets.all(8.0),
         child: Column(
           children: <Widget>[
             Expanded(
+
               child: Center(
                 child: vibrationData != null
                     ? FractionallySizedBox(
@@ -71,7 +74,7 @@ class _ChartScreenState extends State<ChartScreen> {
               ),
             ),
             Container(
-
+              height: 30,
               child: Expanded(
                   child:  ListView(
                     scrollDirection: ax.Axis.horizontal,
@@ -80,33 +83,37 @@ class _ChartScreenState extends State<ChartScreen> {
                         color: Colors.blue,
                         textColor: Colors.white,
                         onPressed: () {},
-                        child: const Text('Hour'),
+                        child: const Text('Hourly'),
                       ),
+                      const SizedBox(width: 10),
                       RaisedButton(
                         color: Colors.blue,
                         textColor: Colors.white,
                         onPressed: () {},
                         child: const Text('Daily'),
                       ),
+                      const SizedBox(width: 10),
                       RaisedButton(
                         color: Colors.blue,
                         textColor: Colors.white,
                         onPressed: () {},
                         child: const Text('Monthly'),
                       ),
+                      const SizedBox(width: 10),
                       RaisedButton(
                         color: Colors.blue,
                         textColor: Colors.white,
                         onPressed: () {},
                         child: const Text('Half-Yearly'),
                       ),
+                      const SizedBox(width: 10),
                       RaisedButton(
                         color: Colors.blue,
                         textColor: Colors.white,
                         onPressed: () {},
                         child: const Text('Yearly'),
                       ),
-                      const SizedBox(height: 30),
+                      const SizedBox(height: 10),
                     ],
                   )
               ),
