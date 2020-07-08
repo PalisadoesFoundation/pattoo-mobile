@@ -3,8 +3,6 @@ import 'package:charts_flutter/flutter.dart';
 import 'package:flutter/src/painting/basic_types.dart' as ax;
 import 'package:pattoomobile/chartdir/chart_util.dart';
 
-
-
 void main() => runApp(Chart());
 
 class Chart extends StatelessWidget {

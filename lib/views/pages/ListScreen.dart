@@ -218,7 +218,6 @@ class _ListState extends State<List> {
                       }),
                 )
               ]);
-
             }),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: 0, // this will be set when a new tab is tapped
