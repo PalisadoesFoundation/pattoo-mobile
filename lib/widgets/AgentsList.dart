@@ -112,22 +112,23 @@ class AgentsList extends StatelessWidget {
                         // in this case, we want to display previous repos plus next repos
                         // so, we combine data in both into a single list of repos
                         for (var i in fetchMoreResultData["allAgent"]
-                            ["edges"]) {                      Agent agent = new Agent(i["node"]["idxAgent"],
-                          translationMap[i["node"]["agentProgram"]]);
-                      Provider.of<AgentsManager>(context, listen: false)
-                          .agents
-                          .add(agent);
-                      var translations = i["node"]["pairXlateGroup"]
-                          ["pairXlatePairXlateGroup"]["edges"];
-                      for (var translation in translations) {
-                        agent.translations.putIfAbsent(
-                            translation["node"]["key"],
-                            () => {
-                                  "translation": translation["node"]
-                                      ["translation"],
-                                  "unit": translation["node"]["units"]
-                                });
-                      }
+                            ["edges"]) {
+                          Agent agent = new Agent(i["node"]["idxAgent"],
+                              translationMap[i["node"]["agentProgram"]]);
+                          Provider.of<AgentsManager>(context, listen: false)
+                              .agents
+                              .add(agent);
+                          var translations = i["node"]["pairXlateGroup"]
+                              ["pairXlatePairXlateGroup"]["edges"];
+                          for (var translation in translations) {
+                            agent.translations.putIfAbsent(
+                                translation["node"]["key"],
+                                () => {
+                                      "translation": translation["node"]
+                                          ["translation"],
+                                      "unit": translation["node"]["units"]
+                                    });
+                          }
                         }
                       },
                     );
@@ -176,7 +177,6 @@ class AgentsList extends StatelessWidget {
         title: Text('Available Agents', style: TextStyle(color: Colors.white)),
         backgroundColor:
             Provider.of<ThemeManager>(context).themeData.backgroundColor,
-        actions: <Widget>[Menu()],
       ),
       body: Center(
         child: Stack(
@@ -184,21 +184,6 @@ class AgentsList extends StatelessWidget {
             showOptions(context),
           ],
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
-        items: [
-          BottomNavigationBarItem(
-            icon: new Icon(Icons.home),
-            title: new Text('Home'),
-          ),
-          BottomNavigationBarItem(
-            icon: new Icon(Icons.favorite),
-            title: new Text('Favorites'),
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.settings), title: Text('Settings'))
-        ],
       ),
     );
   }

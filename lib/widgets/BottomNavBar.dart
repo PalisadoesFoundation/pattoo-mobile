@@ -1,14 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-
 class BottomNavigator extends StatefulWidget {
   @override
   _BottomNavigatorState createState() => _BottomNavigatorState();
 }
 
 class _BottomNavigatorState extends State<BottomNavigator> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,9 +22,7 @@ class _BottomNavigatorState extends State<BottomNavigator> {
             title: new Text('Favorites'),
           ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              title: Text('Settings')
-          )
+              icon: Icon(Icons.settings), title: Text('Settings'))
         ],
       ),
     );

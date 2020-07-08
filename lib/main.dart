@@ -37,7 +37,6 @@ class _AppState extends State<App> {
                 routes: {
                   '/': (context) => LoginScreen(),
                   '/HomeScreen': (context) => HomeScreen(),
-                  '/Settings': (context) => SettingsScreen()
                 });
           });
         }));

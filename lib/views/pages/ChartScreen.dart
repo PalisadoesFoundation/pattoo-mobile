@@ -17,7 +17,6 @@ import 'package:http/http.dart' as http;
 class Chart extends StatelessWidget {
   final DataPointAgent agent;
   Chart(this.agent);
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return ChartScreen(
@@ -58,8 +57,11 @@ class _ChartScreenState extends State<ChartScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          agent.agent_struct["name"]["value"],
+        title: FittedBox(
+          fit: BoxFit.fitWidth,
+          child: Text(
+            agent.agent_struct["name"]["value"],
+          ),
         ),
         elevation: 0.0,
         backgroundColor: Colors.transparent,
@@ -239,21 +241,6 @@ class _ChartScreenState extends State<ChartScreen> {
             )
           ],
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0, // this will be set when a new tab is tapped
-        items: [
-          BottomNavigationBarItem(
-            icon: new Icon(Icons.home),
-            title: new Text('Home'),
-          ),
-          BottomNavigationBarItem(
-            icon: new Icon(Icons.favorite),
-            title: new Text('Favorites'),
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.settings), title: Text('Settings'))
-        ],
       ),
     );
   }

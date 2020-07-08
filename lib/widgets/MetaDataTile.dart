@@ -13,13 +13,23 @@ class MetaDataTile extends StatefulWidget {
 class _metaDataTileState extends State<MetaDataTile> {
   final title;
   final value;
+
   _metaDataTileState(this.title, this.value);
   @override
   Widget build(BuildContext context) {
+    MediaQueryData queryData;
+    queryData = MediaQuery.of(context);
     return ListTile(
-      leading: Icon(Icons.timeline),
-      title: Text(this.title, style: TextStyle(fontWeight: FontWeight.bold)),
-      trailing: Text(this.value, style: TextStyle(fontWeight: FontWeight.bold)),
-    );
+        leading: Icon(Icons.timeline),
+        title: Text(this.title, style: TextStyle(fontWeight: FontWeight.bold)),
+        trailing: SizedBox(
+          width: queryData.size.width * 0.4,
+          child: Wrap(
+              textDirection: TextDirection.ltr,
+              direction: Axis.horizontal,
+              children: <Widget>[
+                Text(this.value, style: TextStyle(fontWeight: FontWeight.bold))
+              ]),
+        ));
   }
 }

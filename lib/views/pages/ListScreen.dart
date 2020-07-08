@@ -35,8 +35,11 @@ class _ListState extends State<List> {
           : "None",
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Reports(${agent.program})',
-              style: TextStyle(color: Colors.white)),
+          title: FittedBox(
+            fit: BoxFit.fitWidth,
+            child: Text('Reports(${agent.program})',
+                style: TextStyle(color: Colors.white)),
+          ),
           backgroundColor: Provider.of<ThemeManager>(context, listen: false)
               .themeData
               .backgroundColor,
@@ -145,56 +148,57 @@ class _ListState extends State<List> {
                     // so, we combine data in both into a single list of repos
                     for (var i in fetchMoreResultData.data["allDatapoints"]
                         ["edges"]) {
-                DataPointAgent datapointagent = new DataPointAgent(
-                    agent.id.toString(), i["node"]["idxDatapoint"]);
-                for (var j in i["node"]["glueDatapoint"]["edges"]) {
-                  if (j["node"]["pair"]["value"] == "pattoo_key") {
-                    var state =
-                        this.agent.translations[j["node"]["pair"]["value"]] ==
-                                null
-                            ? true
-                            : false;
-                    if (state) {
-                      datapointagent.agent_struct.putIfAbsent(
-                          "name",
-                          () => {
-                                "value": j["node"]["pair"]["value"],
-                                "unit": "None"
-                              });
-                    } else {
-                      datapointagent.agent_struct.putIfAbsent(
-                          "name",
-                          () => {
-                                "value": this.agent.translations[j["node"]
-                                    ["pair"]["value"]]["translation"],
-                                "unit": this.agent.translations[j["node"]
-                                    ["pair"]["value"]]["unit"]
-                              });
-                    }
-                  } else {
-                    var state =
-                        this.agent.translations[j["node"]["pair"]["key"]] ==
-                                null
-                            ? true
-                            : false;
-                    if (state) {
-                      datapointagent.agent_struct.putIfAbsent(
-                        j["node"]["pair"]["key"],
-                        () => j["node"]["pair"]["value"],
-                      );
-                    } else {
-                      datapointagent.agent_struct.putIfAbsent(
-                        this.agent.translations[j["node"]["pair"]["key"]]
-                            ["translation"],
-                        () => j["node"]["pair"]["value"],
-                      );
-                    }
-                  }
-                  if (this.agent.target_agents.contains(datapointagent) ==
-                      false) {
-                    this.agent.addTarget(datapointagent);
-                  }
-                }
+                      DataPointAgent datapointagent = new DataPointAgent(
+                          agent.id.toString(), i["node"]["idxDatapoint"]);
+                      for (var j in i["node"]["glueDatapoint"]["edges"]) {
+                        if (j["node"]["pair"]["value"] == "pattoo_key") {
+                          var state = this.agent.translations[j["node"]["pair"]
+                                      ["value"]] ==
+                                  null
+                              ? true
+                              : false;
+                          if (state) {
+                            datapointagent.agent_struct.putIfAbsent(
+                                "name",
+                                () => {
+                                      "value": j["node"]["pair"]["value"],
+                                      "unit": "None"
+                                    });
+                          } else {
+                            datapointagent.agent_struct.putIfAbsent(
+                                "name",
+                                () => {
+                                      "value": this.agent.translations[j["node"]
+                                          ["pair"]["value"]]["translation"],
+                                      "unit": this.agent.translations[j["node"]
+                                          ["pair"]["value"]]["unit"]
+                                    });
+                          }
+                        } else {
+                          var state = this
+                                      .agent
+                                      .translations[j["node"]["pair"]["key"]] ==
+                                  null
+                              ? true
+                              : false;
+                          if (state) {
+                            datapointagent.agent_struct.putIfAbsent(
+                              j["node"]["pair"]["key"],
+                              () => j["node"]["pair"]["value"],
+                            );
+                          } else {
+                            datapointagent.agent_struct.putIfAbsent(
+                              this.agent.translations[j["node"]["pair"]["key"]]
+                                  ["translation"],
+                              () => j["node"]["pair"]["value"],
+                            );
+                          }
+                        }
+                        if (this.agent.target_agents.contains(datapointagent) ==
+                            false) {
+                          this.agent.addTarget(datapointagent);
+                        }
+                      }
                     }
                     ;
                   });
@@ -256,21 +260,6 @@ class _ListState extends State<List> {
                 )
               ]);
             }),
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: 0, // this will be set when a new tab is tapped
-          items: [
-            BottomNavigationBarItem(
-              icon: new Icon(Icons.home),
-              title: new Text('Home'),
-            ),
-            BottomNavigationBarItem(
-              icon: new Icon(Icons.favorite),
-              title: new Text('Favorites'),
-            ),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.settings), title: Text('Settings'))
-          ],
-        ),
       ),
     );
   }
