@@ -45,7 +45,7 @@ class _DisplayMessageState extends State<DisplayMessage> {
                         "Currently there is no Pattoo api linked to the application \n\n",
                     style: TextStyle(
                         fontFamily: 'Quicksand',
-                        fontSize: 24,
+                        fontSize: queryData.size.width * 0.06,
                         fontWeight: FontWeight.bold,
                         color: Provider.of<ThemeManager>(context)
                             .themeData
@@ -58,13 +58,8 @@ class _DisplayMessageState extends State<DisplayMessage> {
                       TextSpan(text: "Please go to "),
                       TextSpan(
                           text: "Settings ",
-                          recognizer: new TapGestureRecognizer()
-                            ..onTap = () {
-                              setState(() {
-                                visible = !visible;
-                              });
-                            },
                           style: TextStyle(
+                              fontSize: queryData.size.width * 0.06,
                               decoration: TextDecoration.none,
                               color: Colors.blue[400],
                               decorationColor: Colors.red[100])),
@@ -72,7 +67,7 @@ class _DisplayMessageState extends State<DisplayMessage> {
                     ],
                     style: TextStyle(
                         fontFamily: 'Quicksand',
-                        fontSize: 24,
+                        fontSize: queryData.size.width * 0.06,
                         fontWeight: FontWeight.bold,
                         color: Provider.of<ThemeManager>(context)
                             .themeData
@@ -85,22 +80,6 @@ class _DisplayMessageState extends State<DisplayMessage> {
         ),
         SizedBox(
           height: queryData.size.height * 0.063,
-        ),
-        SizedBox(
-          child:
-              Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
-            AnimatedOpacity(
-              opacity: visible ? 1.0 : 0.0,
-              duration: Duration(milliseconds: 500),
-              child: SizedBox(
-                height: queryData.size.height * 0.1,
-                child: Image(image: AssetImage('images/finger.png')),
-              ),
-            ),
-            SizedBox(
-              width: queryData.size.width * 0.04,
-            ),
-          ]),
         ),
       ],
     ));

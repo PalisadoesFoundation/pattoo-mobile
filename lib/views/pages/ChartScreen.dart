@@ -188,15 +188,15 @@ class _ChartScreenState extends State<ChartScreen> {
                             children: <Widget>[
                               Text("1D",
                                   style: TextStyle(
-                                      fontSize: 18,
+                                      fontSize: queryData.size.width * 0.036,
                                       fontWeight: FontWeight.bold)),
                               Text("1M",
                                   style: TextStyle(
-                                      fontSize: 18,
+                                      fontSize: queryData.size.width * 0.036,
                                       fontWeight: FontWeight.bold)),
                               Text("1Y",
                                   style: TextStyle(
-                                      fontSize: 18,
+                                      fontSize: queryData.size.width * 0.036,
                                       fontWeight: FontWeight.bold)),
                             ],
                             onPressed: (int index) {
@@ -215,10 +215,11 @@ class _ChartScreenState extends State<ChartScreen> {
                           );
                         }),
                       ),
+                      SizedBox(height: queryData.size.height * 0.01)
                     ],
                   ),
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: queryData.size.height * 0.035),
                 Container(
                   color: Colors.white,
                   width: queryData.size.width * 0.9,

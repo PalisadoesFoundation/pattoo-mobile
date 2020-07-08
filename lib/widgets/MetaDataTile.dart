@@ -23,7 +23,7 @@ class _metaDataTileState extends State<MetaDataTile> {
         leading: Icon(Icons.timeline),
         title: Text(this.title, style: TextStyle(fontWeight: FontWeight.bold)),
         trailing: SizedBox(
-          width: queryData.size.width * 0.4,
+          width: queryData.size.width * 0.32,
           child: Wrap(
               textDirection: TextDirection.ltr,
               direction: Axis.horizontal,
