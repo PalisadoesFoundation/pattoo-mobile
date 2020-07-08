@@ -25,9 +25,21 @@ query getAllAgents(\$cursor: String) {
   allAgent(first: 12, after: \$cursor) {
     edges {
       node {
-        idxAgent
-        agentId
+        id
         agentProgram
+        idxPairXlateGroup
+        pairXlateGroup {
+          pairXlatePairXlateGroup {
+            edges {
+              node {
+                idxPairXlate
+                key
+                translation
+                units
+              }
+            }
+          }
+        }
       }
     }
     pageInfo {
@@ -38,8 +50,6 @@ query getAllAgents(\$cursor: String) {
     }
   }
 }
-
-
 """;
 
 
@@ -91,4 +101,24 @@ query getDataPoints(\$id: String, \$cursor: String){
 }
 
 """;
+String getTimeData = """
+query getTimeSeries(\$id: String){
+  allDatapoints(idxDatapoint:\$id) {
+    edges {
+				node{
+          dataChecksum(last:1000000){
+            edges{
+              node{
+                value
+                timestamp
+                }
+              }
+            }
+        }
+    }
+  }
+}
+
+""";
+
 }
