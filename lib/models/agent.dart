@@ -6,6 +6,7 @@ class Agent {
   String id;
   String program;
   List target_agents = new List();
+  Map translations = new Map();
   Agent(
     this.id,
     this.program,

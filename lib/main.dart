@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:pattoomobile/controllers/agent_controller.dart';
 import 'package:provider/provider.dart';
 import 'package:pattoomobile/controllers/theme_manager.dart';
@@ -18,6 +19,10 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     return MultiProvider(
         providers: [
           ChangeNotifierProvider<ThemeManager>(create: (_) => ThemeManager()),
@@ -32,7 +37,6 @@ class _AppState extends State<App> {
                 routes: {
                   '/': (context) => LoginScreen(),
                   '/HomeScreen': (context) => HomeScreen(),
-                  '/Settings': (context) => SettingsScreen()
                 });
           });
         }));

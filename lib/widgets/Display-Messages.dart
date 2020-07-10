@@ -14,7 +14,9 @@ class _DisplayMessageState extends State<DisplayMessage> {
   @override
   Widget build(BuildContext context) {
     AppTheme theme = Provider.of<ThemeManager>(context).getTheme();
-    String support_img = theme == AppTheme.Light ? "images/support.png" : "images/support-dark.png";
+    String support_img = theme == AppTheme.Light
+        ? "images/support.png"
+        : "images/support-dark.png";
     MediaQueryData queryData;
     queryData = MediaQuery.of(context);
     return Center(
@@ -24,17 +26,6 @@ class _DisplayMessageState extends State<DisplayMessage> {
       children: <Widget>[
         SizedBox(
           height: queryData.size.height * 0.09,
-          child:
-              Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
-            AnimatedOpacity(
-              opacity: visible ? 1.0 : 0.0,
-              duration: Duration(milliseconds: 500),
-              child: SizedBox(
-                height: queryData.size.height * 0.09,
-                child: Image(image: AssetImage('images/finger.png')),
-              ),
-            )
-          ]),
         ),
         SizedBox(
             height: queryData.size.height * 0.35,
@@ -54,22 +45,21 @@ class _DisplayMessageState extends State<DisplayMessage> {
                         "Currently there is no Pattoo api linked to the application \n\n",
                     style: TextStyle(
                         fontFamily: 'Quicksand',
-                        fontSize: 24,
+                        fontSize: queryData.size.width * 0.06,
                         fontWeight: FontWeight.bold,
-                        color: Provider.of<ThemeManager>(context).themeData.primaryTextTheme.headline6.color,
+                        color: Provider.of<ThemeManager>(context)
+                            .themeData
+                            .primaryTextTheme
+                            .headline6
+                            .color,
                         decoration: TextDecoration.none)),
                 TextSpan(
                     children: <TextSpan>[
                       TextSpan(text: "Please go to "),
                       TextSpan(
                           text: "Settings ",
-                          recognizer: new TapGestureRecognizer()
-                            ..onTap = () {
-                              setState(() {
-                                visible = !visible;
-                              });
-                            },
                           style: TextStyle(
+                              fontSize: queryData.size.width * 0.06,
                               decoration: TextDecoration.none,
                               color: Colors.blue[400],
                               decorationColor: Colors.red[100])),
@@ -77,12 +67,19 @@ class _DisplayMessageState extends State<DisplayMessage> {
                     ],
                     style: TextStyle(
                         fontFamily: 'Quicksand',
-                        fontSize: 24,
+                        fontSize: queryData.size.width * 0.06,
                         fontWeight: FontWeight.bold,
-                        color: Provider.of<ThemeManager>(context).themeData.primaryTextTheme.headline6.color,
+                        color: Provider.of<ThemeManager>(context)
+                            .themeData
+                            .primaryTextTheme
+                            .headline6
+                            .color,
                         decoration: TextDecoration.none,
                         decorationColor: Colors.red[100]))
               ]),
+        ),
+        SizedBox(
+          height: queryData.size.height * 0.063,
         ),
       ],
     ));

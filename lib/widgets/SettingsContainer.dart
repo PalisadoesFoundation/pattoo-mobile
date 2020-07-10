@@ -34,32 +34,15 @@ class _SettingsContainerState extends State<SettingsContainer> {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
-        body: ModalProgressHUD(
-      child: OrientationBuilder(
-        builder: (context, orientation) {
-          return _buildVerticalLayout(context);
-        },
-      ),
-      inAsyncCall: inAsyncCall,
-      opacity: 0.5,
-      progressIndicator: CircularProgressIndicator(),
-    ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 2, // this will be set when a new tab is tapped
-        items: [
-          BottomNavigationBarItem(
-            icon: new Icon(Icons.home),
-            title: new Text('Home'),
-          ),
-          BottomNavigationBarItem(
-            icon: new Icon(Icons.favorite),
-            title: new Text('Favorites'),
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              title: Text('Settings')
-          )
-        ],
+      body: ModalProgressHUD(
+        child: OrientationBuilder(
+          builder: (context, orientation) {
+            return _buildVerticalLayout(context);
+          },
+        ),
+        inAsyncCall: inAsyncCall,
+        opacity: 0.5,
+        progressIndicator: CircularProgressIndicator(),
       ),
     );
   }
@@ -71,95 +54,95 @@ class _SettingsContainerState extends State<SettingsContainer> {
         height: SizeConfig.blockSizeVertical * 51,
         width: SizeConfig.blockSizeHorizontal * 220,
         color: Colors.transparent,
-          child: Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Form(
-              key: formKey,
-              child: SizedBox(
-                width: queryData.size.width * 0,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    DarkModeWidget(),
-                    ShowFavWidget(),
-                    Container(
-                      child: Row(
-                        children: <Widget>[
-                          SizedBox(
-                            width: 15,
-                          ),
-                          new Flexible(
-                            child: icon,
-                          ),
-                          SizedBox(
-                            width: 38,
-                          ),
-                          SizedBox(
-                            width: queryData.size.width * 0.45,
-                            child: TextFormField(
-                              controller: textController,
-                              decoration: const InputDecoration(
-                                hintText: "Pattoo API URL",
-                                helperText: "eg. Calico.palisadoes.org",
-                              ),
-                              validator: validate,
-                            ),
-                          ),
-
-                          // flex:1,
-                          SizedBox(
-                            width: queryData.size.width * 0.05,
-                          ),
-                          new DropdownButton<String>(
-                            value: dropdownValue,
-                            icon: Icon(Icons.arrow_downward),
-                            iconSize: 24,
-                            elevation: 16,
-                            style: TextStyle(color: Colors.deepPurple),
-                            underline: Container(
-                              height: 2,
-                              color: Colors.deepPurpleAccent,
-                            ),
-                            onChanged: (String newValue) {
-                              setState(() {
-                                dropdownValue = newValue;
-                              });
-                            },
-                            items: <String>[
-                              'HTTP',
-                              'HTTPS',
-                            ].map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+        child: Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Form(
+            key: formKey,
+            child: SizedBox(
+              width: queryData.size.width * 0,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  DarkModeWidget(),
+                  ShowFavWidget(),
+                  Container(
+                    child: Row(
                       children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: RaisedButton(
-                            color: Colors.blue,
-                            splashColor: Colors.blueAccent,
-                            onPressed: _submit,
-                            textColor: Colors.white,
-                            padding: const EdgeInsets.all(0.0),
-                            child: Text('Submit'),
+                        SizedBox(
+                          width: 15,
+                        ),
+                        new Flexible(
+                          child: icon,
+                        ),
+                        SizedBox(
+                          width: 38,
+                        ),
+                        SizedBox(
+                          width: queryData.size.width * 0.45,
+                          child: TextFormField(
+                            controller: textController,
+                            decoration: const InputDecoration(
+                              hintText: "Pattoo API URL",
+                              helperText: "eg. Calico.palisadoes.org",
+                            ),
+                            validator: validate,
                           ),
-                        )
+                        ),
+
+                        // flex:1,
+                        SizedBox(
+                          width: queryData.size.width * 0.05,
+                        ),
+                        new DropdownButton<String>(
+                          value: dropdownValue,
+                          icon: Icon(Icons.arrow_downward),
+                          iconSize: 24,
+                          elevation: 16,
+                          style: TextStyle(color: Colors.deepPurple),
+                          underline: Container(
+                            height: 2,
+                            color: Colors.deepPurpleAccent,
+                          ),
+                          onChanged: (String newValue) {
+                            setState(() {
+                              dropdownValue = newValue;
+                            });
+                          },
+                          items: <String>[
+                            'HTTP',
+                            'HTTPS',
+                          ].map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                        ),
                       ],
-                    )
-                  ],
-                ),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: RaisedButton(
+                          color: Colors.blue,
+                          splashColor: Colors.blueAccent,
+                          onPressed: _submit,
+                          textColor: Colors.white,
+                          padding: const EdgeInsets.all(0.0),
+                          child: Text('Submit'),
+                        ),
+                      )
+                    ],
+                  )
+                ],
               ),
             ),
           ),
-       ),
+        ),
+      ),
     );
   }
 
@@ -230,13 +213,14 @@ class _SettingsContainerState extends State<SettingsContainer> {
     if (formKey.currentState.validate()) {
       formKey.currentState.save();
       print(_source);
-      String uri = "${dropdownValue.toLowerCase()}://${_source}/pattoo/api/v1/web/graphql";
-      Provider.of<AgentsManager>(context,listen:false).setLink(uri);
-      Provider.of<AgentsManager>(context,listen:false).loaded = true;
-      print(Provider.of<AgentsManager>(context,listen:false).loaded);
-      print(Provider.of<AgentsManager>(context,listen:false).link);
+      String uri =
+          "${dropdownValue.toLowerCase()}://${_source}/pattoo/api/v1/web/graphql";
+      Provider.of<AgentsManager>(context, listen: false).setLink(uri);
+      Provider.of<AgentsManager>(context, listen: false).loaded = true;
+      print(Provider.of<AgentsManager>(context, listen: false).loaded);
+      print(Provider.of<AgentsManager>(context, listen: false).link);
       Future.delayed(Duration(seconds: 3), () {
-       Navigator.pushNamed(context, '/HomeScreen');
+        Navigator.pushNamed(context, '/HomeScreen');
       });
     }
   }

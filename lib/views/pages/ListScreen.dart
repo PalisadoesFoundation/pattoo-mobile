@@ -7,6 +7,7 @@ import 'package:pattoomobile/controllers/client_provider.dart';
 import 'package:pattoomobile/controllers/theme_manager.dart';
 import 'package:pattoomobile/models/agent.dart';
 import 'package:pattoomobile/models/dataPointAgent.dart';
+import 'package:pattoomobile/views/pages/ChartScreen.dart';
 import 'package:pattoomobile/widgets/circleMenu.dart';
 import 'package:provider/provider.dart';
 
@@ -34,12 +35,14 @@ class _ListState extends State<List> {
           : "None",
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Reports(${agent.program})',
-              style: TextStyle(color: Colors.white)),
+          title: FittedBox(
+            fit: BoxFit.fitWidth,
+            child: Text('Reports(${agent.program})',
+                style: TextStyle(color: Colors.white)),
+          ),
           backgroundColor: Provider.of<ThemeManager>(context, listen: false)
               .themeData
               .backgroundColor,
-
         ),
         body: Query(
             options: QueryOptions(
@@ -86,24 +89,46 @@ class _ListState extends State<List> {
                     agent.id.toString(), i["node"]["idxDatapoint"]);
                 for (var j in i["node"]["glueDatapoint"]["edges"]) {
                   if (j["node"]["pair"]["key"] == "pattoo_key") {
-                    datapointagent.agent_struct.putIfAbsent(
-                        "name",
-                            () => {
-                          "value": j["node"]["pair"]["value"],
-                          "idxPair": j["node"]["idxPair"]
-                        });
-                    Provider.of<AgentsManager>(context, listen: false)
-                        .getTranslatedName(
-                        datapointagent.agent_struct["name"])
-                        .then((val) => (datapointagent.agent_struct
-                        .addAll({"name": val})));
+                    var state =
+                        this.agent.translations[j["node"]["pair"]["value"]] ==
+                                null
+                            ? true
+                            : false;
+                    if (state) {
+                      datapointagent.agent_struct.putIfAbsent(
+                          "name",
+                          () => {
+                                "value": j["node"]["pair"]["value"],
+                                "unit": "None"
+                              });
+                    } else {
+                      datapointagent.agent_struct.putIfAbsent(
+                          "name",
+                          () => {
+                                "value": this.agent.translations[j["node"]
+                                    ["pair"]["value"]]["translation"],
+                                "unit": this.agent.translations[j["node"]
+                                    ["pair"]["value"]]["unit"]
+                              });
+                    }
                   } else {
-                    datapointagent.agent_struct.putIfAbsent(
+                    var state =
+                        this.agent.translations[j["node"]["pair"]["key"]] ==
+                                null
+                            ? true
+                            : false;
+                    if (state) {
+                      datapointagent.agent_struct.putIfAbsent(
                         j["node"]["pair"]["key"],
-                            () => {
-                          "value": j["node"]["pair"]["value"],
-                          "idxPair": j["node"]["idxPair"]
-                        });
+                        () => j["node"]["pair"]["value"],
+                      );
+                    } else {
+                      datapointagent.agent_struct.putIfAbsent(
+                        this.agent.translations[j["node"]["pair"]["key"]]
+                            ["translation"],
+                        () => j["node"]["pair"]["value"],
+                      );
+                    }
                   }
                   if (this.agent.target_agents.contains(datapointagent) ==
                       false) {
@@ -122,30 +147,54 @@ class _ListState extends State<List> {
                     // in this case, we want to display previous repos plus next repos
                     // so, we combine data in both into a single list of repos
                     for (var i in fetchMoreResultData.data["allDatapoints"]
-                    ["edges"]) {
+                        ["edges"]) {
                       DataPointAgent datapointagent = new DataPointAgent(
                           agent.id.toString(), i["node"]["idxDatapoint"]);
                       for (var j in i["node"]["glueDatapoint"]["edges"]) {
-                        if (j["node"]["pair"]["key"] == "pattoo_key") {
-                          datapointagent.agent_struct.putIfAbsent(
-                              "name",
-                                  () => {
-                                "value": j["node"]["pair"]["value"],
-                                "idxPair": j["node"]["idxPair"]
-                              });
+                        if (j["node"]["pair"]["value"] == "pattoo_key") {
+                          var state = this.agent.translations[j["node"]["pair"]
+                                      ["value"]] ==
+                                  null
+                              ? true
+                              : false;
+                          if (state) {
+                            datapointagent.agent_struct.putIfAbsent(
+                                "name",
+                                () => {
+                                      "value": j["node"]["pair"]["value"],
+                                      "unit": "None"
+                                    });
+                          } else {
+                            datapointagent.agent_struct.putIfAbsent(
+                                "name",
+                                () => {
+                                      "value": this.agent.translations[j["node"]
+                                          ["pair"]["value"]]["translation"],
+                                      "unit": this.agent.translations[j["node"]
+                                          ["pair"]["value"]]["unit"]
+                                    });
+                          }
                         } else {
-                          datapointagent.agent_struct.putIfAbsent(
+                          var state = this
+                                      .agent
+                                      .translations[j["node"]["pair"]["key"]] ==
+                                  null
+                              ? true
+                              : false;
+                          if (state) {
+                            datapointagent.agent_struct.putIfAbsent(
                               j["node"]["pair"]["key"],
-                                  () => {
-                                "value": j["node"]["pair"]["value"],
-                                "idxPair": j["node"]["idxPair"]
-                              });
+                              () => j["node"]["pair"]["value"],
+                            );
+                          } else {
+                            datapointagent.agent_struct.putIfAbsent(
+                              this.agent.translations[j["node"]["pair"]["key"]]
+                                  ["translation"],
+                              () => j["node"]["pair"]["value"],
+                            );
+                          }
                         }
-
-                        if (this
-                            .agent
-                            .target_agents
-                            .contains(datapointagent) ==
+                        if (this.agent.target_agents.contains(datapointagent) ==
                             false) {
                           this.agent.addTarget(datapointagent);
                         }
@@ -164,78 +213,54 @@ class _ListState extends State<List> {
                   }
                 });
 
-
               return Column(children: [
                 Expanded(
-                  child: FutureBuilder<bool>(
-                      future: wait(),
-                      builder:
-                          (BuildContext context, AsyncSnapshot snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.done) {
-                          return ListView.builder(
-                            controller: _scrollController,
-                            scrollDirection: Axis.vertical,
-                            shrinkWrap: true,
-                            itemCount: this.agent.target_agents.length,
-                            itemBuilder: (context, index) {
-                              return Card(
-                                color: Provider.of<ThemeManager>(context)
-                                    .themeData
-                                    .buttonColor,
-                                child: ListTile(
-                                  title: Text(
-                                    this
-                                        .agent
-                                        .target_agents[index]
-                                        .agent_struct["name"],
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                  leading: SizedBox(
-                                      height: queryData.size.height * 0.09,
-                                      width: queryData.size.width * 0.09,
-                                      child: FittedBox(
-                                          child: Image(
-                                            image: AssetImage(
-                                                'images/bar-chart.png'),
-                                          ),
-                                          fit: BoxFit.contain)),
-                                  trailing: Icon(Icons.arrow_forward,
-                                      color: Colors.white),
-                                  onTap: () {},
-                                ),
-                              );
-                            },
-                          );
-                        } else {
-                          return Row(
+                  child: ListView(
+                      controller: _scrollController,
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      children: <Widget>[
+                        for (var agent in this.agent.target_agents)
+                          Card(
+                            color: Provider.of<ThemeManager>(context)
+                                .themeData
+                                .buttonColor,
+                            child: ListTile(
+                              title: Text(
+                                agent.agent_struct["name"]["value"],
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              leading: SizedBox(
+                                  height: queryData.size.height * 0.09,
+                                  width: queryData.size.width * 0.09,
+                                  child: FittedBox(
+                                      child: Image(
+                                        image:
+                                            AssetImage('images/bar-chart.png'),
+                                      ),
+                                      fit: BoxFit.contain)),
+                              trailing: Icon(Icons.arrow_forward,
+                                  color: Colors.white),
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Chart(agent)));
+                              },
+                            ),
+                          ),
+                        if (result.loading)
+                          Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
                               CircularProgressIndicator(),
                             ],
-                          );
-                        }
-                      }),
+                          )
+                      ]),
                 )
               ]);
             }),
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: 0, // this will be set when a new tab is tapped
-          items: [
-            BottomNavigationBarItem(
-              icon: new Icon(Icons.home),
-              title: new Text('Home'),
-            ),
-            BottomNavigationBarItem(
-              icon: new Icon(Icons.favorite),
-              title: new Text('Favorites'),
-            ),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.settings),
-                title: Text('Settings')
-            )
-          ],
-        ),),
+      ),
     );
   }
 
@@ -251,7 +276,7 @@ class _ListState extends State<List> {
   }
 
   Future<bool> wait() async {
-    await new Future.delayed(const Duration(seconds: 2));
+    await new Future.delayed(const Duration(seconds: 0));
     return true;
   }
 }
