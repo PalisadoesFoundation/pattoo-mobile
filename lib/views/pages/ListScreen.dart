@@ -232,7 +232,7 @@ class _ListState extends State<List> {
                                 style: TextStyle(color: Colors.white),
                               ),
                               subtitle: Text(
-                                'sample',
+                                'unique identifier',
                                 style: TextStyle(color: Colors.white),
                               ),
                               leading: SizedBox(
