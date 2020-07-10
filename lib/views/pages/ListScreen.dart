@@ -23,6 +23,7 @@ class _ListState extends State<List> {
   String cursor = "";
   ScrollController _scrollController = new ScrollController();
 
+
   @override
   Widget build(BuildContext context) {
     this.agent.target_agents = [];
@@ -200,8 +201,7 @@ class _ListState extends State<List> {
                           this.agent.addTarget(datapointagent);
                         }
                       }
-                    }
-                    ;
+
                   });
 
               _scrollController
@@ -213,6 +213,8 @@ class _ListState extends State<List> {
                     }
                   }
                 });
+
+
 
               return Column(children: [
                 Expanded(
@@ -279,6 +281,21 @@ class _ListState extends State<List> {
     }
     return result;
   }
+
+    String UniqueInfo()
+    {
+      String information = agent.id;
+      for (MapEntry entry in agent.agent_struct.entries)
+      {
+        if(entry.key != "name")
+        {
+          information = information + "/n$entry.key : $entry.value";
+        }
+      }
+      return information;
+    }
+  }
+
 
   Future<bool> wait() async {
     await new Future.delayed(const Duration(seconds: 0));
