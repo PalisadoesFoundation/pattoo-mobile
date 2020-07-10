@@ -8,7 +8,6 @@ import 'package:pattoomobile/controllers/theme_manager.dart';
 import 'package:pattoomobile/models/agent.dart';
 import 'package:pattoomobile/models/dataPointAgent.dart';
 import 'package:pattoomobile/views/pages/ChartScreen.dart';
-import 'package:pattoomobile/widgets/circleMenu.dart';
 import 'package:provider/provider.dart';
 
 class List extends StatefulWidget {
@@ -134,6 +133,8 @@ class _ListState extends State<List> {
                       false) {
                     this.agent.addTarget(datapointagent);
                   }
+
+
                 }
               }
 
@@ -228,6 +229,10 @@ class _ListState extends State<List> {
                             child: ListTile(
                               title: Text(
                                 agent.agent_struct["name"]["value"],
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              subtitle: Text(
+                                'sample',
                                 style: TextStyle(color: Colors.white),
                               ),
                               leading: SizedBox(
