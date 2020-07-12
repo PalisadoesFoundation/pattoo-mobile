@@ -11,19 +11,16 @@ void main() {
   testWidgets('MyWidget has a title and message', (WidgetTester tester) async {
     // Create the widget by telling the tester to build it.
     await tester.pumpWidget(MyWidget());
-    await tester.pump();
     await tester.tap(find.byType(SwitchListTile));
     await tester.pump();
-    expect(find.byType(Text), findsWidgets);
+    //expect(find.byType(Text), findsWidgets);
     var val = _MyWidgetState._lights;
-
-
-    //expect(val = true);
-
+    expect(val, true);
   })
   ;
 }
-
+//var result = FieldValidator.validateEmail('');
+//expect(result, 'Enter Email!');
 
 //DarkModeWidget
 class MyWidget extends StatefulWidget {
