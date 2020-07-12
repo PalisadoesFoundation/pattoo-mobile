@@ -155,44 +155,46 @@ class _ListState extends State<List> {
                       for (var j in i["node"]["glueDatapoint"]["edges"]) {
                         if (j["node"]["pair"]["value"] == "pattoo_key") {
                           var state = this.agent.translations[j["node"]["pair"]
-                                      ["value"]] ==
-                                  null
+                          ["value"]] ==
+                              null
                               ? true
                               : false;
                           if (state) {
                             datapointagent.agent_struct.putIfAbsent(
                                 "name",
-                                () => {
-                                      "value": j["node"]["pair"]["value"],
-                                      "unit": "None"
-                                    });
+                                    () =>
+                                {
+                                  "value": j["node"]["pair"]["value"],
+                                  "unit": "None"
+                                });
                           } else {
                             datapointagent.agent_struct.putIfAbsent(
                                 "name",
-                                () => {
-                                      "value": this.agent.translations[j["node"]
-                                          ["pair"]["value"]]["translation"],
-                                      "unit": this.agent.translations[j["node"]
-                                          ["pair"]["value"]]["unit"]
-                                    });
+                                    () =>
+                                {
+                                  "value": this.agent.translations[j["node"]
+                                  ["pair"]["value"]]["translation"],
+                                  "unit": this.agent.translations[j["node"]
+                                  ["pair"]["value"]]["unit"]
+                                });
                           }
                         } else {
                           var state = this
-                                      .agent
-                                      .translations[j["node"]["pair"]["key"]] ==
-                                  null
+                              .agent
+                              .translations[j["node"]["pair"]["key"]] ==
+                              null
                               ? true
                               : false;
                           if (state) {
                             datapointagent.agent_struct.putIfAbsent(
                               j["node"]["pair"]["key"],
-                              () => j["node"]["pair"]["value"],
+                                  () => j["node"]["pair"]["value"],
                             );
                           } else {
                             datapointagent.agent_struct.putIfAbsent(
                               this.agent.translations[j["node"]["pair"]["key"]]
-                                  ["translation"],
-                              () => j["node"]["pair"]["value"],
+                              ["translation"],
+                                  () => j["node"]["pair"]["value"],
                             );
                           }
                         }
@@ -201,7 +203,7 @@ class _ListState extends State<List> {
                           this.agent.addTarget(datapointagent);
                         }
                       }
-
+                    }
                   });
 
               _scrollController
@@ -282,22 +284,8 @@ class _ListState extends State<List> {
     return result;
   }
 
-    String UniqueInfo()
-    {
-      String information = agent.id;
-      for (MapEntry entry in agent.agent_struct.entries)
-      {
-        if(entry.key != "name")
-        {
-          information = information + "/n$entry.key : $entry.value";
-        }
-      }
-      return information;
-    }
-  }
 
-
-  Future<bool> wait() async {
+    Future<bool> wait() async {
     await new Future.delayed(const Duration(seconds: 0));
     return true;
   }

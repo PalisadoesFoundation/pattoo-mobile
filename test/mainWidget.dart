@@ -18,16 +18,8 @@ void main() {
     // Build our app and trigger a frame.
     await tester.pumpWidget(buildTestableWidget(SettingsContainer()));
 
-    // Verify that our counter starts at 0.
-    expect(find.byType(Switch), findsOneWidget);
-    await tester.tap(find.byType(Switch));
-    await tester.pump();
-    expect(value, isFalse);
-    await tester.pump();
-    await tester.press(find.byType(Switch));
+    expect(find.byType(ShowFavWidget), findsOneWidget);
 
-    await tester.pump();
-    expect(value, isTrue);
 
 
   });
