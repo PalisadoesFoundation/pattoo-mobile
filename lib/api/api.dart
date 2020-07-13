@@ -121,4 +121,27 @@ query getTimeSeries(\$id: String){
 
 """;
 
+//Favourite
+
+String getFavouriteData ="""
+query{
+  allFavorite {
+    edges {
+      node {
+        idxFavorite
+        idxUser
+        idxChart
+        order
+        enabled
+      }
+    }
+    pageInfo {
+      startCursor
+      endCursor
+      hasNextPage
+      hasPreviousPage
+    }
+  }
+}
+""";
 }
