@@ -123,8 +123,8 @@ query getTimeSeries(\$id: String){
 
 //Favourite
 
-String getFavouriteData ="""
-query
+String getFavoriteData ="""
+query getFavoriteData(\$username: String)
 {
   allUser(username: "pattoo") {
     edges {

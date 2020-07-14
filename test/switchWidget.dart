@@ -2,28 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pattoomobile/controllers/theme_manager.dart';
 import 'package:pattoomobile/utils/app_themes.dart';
+import 'package:pattoomobile/widgets/ShowFavSwitch.dart';
 import 'package:provider/provider.dart';
 
 void main() {
 
-  // Define a test. The TestWidgets function also provides a WidgetTester
-  // to work with. The WidgetTester allows building and interacting
-  // with widgets in the test environment.
-  testWidgets('MyWidget has a title and message', (WidgetTester tester) async {
+  MaterialApp app = MaterialApp(
+    home: Scaffold(
+        body: ShowFavWidget()
+    ),
+  );
 
-
-    //Fav Switch Test
-    await tester.pumpWidget(MyWidget());
+  testWidgets('swttings container test', (WidgetTester tester) async {
+    // Create the widget by telling the tester to build it.
+    await tester.pumpWidget(app);
     await tester.tap(find.byType(SwitchListTile));
     await tester.pump();
-    //expect(find.byType(Text), findsWidgets);
-    var val = _MyWidgetState._lights;
-    expect(val, true);
 
+    final sometext = find.text('Show Favourites');
+    expect(sometext, findsOneWidget);
+  });
 
-
-  })
-  ;
 }
 //var result = FieldValidator.validateEmail('');
 //expect(result, 'Enter Email!');
