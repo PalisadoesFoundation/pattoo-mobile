@@ -25,7 +25,7 @@ class ShowFavWidget extends StatefulWidget {
 }
 
 class _ShowFavWidgetState extends State<ShowFavWidget> {
-  bool _lights = false;
+  static bool _lights = false;
 
   @override
   Widget build(BuildContext context) {
