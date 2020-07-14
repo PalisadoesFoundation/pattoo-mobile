@@ -128,20 +128,30 @@ query{
   allFavorite {
     edges {
       node {
+        id
         idxFavorite
-        idxUser
-        idxChart
         order
-        enabled
+        user {
+          id
+          idxUser
+          username
+          firstName
+          lastName
+        }
+        chart {
+          name
+          chartDatapointChart {
+            edges {
+              node {
+                idxDatapoint
+              }
+            }
+          }
+        }
       }
-    }
-    pageInfo {
-      startCursor
-      endCursor
-      hasNextPage
-      hasPreviousPage
     }
   }
 }
+
 """;
 }
