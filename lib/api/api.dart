@@ -124,26 +124,21 @@ query getTimeSeries(\$id: String){
 //Favourite
 
 String getFavouriteData ="""
-query{
-  allFavorite {
+query
+{
+  allUser(username: "pattoo") {
     edges {
       node {
         id
-        idxFavorite
-        order
-        user {
-          id
-          idxUser
-          username
-          firstName
-          lastName
-        }
-        chart {
-          name
-          chartDatapointChart {
-            edges {
-              node {
-                idxDatapoint
+        username
+        favoriteUser {
+          edges {
+            node {
+              order
+              chart {
+                id
+                idxChart
+                name
               }
             }
           }
