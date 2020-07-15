@@ -6,6 +6,7 @@ import 'package:pattoomobile/controllers/theme_manager.dart';
 import 'package:pattoomobile/utils/app_themes.dart';
 import 'package:pattoomobile/models/timestamp.dart';
 
+
 class LoginForm extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => new _LoginFormState();
@@ -121,7 +122,7 @@ class _LoginFormState extends State<LoginForm> {
             icon: new Icon(
               Icons.mail,
             )),
-        validator: FieldValidator.validateEmail,
+        validator: validateEmail,
         onSaved: (value) => this.userLogin.email = value.trim(),
       ),
     );
@@ -176,6 +177,18 @@ class _LoginFormState extends State<LoginForm> {
       ),
     );
   }
+
+  //Regular Expression Validation
+  String validateEmail(String value) {
+    Pattern pattern =
+        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+    RegExp regex = new RegExp(pattern);
+    if (!regex.hasMatch(value))
+      return 'Enter Valid Email';
+    else
+      return null;
+  }
+
 
   @override
   Widget build(BuildContext context) {

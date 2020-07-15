@@ -25,6 +25,9 @@ void main() {
     // Create the widget by telling the tester to build it.
     //await tester.pumpWidget(app);
     expect(find.byType(RaisedButton), findsOneWidget);
+    final loginFinder = find.text('Login');
+    expect(loginFinder, findsOneWidget);
+
     await tester.tap(find.byType(RaisedButton));
     await tester.pumpAndSettle();
 
