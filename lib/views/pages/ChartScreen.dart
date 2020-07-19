@@ -3,9 +3,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' hide TextStyle, Axis;
 import 'package:flutter/services.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:pattoomobile/api/api.dart';
-import 'package:pattoomobile/chartdir/chart_util.dart';
 import 'package:pattoomobile/controllers/agent_controller.dart';
+import 'package:pattoomobile/controllers/client_provider.dart';
+import 'package:pattoomobile/controllers/theme_manager.dart';
+import 'package:pattoomobile/models/agent.dart';
 import 'package:pattoomobile/models/dataPointAgent.dart';
 import 'package:pattoomobile/models/timestamp.dart';
 import 'package:pattoomobile/views/pages/FullScreenChart.dart';
@@ -19,6 +22,12 @@ class Chart extends StatelessWidget {
   Chart(this.agent);
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     return ChartScreen(
         title: agent.agent_struct["name"]["value"], agent: this.agent);
   }
@@ -36,6 +45,7 @@ class ChartScreen extends StatefulWidget {
 
 class _ChartScreenState extends State<ChartScreen> {
   DataPointAgent agent;
+  List<DataPointAgent> agents = List<DataPointAgent>();
   _ChartScreenState(this.agent);
   List<TimeSeriesSales> data_;
   List<TimeSeriesSales> cdata_;
@@ -43,17 +53,15 @@ class _ChartScreenState extends State<ChartScreen> {
   bool favourite = false;
   Widget chart;
   final List<bool> isSelected = [false, false, true];
-  List<Series<TimeSeriesSales, DateTime>> vibrationData;
+  List<Series<TimeSeriesSales, DateTime>> vibrationData =
+      List<Series<TimeSeriesSales, DateTime>>();
   @override
   Widget build(BuildContext context) {
     MediaQueryData queryData;
-
     queryData = MediaQuery.of(context);
-    ChartUtil().getChartData().then((vibrationData) {
-      setState(() {
-        this.vibrationData = vibrationData;
-      });
-    });
+    if (!this.agents.contains(agent)) {
+      this.agents.add(agent);
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -67,7 +75,6 @@ class _ChartScreenState extends State<ChartScreen> {
         backgroundColor: Colors.transparent,
       ),
       body: Container(
-        height: 1000.0,
         padding: EdgeInsets.all(8.0),
         color: Colors.grey[100],
         child: ListView(
@@ -77,16 +84,17 @@ class _ChartScreenState extends State<ChartScreen> {
               children: <Widget>[
                 Container(
                   color: Colors.white,
-                  width: queryData.size.width * 0.9,
+                  width: queryData.size.width * 1,
                   height: queryData.size.width * 0.8,
                   child: Column(
                     children: <Widget>[
                       FutureBuilder(
-                          future: this.fetchTimeSeries(agent.datapoint_id),
+                          future: this.fetchTimeSeries(agents),
                           builder:
                               (BuildContext context, AsyncSnapshot snapshot) {
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
+                              print(agent.agent_struct["name"]["unit"]);
                               return Expanded(
                                 child: Center(
                                     child: Container(
@@ -99,22 +107,34 @@ class _ChartScreenState extends State<ChartScreen> {
                             } else if (snapshot.hasData &&
                                 snapshot.connectionState ==
                                     ConnectionState.done) {
-                              vibrationData = [
-                                Series<TimeSeriesSales, DateTime>(
-                                  id: 'Sales',
+                              List<dynamic> colors = [
+                                MaterialPalette.blue.shadeDefault,
+                                MaterialPalette.red.shadeDefault
+                              ];
+
+                              for (var result in snapshot.data) {
+                                vibrationData
+                                    .add(new Series<TimeSeriesSales, DateTime>(
+                                  id: agents[snapshot.data.indexOf(result)]
+                                      .agent_struct['name']['value'],
                                   colorFn: (_, __) =>
-                                      MaterialPalette.blue.shadeDefault,
+                                      colors[snapshot.data.indexOf(result)],
                                   domainFn: (TimeSeriesSales sales, _) =>
                                       sales.time,
                                   measureFn: (TimeSeriesSales sales, _) =>
                                       sales.sales,
-                                  data: snapshot.data,
-                                )
-                              ];
+                                  data: result,
+                                ));
+                              }
+
                               this.chart = Hero(
                                   tag: "chart",
                                   child: TimeSeriesChart(vibrationData,
                                       behaviors: [
+                                        SeriesLegend(
+                                            horizontalFirst: false,
+                                            desiredMaxRows: 2,
+                                            desiredMaxColumns: 1),
                                         LinePointHighlighter(
                                           drawFollowLinesAcrossChart: true,
                                           showHorizontalFollowLine:
@@ -122,8 +142,7 @@ class _ChartScreenState extends State<ChartScreen> {
                                                   .all,
                                         ),
                                       ],
-                                      defaultRenderer: LineRendererConfig(
-                                          includeArea: true, stacked: true),
+                                      defaultRenderer: LineRendererConfig(),
                                       animate: true,
                                       domainAxis: DateTimeAxisSpec(
                                           renderSpec: SmallTickRendererSpec(
@@ -134,10 +153,11 @@ class _ChartScreenState extends State<ChartScreen> {
                                                       format: 'dd/MM',
                                                       transitionFormat:
                                                           'yyyy')))));
+
                               return Expanded(
                                 child: Center(
                                     child: Container(
-                                  height: queryData.size.height * 0.35,
+                                  height: queryData.size.height * 0.75,
                                   width: queryData.size.width * 0.8,
                                   child: vibrationData != null
                                       ? chart
@@ -151,8 +171,21 @@ class _ChartScreenState extends State<ChartScreen> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
                           Wrap(direction: Axis.horizontal, children: <Widget>[
-                            IconButton(
-                                icon: Icon(Icons.favorite, color: fav_color),
+                            FloatingActionButton(
+                              backgroundColor:
+                                  agents.length >= 2 ? Colors.grey : null,
+                              heroTag: null,
+                              child: Icon(Icons.filter_9_plus),
+                              onPressed: agents.length >= 2
+                                  ? () {}
+                                  : () {
+                                      _addChart(context);
+                                    },
+                            ),
+                            SizedBox(width: queryData.size.width * 0.03),
+                            FloatingActionButton(
+                                heroTag: null,
+                                child: Icon(Icons.favorite, color: fav_color),
                                 onPressed: () {
                                   setState(() {
                                     favourite = !favourite;
@@ -161,8 +194,10 @@ class _ChartScreenState extends State<ChartScreen> {
                                         : Colors.grey[100];
                                   });
                                 }),
-                            IconButton(
-                              icon: Icon(
+                            SizedBox(width: queryData.size.width * 0.03),
+                            FloatingActionButton(
+                              heroTag: null,
+                              child: Icon(
                                 Icons.zoom_out_map,
                               ),
                               onPressed: () {
@@ -177,6 +212,7 @@ class _ChartScreenState extends State<ChartScreen> {
                           ])
                         ],
                       )),
+                      SizedBox(height: queryData.size.height * 0.03),
                       Container(
                         child: LayoutBuilder(builder: (context, constraints) {
                           return ToggleButtons(
@@ -188,15 +224,24 @@ class _ChartScreenState extends State<ChartScreen> {
                             children: <Widget>[
                               Text("1D",
                                   style: TextStyle(
-                                      fontSize: queryData.size.width * 0.036,
+                                      fontSize:
+                                          queryData.size.width * 0.036 > 24
+                                              ? 18
+                                              : queryData.size.width * 0.036,
                                       fontWeight: FontWeight.bold)),
                               Text("1M",
                                   style: TextStyle(
-                                      fontSize: queryData.size.width * 0.036,
+                                      fontSize:
+                                          queryData.size.width * 0.036 > 24
+                                              ? 18
+                                              : queryData.size.width * 0.036,
                                       fontWeight: FontWeight.bold)),
                               Text("1Y",
                                   style: TextStyle(
-                                      fontSize: queryData.size.width * 0.036,
+                                      fontSize:
+                                          queryData.size.width * 0.036 > 24
+                                              ? 18
+                                              : queryData.size.width * 0.036,
                                       fontWeight: FontWeight.bold)),
                             ],
                             onPressed: (int index) {
@@ -223,20 +268,33 @@ class _ChartScreenState extends State<ChartScreen> {
                 Container(
                   color: Colors.white,
                   width: queryData.size.width * 0.9,
-                  child: Column(
-                    children: ListTile.divideTiles(
-                      context: context,
-                      tiles: [
-                        ListTile(title: Text("MetaData")),
-                        for (MapEntry e in agent.agent_struct.entries)
-                          if (e.key != "name")
-                            MetaDataTile(
-                              title: e.key,
-                              value: e.value,
-                            )
-                      ],
-                    ).toList(),
-                  ),
+                  child: StatefulBuilder(builder: (context, fixState) {
+                    fixState(() {});
+                    return Column(
+                      children: ListTile.divideTiles(
+                        context: context,
+                        tiles: [
+                          ListTile(title: Text("MetaData")),
+                          for (MapEntry e in this.agent.agent_struct.entries)
+                            if (e.key == "name" && e.value["unit"] != "None")
+                              MetaDataTile(
+                                title: "Unit of Measurment",
+                                value: e.value["unit"],
+                              ),
+                          for (MapEntry e in this.agent.agent_struct.entries)
+                            if (e.key != "name")
+                              MetaDataTile(
+                                title: e.key,
+                                value: e.value,
+                              ),
+                          if (this.agents.asMap().containsKey(1))
+                            for (Widget tile
+                                in loadSecondAgentData(this.agents[1]))
+                              tile
+                        ],
+                      ).toList(),
+                    );
+                  }),
                 )
               ],
             )
@@ -246,54 +304,484 @@ class _ChartScreenState extends State<ChartScreen> {
     );
   }
 
+  List loadSecondAgentData(DataPointAgent agent) {
+    List<dynamic> lst = List.filled(
+        1,
+        ListTile(
+          title: Text(agent.agent_struct["name"]["value"]),
+          trailing: IconButton(
+            icon: Icon(
+              Icons.remove_circle,
+              color: Colors.red,
+            ),
+            onPressed: (() {
+              setState(() {
+                agents.remove(agent);
+              });
+            }),
+          ),
+        ),
+        growable: true);
+    for (MapEntry e in agent.agent_struct.entries) {
+      if (e.key == "name" && e.value["unit"] != "None")
+        lst.add(MetaDataTile(
+          title: "Unit of Measurment",
+          value: e.value["unit"],
+        ));
+      else if (e.key != "name") {
+        lst.add(MetaDataTile(
+          title: e.key,
+          value: e.value,
+        ));
+      }
+    }
+    return lst;
+  }
+
+  _addChart(BuildContext context) async {
+    var obj = Provider.of<AgentsManager>(context, listen: false).agents;
+    var agents = obj.map((val) => val.program).toList();
+    MediaQueryData queryData;
+    queryData = MediaQuery.of(context);
+    String dropdownVal;
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(builder: (context, updateState) {
+            return OrientationBuilder(
+                builder: (BuildContext context, Orientation orientation) {
+              switch (orientation) {
+                case Orientation.portrait:
+                  return AlertDialog(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                    title: Text('Add Chart'),
+                    content: Container(
+                        height: queryData.size.height * 0.8,
+                        width: queryData.size.width * 0.8,
+                        child: Column(children: <Widget>[
+                          DropdownButton<dynamic>(
+                            value: dropdownVal,
+                            items: agents
+                                .map((value) => DropdownMenuItem<dynamic>(
+                                      child: SizedBox(
+                                        width: queryData.size.width * 0.6,
+                                        child: FittedBox(
+                                            fit: BoxFit.fitWidth,
+                                            child: Text(value)),
+                                      ),
+                                      value: value,
+                                    ))
+                                .toList(),
+                            onChanged: (newvalue) {
+                              updateState(() {
+                                dropdownVal = newvalue;
+                              });
+                            },
+                            isExpanded: true,
+                            icon: Icon(Icons.assignment),
+                            iconEnabledColor: Provider.of<ThemeManager>(context)
+                                .themeData
+                                .backgroundColor,
+                            hint: Text('Select Agent'),
+                          ),
+                          SizedBox(height: queryData.size.height * 0.1),
+                          Container(
+                              height: queryData.size.height * 0.5,
+                              child: Expanded(
+                                child: ListView(children: <Widget>[
+                                  dropdownVal == null
+                                      ? Container()
+                                      : SizedBox(
+                                          height: queryData.size.height * 1,
+                                          child: getList(context,
+                                              obj[agents.indexOf(dropdownVal)]))
+                                ]),
+                              ))
+                        ])),
+                    actions: <Widget>[
+                      FlatButton(
+                        child: Text('CANCEL'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      )
+                    ],
+                  );
+                case Orientation.landscape:
+                  return AlertDialog(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                    title: Text('Add Chart'),
+                    content: Container(
+                        height: queryData.size.height * 0.8,
+                        width: queryData.size.width * 0.8,
+                        child: Column(children: <Widget>[
+                          DropdownButton<dynamic>(
+                            value: dropdownVal,
+                            items: agents
+                                .map((value) => DropdownMenuItem<dynamic>(
+                                      child: SizedBox(
+                                          width: queryData.size.width * 0.6,
+                                          child: FittedBox(
+                                            fit: BoxFit.scaleDown,
+                                            child: Text(value),
+                                          )),
+                                      value: value,
+                                    ))
+                                .toList(),
+                            onChanged: (newvalue) {
+                              updateState(() {
+                                dropdownVal = newvalue;
+                              });
+                            },
+                            isExpanded: true,
+                            icon: Icon(Icons.assignment),
+                            iconEnabledColor: Provider.of<ThemeManager>(context)
+                                .themeData
+                                .backgroundColor,
+                            hint: Text('Select Agent'),
+                          ),
+                          Container(
+                              height: queryData.size.height * 0.32,
+                              child: Expanded(
+                                child: ListView(children: <Widget>[
+                                  dropdownVal == null
+                                      ? Container()
+                                      : SizedBox(
+                                          height: queryData.size.height * 1,
+                                          child: getList(context,
+                                              obj[agents.indexOf(dropdownVal)]))
+                                ]),
+                              ))
+                        ])),
+                    actions: <Widget>[
+                      FlatButton(
+                        child: Text('CANCEL'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      )
+                    ],
+                  );
+              }
+            });
+          });
+        });
+  }
+
+  Future<Widget> removeAgentConfirmation(
+      BuildContext context, DataPointAgent agent) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text("Agent Removal Confirmation")),
+            content: Container(
+              child: Center(
+                child: Text(
+                    "Are you sure you want to remove Agent ${agent.agent_struct['name']['value']}"),
+              ),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("YES"),
+                onPressed: (() {
+                  this.setState(() {
+                    print(agent);
+                    print(this.agents);
+                    this.agents.remove(agent);
+                    print(this.agents);
+                  });
+                  Navigator.of(context).pop();
+                }),
+              ),
+              FlatButton(
+                child: Text("NO"),
+                onPressed: (() {
+                  Navigator.of(context).pop();
+                }),
+              ),
+            ],
+          );
+        });
+  }
+
+  Widget getList(BuildContext context, Agent agent) {
+    agent.target_agents = [];
+    MediaQueryData queryData;
+    String cursor = "";
+    ScrollController _scrollController = new ScrollController();
+    queryData = MediaQuery.of(context);
+    return ClientProvider(
+      uri: Provider.of<AgentsManager>(context).loaded
+          ? Provider.of<AgentsManager>(context).httpLink
+          : "None",
+      child: Query(
+          options: QueryOptions(
+            documentNode: gql(AgentFetch().getDataPointAgents),
+            variables: <String, String>{"id": agent.id, "cursor": cursor},
+          ),
+          builder: (QueryResult result, {refetch, FetchMore fetchMore}) {
+            if (result.loading && result.data == null) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+
+            if (result.hasException) {
+              return Text('\nErrors: \n  ' + result.exception.toString());
+            }
+
+            if (result.data["allDatapoints"]["edges"].length == 0 &&
+                result.exception == null) {
+              return Column(
+                children: <Widget>[
+                  SizedBox(
+                    height: 250,
+                  ),
+                  Text('No Agents available',
+                      style: Theme.of(context).textTheme.headline6),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Container(
+                      height: 200,
+                      child: Image.asset(
+                        'images/waiting.png',
+                        fit: BoxFit.cover,
+                      )),
+                ],
+              );
+            }
+            for (var i in result.data["allDatapoints"]["edges"]) {
+              DataPointAgent datapointagent = new DataPointAgent(
+                  agent.id.toString(), i["node"]["idxDatapoint"]);
+              for (var j in i["node"]["glueDatapoint"]["edges"]) {
+                if (j["node"]["pair"]["key"] == "pattoo_key") {
+                  var state =
+                      agent.translations[j["node"]["pair"]["value"]] == null
+                          ? true
+                          : false;
+                  if (state) {
+                    datapointagent.agent_struct.putIfAbsent(
+                        "name",
+                        () => {
+                              "value": j["node"]["pair"]["value"],
+                              "unit": "None"
+                            });
+                  } else {
+                    datapointagent.agent_struct.putIfAbsent(
+                        "name",
+                        () => {
+                              "value":
+                                  agent.translations[j["node"]["pair"]["value"]]
+                                      ["translation"],
+                              "unit":
+                                  agent.translations[j["node"]["pair"]["value"]]
+                                      ["unit"]
+                            });
+                  }
+                } else {
+                  var state =
+                      agent.translations[j["node"]["pair"]["key"]] == null
+                          ? true
+                          : false;
+                  if (state) {
+                    datapointagent.agent_struct.putIfAbsent(
+                      j["node"]["pair"]["key"],
+                      () => j["node"]["pair"]["value"],
+                    );
+                  } else {
+                    datapointagent.agent_struct.putIfAbsent(
+                      agent.translations[j["node"]["pair"]["key"]]
+                          ["translation"],
+                      () => j["node"]["pair"]["value"],
+                    );
+                  }
+                }
+                if (agent.target_agents.contains(datapointagent) == false) {
+                  agent.addTarget(datapointagent);
+                }
+              }
+            }
+            final Map pageInfo = result.data['allDatapoints']['pageInfo'];
+            final String fetchMoreCursor = pageInfo['endCursor'];
+
+            FetchMoreOptions opts = FetchMoreOptions(
+                variables: {'id': agent.id, 'cursor': fetchMoreCursor},
+                updateQuery: (previousResultData, fetchMoreResultData) {
+                  for (var i in fetchMoreResultData.data["allDatapoints"]
+                      ["edges"]) {
+                    DataPointAgent datapointagent = new DataPointAgent(
+                        agent.id.toString(), i["node"]["idxDatapoint"]);
+                    for (var j in i["node"]["glueDatapoint"]["edges"]) {
+                      if (j["node"]["pair"]["value"] == "pattoo_key") {
+                        var state =
+                            agent.translations[j["node"]["pair"]["value"]] ==
+                                    null
+                                ? true
+                                : false;
+                        if (state) {
+                          datapointagent.agent_struct.putIfAbsent(
+                              "name",
+                              () => {
+                                    "value": j["node"]["pair"]["value"],
+                                    "unit": "None"
+                                  });
+                        } else {
+                          datapointagent.agent_struct.putIfAbsent(
+                              "name",
+                              () => {
+                                    "value": agent.translations[j["node"]
+                                        ["pair"]["value"]]["translation"],
+                                    "unit": agent.translations[j["node"]["pair"]
+                                        ["value"]]["unit"]
+                                  });
+                        }
+                      } else {
+                        var state =
+                            agent.translations[j["node"]["pair"]["key"]] == null
+                                ? true
+                                : false;
+                        if (state) {
+                          datapointagent.agent_struct.putIfAbsent(
+                            j["node"]["pair"]["key"],
+                            () => j["node"]["pair"]["value"],
+                          );
+                        } else {
+                          datapointagent.agent_struct.putIfAbsent(
+                            agent.translations[j["node"]["pair"]["key"]]
+                                ["translation"],
+                            () => j["node"]["pair"]["value"],
+                          );
+                        }
+                      }
+                      if (agent.target_agents.contains(datapointagent) ==
+                          false) {
+                        agent.addTarget(datapointagent);
+                      }
+                    }
+                  }
+                  ;
+                });
+
+            _scrollController
+              ..addListener(() {
+                if (_scrollController.position.pixels ==
+                    _scrollController.position.maxScrollExtent) {
+                  if (!result.loading) {
+                    fetchMore(opts);
+                  }
+                }
+              });
+
+            return Column(
+              children: [
+                Expanded(
+                  child: ListView(
+                      controller: _scrollController,
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      children: <Widget>[
+                        for (var agent in agent.target_agents)
+                          Card(
+                            color: Provider.of<ThemeManager>(context)
+                                .themeData
+                                .buttonColor,
+                            child: ListTile(
+                              title: Text(
+                                agent.agent_struct["name"]["value"],
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              subtitle: Text(
+                                "Datapoint Agent ID: ${agent.datapoint_id}",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              leading: SizedBox(
+                                  height: queryData.size.height * 0.09,
+                                  width: queryData.size.width * 0.09,
+                                  child: FittedBox(
+                                      child: Image(
+                                        image:
+                                            AssetImage('images/bar-chart.png'),
+                                      ),
+                                      fit: BoxFit.contain)),
+                              trailing: Icon(Icons.arrow_forward,
+                                  color: Colors.white),
+                              onTap: () {
+                                setState(() {
+                                  if (!this.agents.contains(agent)) {
+                                    this.agents.add(agent);
+                                  }
+
+                                  Navigator.pop(context);
+                                });
+                              },
+                            ),
+                          ),
+                        if (result.loading)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              CircularProgressIndicator(),
+                            ],
+                          )
+                      ]),
+                )
+              ],
+            );
+          }),
+    );
+  }
+
+  String information(DataPointAgent agent) {
+    var information = "ID : ${agent.datapoint_id}";
+    for (MapEntry e in agent.agent_struct.entries) {
+      if (e.key != "name") {
+        information += "\n${e.key} : ${e.value}";
+      }
+    }
+    return information;
+  }
+
   List<TimeSeriesSales> parseProducts(String responseBody) {
     final parsed = json.decode(responseBody).cast<Map<String, dynamic>>();
+
     List<TimeSeriesSales> data = [];
     for (var i in parsed) {
-      TimeStamp date =
-          new TimeStamp(value: i["value"].round(), timestamp: (i["timestamp"]));
-      data.add(TimeSeriesSales(date.Timestamp, date.value));
+      if (i["value"] != null) {
+        TimeStamp date = new TimeStamp(
+            value: i["value"].round(), timestamp: (i["timestamp"]));
+        data.add(TimeSeriesSales(date.Timestamp, date.value));
+      }
     }
-    this.data_ = data;
     return data;
   }
 
-  fetchTimeSeries(String datapoint_id) async {
+  fetchTimeSeries(List datapoints) async {
     var client = new http.Client();
-    try {
-      var result = await client.get(
-          'http://calico.palisadoes.org/pattoo/api/v1/web/rest/data/$datapoint_id');
-      if (result.statusCode == 200) {
-        return parseProducts(result.body);
-      } else {
-        throw Exception('Unable to fetch TimeSeries Data from the REST API');
-      }
-    } finally {
-      client.close();
-    }
+    List data_ = new List();
+    this.agents = datapoints;
+    print(agents);
+    this.vibrationData = List<Series<TimeSeriesSales, DateTime>>();
+    for (agent in datapoints) {
+      try {
+        var result = await client.get(
+            'http://calico.palisadoes.org/pattoo/api/v1/web/rest/data/${agent.datapoint_id}');
 
-/*     if (result.data["allDatapoints"]["edges"].length == 0 &&
-        result.exception == null) {
-      print("Empty Data");
-    } else {
-      List<TimeSeriesSales> data = List();
-      var times = result.data["allDatapoints"]["edges"][0]["node"]
-          ["dataChecksum"]["edges"];
-      for (var time in times) {
-        if (time["node"]["value"] == "0E-10") {
-          TimeStamp date = new TimeStamp(
-              value: 0, timestamp: int.parse(time["node"]["timestamp"]));
-          data.add(TimeSeriesSales(date.Timestamp, date.value));
+        if (result.statusCode == 200) {
+          data_.add(parseProducts(result.body));
         } else {
-          TimeStamp date = new TimeStamp(
-              value: double.parse(time["node"]["value"]).round(),
-              timestamp: int.parse(time["node"]["timestamp"]));
-          data.add(TimeSeriesSales(date.Timestamp, date.value));
+          throw Exception('Unable to fetch TimeSeries Data from the REST API');
         }
-      }
-      this.data_ = data;
-      return data.where((x) => this.data_.indexOf(x) % 12 == 0).toList();
-    } */
+      } finally {}
+    }
+    client.close();
+    print(data_.length.toString() + " Bout this big");
+    return data_;
   }
 
   void changeView(int view) {

@@ -143,9 +143,6 @@ class _ListState extends State<List> {
               FetchMoreOptions opts = FetchMoreOptions(
                   variables: {'id': this.agent.id, 'cursor': fetchMoreCursor},
                   updateQuery: (previousResultData, fetchMoreResultData) {
-                    // this is where you combine your previous data and response
-                    // in this case, we want to display previous repos plus next repos
-                    // so, we combine data in both into a single list of repos
                     for (var i in fetchMoreResultData.data["allDatapoints"]
                         ["edges"]) {
                       DataPointAgent datapointagent = new DataPointAgent(
@@ -230,6 +227,10 @@ class _ListState extends State<List> {
                                 agent.agent_struct["name"]["value"],
                                 style: TextStyle(color: Colors.white),
                               ),
+                              subtitle: Text(
+                                information(agent),
+                                style: TextStyle(color: Colors.white),
+                              ),
                               leading: SizedBox(
                                   height: queryData.size.height * 0.09,
                                   width: queryData.size.width * 0.09,
@@ -264,6 +265,16 @@ class _ListState extends State<List> {
     );
   }
 
+  String information(DataPointAgent agent) {
+    var information = "\nDatapoint Agent ID : ${agent.datapoint_id}";
+    for (MapEntry e in agent.agent_struct.entries) {
+      if (e.key != "name") {
+        information += "\n\n${e.key} : ${e.value}";
+      }
+    }
+    return information;
+  }
+
   String parseDescriptions(Map map) {
     String result = "";
     for (MapEntry e in map.entries) {
@@ -273,10 +284,5 @@ class _ListState extends State<List> {
       }
     }
     return result;
-  }
-
-  Future<bool> wait() async {
-    await new Future.delayed(const Duration(seconds: 0));
-    return true;
   }
 }

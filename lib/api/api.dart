@@ -1,6 +1,5 @@
-
-class AgentFetch{
-String translateAgent="""
+class AgentFetch {
+  String translateAgent = """
 query{
   allAgentXlate {
     edges {
@@ -20,7 +19,7 @@ query{
 
 """;
 
-String getAllAgents="""
+  String getAllAgents = """
 query getAllAgents(\$cursor: String) {
   allAgent(first: 12, after: \$cursor) {
     edges {
@@ -52,8 +51,7 @@ query getAllAgents(\$cursor: String) {
 }
 """;
 
-
-String getTranslatedDataPointAgentName = """
+  String getTranslatedDataPointAgentName = """
 query getTranslatedDataPoints(\$id: String){
   allPairXlate(idxPairXlate:\$id) {
     edges {
@@ -69,8 +67,7 @@ query getTranslatedDataPoints(\$id: String){
 
 """;
 
-
-String getDataPointAgents = """
+  String getDataPointAgents = """
 query getDataPoints(\$id: String, \$cursor: String){
   allDatapoints(idxAgent:\$id, first:12, after:\$cursor) {
     edges {
@@ -101,7 +98,7 @@ query getDataPoints(\$id: String, \$cursor: String){
 }
 
 """;
-String getTimeData = """
+  String getTimeData = """
 query getTimeSeries(\$id: String){
   allDatapoints(idxDatapoint:\$id) {
     edges {
@@ -120,5 +117,4 @@ query getTimeSeries(\$id: String){
 }
 
 """;
-
 }
