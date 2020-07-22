@@ -60,7 +60,7 @@ class AgentsList extends StatelessWidget {
                           '\nErrors: \n  ' + result.exception.toString());
                     }
 
-                    if (result.data["allAgent"]["edges"].length == 0 &&
+                    if (result.data["favoriteUser"]["edges"].length == 0 &&
                         result.exception == null) {
                       return Column(
                         children: <Widget>[
@@ -84,7 +84,7 @@ class AgentsList extends StatelessWidget {
                     Provider.of<AgentsManager>(context).agents = new List();
                     ;
 
-                    for (var i in result.data['allAgent']['edges']) {
+                    for (var i in result.data['favoriteUser']['edges']) {
                       Agent agent = new Agent(i["node"]["idxAgent"],
                           translationMap[i["node"]["agentProgram"]]);
                       Provider.of<AgentsManager>(context, listen: false)

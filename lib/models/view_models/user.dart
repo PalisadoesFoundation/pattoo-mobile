@@ -5,7 +5,7 @@ import '../dataPointAgent.dart';
 class User{
   String id;
   String username;
-  String datapoint_id;
+  String chart_id;
   String chartname;
   List fav_agents = new List();
   Map translations = new Map();
@@ -16,7 +16,7 @@ class User{
       );
 
   @override
-  String toString() => 'Agent(id: $id, chartname: $chartname, ID: $datapoint_id)';
+  String toString() => 'Agent(id: $id, chartname: $chartname, ID: $chart_id)';
 
   //Retrieve user data
 }
