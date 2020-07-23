@@ -68,12 +68,11 @@ class _LoginFormState extends State<LoginForm> {
             shrinkWrap: true,
             children: <Widget>[
               showLogo(),
-              showEmailInput(),
+              emailLogin(),
               showPasswordInput(),
               showPrimaryButton(),
               showSecondaryButton(),
               showErrorMessage(),
-              emailLogin(),
             ],
           ),
         ));

@@ -10,7 +10,7 @@ class NameDisplay extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16.0),
       child: Text(
-        userState.getUserName,
+        'Hello ${userState.getUserName}',
         style: TextStyle(
           fontSize: 24.0,
         ),
@@ -18,3 +18,5 @@ class NameDisplay extends StatelessWidget {
     );
   }
 }
+
+//Display getFavoriteData querry data

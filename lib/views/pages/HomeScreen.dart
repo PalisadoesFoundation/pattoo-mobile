@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pattoomobile/controllers/agent_controller.dart';
 import 'package:pattoomobile/controllers/client_provider.dart';
+import 'package:pattoomobile/models/view_models/userData.dart';
 import 'package:pattoomobile/views/pages/SettingsScreen.dart';
 import 'package:pattoomobile/widgets/AgentsList.dart';
 import 'package:provider/provider.dart';
@@ -18,11 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     List<Widget> children = [
       AgentsList(),
-      Scaffold(
-        body: Center(
-            child: Text("Favourites Soon To Come",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30))),
-      ),
+      NameDisplay(),
       SettingsScreen()
     ];
     return ClientProvider(

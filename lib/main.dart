@@ -7,6 +7,8 @@ import 'package:pattoomobile/views/pages/HomeScreen.dart';
 import 'package:pattoomobile/views/pages/LoginScreen.dart';
 import 'package:pattoomobile/views/pages/SettingsScreen.dart';
 
+import 'controllers/userState.dart';
+
 void main() {
   runApp(App());
 }
@@ -26,18 +28,22 @@ class _AppState extends State<App> {
     return MultiProvider(
         providers: [
           ChangeNotifierProvider<ThemeManager>(create: (_) => ThemeManager()),
-          ChangeNotifierProvider<AgentsManager>(create: (_) => AgentsManager())
+          ChangeNotifierProvider<AgentsManager>(create: (_) => AgentsManager()),
+          ChangeNotifierProvider<UserState>(create: (_) => UserState())
         ],
         child: Consumer<AgentsManager>(builder: (context, agent, _) {
           return Consumer<ThemeManager>(builder: (context, manager, _) {
-            return MaterialApp(
-                debugShowCheckedModeBanner: false,
-                theme: manager.themeData,
-                initialRoute: '/',
-                routes: {
-                  '/': (context) => LoginScreen(),
-                  '/HomeScreen': (context) => HomeScreen(),
-                });
+               return Consumer<UserState>(builder: (context, user, _)
+               {
+                 return MaterialApp(
+                     debugShowCheckedModeBanner: false,
+                     theme: manager.themeData,
+                     initialRoute: '/',
+                     routes: {
+                       '/': (context) => LoginScreen(),
+                       '/HomeScreen': (context) => HomeScreen(),
+                     });
+               });
           });
         }));
   }
