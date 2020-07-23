@@ -134,7 +134,7 @@ query getFavoriteData(\$username: String)
         favoriteUser {
           edges {
             node {
-              order
+              order 
               chart {
                 id
                 idxChart

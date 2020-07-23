@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:pattoomobile/controllers/userState.dart';
 import 'package:pattoomobile/util/validator.dart';
 import 'package:pattoomobile/models/view_models/login_form_model.dart';
+import 'package:pattoomobile/widgets/emailLogin.dart';
 import 'package:provider/provider.dart';
 import 'package:pattoomobile/controllers/theme_manager.dart';
 import 'package:pattoomobile/utils/app_themes.dart';
@@ -13,7 +15,9 @@ class LoginForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<LoginForm> {
+
   LoginFormModel userLogin = new LoginFormModel();
+
   TimeStamp time = new TimeStamp(timestamp: 1591211730580, value: 10);
   String _errorMessage;
   final _formKey = new GlobalKey<FormState>();
@@ -69,6 +73,7 @@ class _LoginFormState extends State<LoginForm> {
               showPrimaryButton(),
               showSecondaryButton(),
               showErrorMessage(),
+              emailLogin(),
             ],
           ),
         ));
@@ -122,6 +127,7 @@ class _LoginFormState extends State<LoginForm> {
             icon: new Icon(
               Icons.mail,
             )),
+
         validator: validateEmail,
         onSaved: (value) => this.userLogin.email = value.trim(),
       ),
@@ -158,6 +164,7 @@ class _LoginFormState extends State<LoginForm> {
                   color: Colors.lightBlue)),
         ),
       ),
+
       onPressed: () {},
     );
   }
@@ -171,6 +178,7 @@ class _LoginFormState extends State<LoginForm> {
             borderRadius: new BorderRadius.circular(30.0)),
         onPressed: () {
           Navigator.pushReplacementNamed(context, '/HomeScreen');
+
         },
         child: const Text('Login',
             style: TextStyle(fontSize: 20, color: Colors.white)),

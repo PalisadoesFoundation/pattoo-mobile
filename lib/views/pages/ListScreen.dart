@@ -7,8 +7,10 @@ import 'package:pattoomobile/controllers/client_provider.dart';
 import 'package:pattoomobile/controllers/theme_manager.dart';
 import 'package:pattoomobile/models/agent.dart';
 import 'package:pattoomobile/models/dataPointAgent.dart';
+import 'package:pattoomobile/models/view_models/userData.dart';
 import 'package:pattoomobile/views/pages/ChartScreen.dart';
 import 'package:provider/provider.dart';
+import 'package:pattoomobile/controllers/userState.dart';
 
 class List extends StatefulWidget {
   Agent agent;
@@ -26,6 +28,7 @@ class _ListState extends State<List> {
 
   @override
   Widget build(BuildContext context) {
+    final appState = Provider.of<UserState>(context);
     this.agent.target_agents = [];
     MediaQueryData queryData;
     queryData = MediaQuery.of(context);
@@ -67,6 +70,7 @@ class _ListState extends State<List> {
                   result.exception == null) {
                 return Column(
                   children: <Widget>[
+                    NameDisplay(),
                     SizedBox(
                       height: 250,
                     ),
