@@ -19,7 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     List<Widget> children = [
       AgentsList(),
-      NameDisplay(),
+      DataDisplay(),
       SettingsScreen()
     ];
     return ClientProvider(

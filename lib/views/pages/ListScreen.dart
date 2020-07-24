@@ -70,8 +70,7 @@ class _ListState extends State<List> {
                   result.exception == null) {
                 return Column(
                   children: <Widget>[
-                    NameDisplay(),
-                    SizedBox(
+                                        SizedBox(
                       height: 250,
                     ),
                     Text('No Agents available',
