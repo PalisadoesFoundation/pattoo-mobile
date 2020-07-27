@@ -14,6 +14,7 @@ import 'package:pattoomobile/models/timestamp.dart';
 import 'package:pattoomobile/views/pages/FullScreenChart.dart';
 import 'package:pattoomobile/widgets/MetaDataTile.dart';
 import 'package:pattoomobile/widgets/SampleChart.dart';
+import 'package:pattoomobile/widgets/createChartGroupPopUp.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 
@@ -57,6 +58,24 @@ class _ChartScreenState extends State<ChartScreen> {
       List<Series<TimeSeriesSales, DateTime>>();
   @override
   Widget build(BuildContext context) {
+    Widget saveButton = Padding(
+        padding: EdgeInsets.all(10.0),
+        child: RaisedButton(
+          color: Colors.green,
+          child: Text("SAVE",
+              style:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          onPressed: (() {
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return ChartGroupPopUp(
+                    context: context,
+                    agents: agents,
+                  );
+                });
+          }),
+        ));
     MediaQueryData queryData;
     queryData = MediaQuery.of(context);
     if (!this.agents.contains(agent)) {
@@ -65,6 +84,7 @@ class _ChartScreenState extends State<ChartScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        actions: <Widget>[agents.length > 1 ? saveButton : Container()],
         title: FittedBox(
           fit: BoxFit.fitWidth,
           child: Text(
@@ -94,7 +114,6 @@ class _ChartScreenState extends State<ChartScreen> {
                               (BuildContext context, AsyncSnapshot snapshot) {
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
-                              print(agent.agent_struct["name"]["unit"]);
                               return Expanded(
                                 child: Center(
                                     child: Container(
@@ -107,18 +126,11 @@ class _ChartScreenState extends State<ChartScreen> {
                             } else if (snapshot.hasData &&
                                 snapshot.connectionState ==
                                     ConnectionState.done) {
-                              List<dynamic> colors = [
-                                MaterialPalette.blue.shadeDefault,
-                                MaterialPalette.red.shadeDefault
-                              ];
-
                               for (var result in snapshot.data) {
                                 vibrationData
                                     .add(new Series<TimeSeriesSales, DateTime>(
                                   id: agents[snapshot.data.indexOf(result)]
                                       .agent_struct['name']['value'],
-                                  colorFn: (_, __) =>
-                                      colors[snapshot.data.indexOf(result)],
                                   domainFn: (TimeSeriesSales sales, _) =>
                                       sales.time,
                                   measureFn: (TimeSeriesSales sales, _) =>
@@ -127,32 +139,60 @@ class _ChartScreenState extends State<ChartScreen> {
                                 ));
                               }
 
-                              this.chart = Hero(
-                                  tag: "chart",
-                                  child: TimeSeriesChart(vibrationData,
-                                      behaviors: [
-                                        SeriesLegend(
-                                            horizontalFirst: false,
-                                            desiredMaxRows: 2,
-                                            desiredMaxColumns: 1),
-                                        LinePointHighlighter(
-                                          drawFollowLinesAcrossChart: true,
-                                          showHorizontalFollowLine:
-                                              LinePointHighlighterFollowLineType
-                                                  .all,
-                                        ),
-                                      ],
-                                      defaultRenderer: LineRendererConfig(),
-                                      animate: true,
-                                      domainAxis: DateTimeAxisSpec(
-                                          renderSpec: SmallTickRendererSpec(
-                                              labelRotation: 45),
-                                          tickFormatterSpec:
-                                              AutoDateTimeTickFormatterSpec(
-                                                  day: TimeFormatterSpec(
-                                                      format: 'dd/MM',
-                                                      transitionFormat:
-                                                          'yyyy')))));
+                              this.chart = queryData.orientation ==
+                                      Orientation.landscape
+                                  ? Hero(
+                                      tag: "chart",
+                                      child: TimeSeriesChart(vibrationData,
+                                          behaviors: [
+                                            SeriesLegend(
+                                                entryTextStyle:
+                                                    TextStyleSpec(fontSize: 12),
+                                                position:
+                                                    BehaviorPosition.bottom,
+                                                horizontalFirst: true,
+                                                desiredMaxRows: 3,
+                                                desiredMaxColumns: 2),
+                                            LinePointHighlighter(
+                                              drawFollowLinesAcrossChart: true,
+                                              showHorizontalFollowLine:
+                                                  LinePointHighlighterFollowLineType
+                                                      .all,
+                                            ),
+                                          ],
+                                          defaultRenderer: LineRendererConfig(),
+                                          animate: true,
+                                          domainAxis: DateTimeAxisSpec(
+                                              renderSpec: SmallTickRendererSpec(
+                                                  labelRotation: 45),
+                                              tickFormatterSpec:
+                                                  AutoDateTimeTickFormatterSpec(
+                                                      day: TimeFormatterSpec(
+                                                          format: 'dd/MM',
+                                                          transitionFormat:
+                                                              'yyyy')))))
+                                  : Hero(
+                                      tag: "chart",
+                                      child: TimeSeriesChart(vibrationData,
+                                          behaviors: [
+                                            LinePointHighlighter(
+                                              drawFollowLinesAcrossChart: true,
+                                              showHorizontalFollowLine:
+                                                  LinePointHighlighterFollowLineType
+                                                      .all,
+                                            ),
+                                          ],
+                                          defaultRenderer: LineRendererConfig(),
+                                          animate: true,
+                                          domainAxis: DateTimeAxisSpec(
+                                              renderSpec: SmallTickRendererSpec(
+                                                  labelRotation: 45),
+                                              tickFormatterSpec:
+                                                  AutoDateTimeTickFormatterSpec(
+                                                      day: TimeFormatterSpec(
+                                                          format: 'dd/MM',
+                                                          transitionFormat:
+                                                              'yyyy')))));
 
                               return Expanded(
                                 child: Center(
@@ -173,10 +213,10 @@ class _ChartScreenState extends State<ChartScreen> {
                           Wrap(direction: Axis.horizontal, children: <Widget>[
                             FloatingActionButton(
                               backgroundColor:
-                                  agents.length >= 2 ? Colors.grey : null,
+                                  agents.length >= 7 ? Colors.grey : null,
                               heroTag: null,
                               child: Icon(Icons.filter_9_plus),
-                              onPressed: agents.length >= 2
+                              onPressed: agents.length >= 7
                                   ? () {}
                                   : () {
                                       _addChart(context);
@@ -288,9 +328,9 @@ class _ChartScreenState extends State<ChartScreen> {
                                 value: e.value,
                               ),
                           if (this.agents.asMap().containsKey(1))
-                            for (Widget tile
-                                in loadSecondAgentData(this.agents[1]))
-                              tile
+                            for (var agent in this.agents.sublist(1))
+                              for (Widget tile in loadSecondAgentData(agent))
+                                tile
                         ],
                       ).toList(),
                     );

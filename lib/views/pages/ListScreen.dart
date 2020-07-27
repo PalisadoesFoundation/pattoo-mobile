@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:pattoomobile/api/api.dart';
@@ -8,11 +7,10 @@ import 'package:pattoomobile/controllers/theme_manager.dart';
 import 'package:pattoomobile/models/agent.dart';
 import 'package:pattoomobile/models/dataPointAgent.dart';
 import 'package:pattoomobile/views/pages/ChartScreen.dart';
-import 'package:pattoomobile/widgets/circleMenu.dart';
 import 'package:provider/provider.dart';
 
 class List extends StatefulWidget {
-  Agent agent;
+  final Agent agent;
   @override
   List(this.agent);
   _ListState createState() => _ListState(agent);
@@ -29,16 +27,19 @@ class _ListState extends State<List> {
     this.agent.target_agents = [];
     MediaQueryData queryData;
     queryData = MediaQuery.of(context);
+
     return ClientProvider(
       uri: Provider.of<AgentsManager>(context).loaded
           ? Provider.of<AgentsManager>(context).httpLink
           : "None",
       child: Scaffold(
         appBar: AppBar(
-          title: FittedBox(
-            fit: BoxFit.fitWidth,
-            child: Text('Reports(${agent.program})',
-                style: TextStyle(color: Colors.white)),
+          flexibleSpace: FlexibleSpaceBar(
+            title: FittedBox(
+              fit: BoxFit.fitWidth,
+              child: Text('Reports(${agent.program})',
+                  style: TextStyle(color: Colors.white)),
+            ),
           ),
           backgroundColor: Provider.of<ThemeManager>(context, listen: false)
               .themeData
@@ -218,38 +219,71 @@ class _ListState extends State<List> {
                       shrinkWrap: true,
                       children: <Widget>[
                         for (var agent in this.agent.target_agents)
-                          Card(
-                            color: Provider.of<ThemeManager>(context)
-                                .themeData
-                                .buttonColor,
-                            child: ListTile(
-                              title: Text(
-                                agent.agent_struct["name"]["value"],
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              subtitle: Text(
-                                information(agent),
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              leading: SizedBox(
-                                  height: queryData.size.height * 0.09,
-                                  width: queryData.size.width * 0.09,
-                                  child: FittedBox(
-                                      child: Image(
-                                        image:
-                                            AssetImage('images/bar-chart.png'),
+                          Padding(
+                              padding:
+                                  EdgeInsets.fromLTRB(10.0, 12.0, 10.0, 10.0),
+                              child: ButtonTheme(
+                                height: queryData.size.height * 0.25,
+                                minWidth: queryData.size.width * 0.05,
+                                child: RaisedButton(
+                                    elevation: 5.0,
+                                    shape: new RoundedRectangleBorder(
+                                        borderRadius:
+                                            new BorderRadius.circular(30.0)),
+                                    color: Provider.of<ThemeManager>(context)
+                                        .themeData
+                                        .backgroundColor,
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  Chart(agent)));
+                                    },
+                                    child: new Center(
+                                      child: Row(
+                                        children: <Widget>[
+                                          Column(
+                                            children: <Widget>[
+                                              FittedBox(
+                                                fit: BoxFit.contain,
+                                                child: Image(
+                                                  image: AssetImage(
+                                                      'images/bar-chart.png'),
+                                                  height:
+                                                      queryData.size.height *
+                                                          0.14,
+                                                  width: queryData.size.height *
+                                                      0.14,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(
+                                              width:
+                                                  queryData.size.width * 0.1),
+                                          Column(children: <Widget>[
+                                            SizedBox(
+                                              width:
+                                                  queryData.size.width * 0.4908,
+                                              child: Text(
+                                                  "\n" +
+                                                      agent.agent_struct["name"]
+                                                          ["value"] +
+                                                      "\n" +
+                                                      information(agent) +
+                                                      "\n",
+                                                  style: TextStyle(
+                                                      color: Colors.white)),
+                                            )
+                                          ]),
+                                        ],
                                       ),
-                                      fit: BoxFit.contain)),
-                              trailing: Icon(Icons.arrow_forward,
-                                  color: Colors.white),
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => Chart(agent)));
-                              },
-                            ),
-                          ),
+                                    )),
+                              )),
+                        SizedBox(
+                          height: queryData.size.height * 0.005,
+                        ),
                         if (result.loading)
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -269,7 +303,7 @@ class _ListState extends State<List> {
     var information = "\nDatapoint Agent ID : ${agent.datapoint_id}";
     for (MapEntry e in agent.agent_struct.entries) {
       if (e.key != "name") {
-        information += "\n\n${e.key} : ${e.value}";
+        information += "\n${e.key} : ${e.value}";
       }
     }
     return information;

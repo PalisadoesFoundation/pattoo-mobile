@@ -13,8 +13,6 @@ class _fullScreenChartState extends State<FullScreenChart> {
   _fullScreenChartState(this.child);
   @override
   Widget build(BuildContext context) {
-    MediaQueryData queryData;
-    queryData = MediaQuery.of(context);
     return Scaffold(
         body: Column(children: <Widget>[
       Expanded(

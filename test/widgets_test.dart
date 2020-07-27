@@ -2,12 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pattoomobile/controllers/agent_controller.dart';
-import 'package:pattoomobile/controllers/client_provider.dart';
 import 'package:pattoomobile/controllers/theme_manager.dart';
 import 'package:pattoomobile/models/agent.dart';
 import 'package:pattoomobile/widgets/AgentOptions.dart';
-import 'package:pattoomobile/widgets/AgentsList.dart';
-import 'package:pattoomobile/widgets/Display-Messages.dart';
+
 import 'package:provider/provider.dart';
 
 void main() {

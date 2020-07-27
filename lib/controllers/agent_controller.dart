@@ -1,22 +1,31 @@
-
 import 'package:flutter/material.dart';
 import 'package:pattoomobile/api/api.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:pattoomobile/models/agent.dart';
 
 class AgentsManager with ChangeNotifier {
-  List agents = new List();
+  List<Agent> agents = new List();
   String httpLink;
   QueryResult result;
   bool loaded = false;
   QueryOptions current_options;
+
   /// Use this method on UI to get selected theme.
   String get link {
     return this.httpLink;
   }
-  setLink(String link){
+
+  setLink(String link) {
     this.httpLink = link;
   }
 
+  Map<String, Agent> get agentsMap {
+    Map<String, Agent> map = new Map<String, Agent>();
+    for (Agent agent in agents) {
+      map.addAll({agent.id: agent});
+    }
+    return map;
+  }
 
 /*   updateAgents() async {
     QueryOptions options = QueryOptions(
@@ -100,19 +109,16 @@ class AgentsManager with ChangeNotifier {
       link: new HttpLink(uri: httpLink),
     );
     QueryResult result2 = await _client.query(options_);
-    if (result2.data["allPairXlate"]["edges"].length == 0){
+    if (result2.data["allPairXlate"]["edges"].length == 0) {
       return agent["value"];
-    }
-    else{
-    name = result2.data["allPairXlate"]["edges"][0]["node"]["translation"];
-    
-    return name;
+    } else {
+      name = result2.data["allPairXlate"]["edges"][0]["node"]["translation"];
+
+      return name;
     }
   }
 
   List get agentsList {
     return this.agents;
   }
-  
-  
 }

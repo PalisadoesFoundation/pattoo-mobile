@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:pattoomobile/controllers/theme_manager.dart';
 import 'package:pattoomobile/utils/app_themes.dart';
