@@ -121,7 +121,7 @@ query getTimeSeries(\$id: String){
 
 """;
 
-//Favourite
+//Favourites
 
   String getFavoriteData = """
 query getFavoriteData(\$username: String)

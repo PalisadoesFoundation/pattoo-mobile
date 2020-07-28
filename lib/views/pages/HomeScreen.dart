@@ -5,6 +5,7 @@ import 'package:pattoomobile/models/view_models/userData.dart';
 import 'package:pattoomobile/views/pages/SettingsScreen.dart';
 import 'package:pattoomobile/widgets/AgentsList.dart';
 import 'package:provider/provider.dart';
+import 'package:pattoomobile/controllers/userState.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -17,8 +18,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
 
+
     List<Widget> children = [
       AgentsList(),
+      //MyApp(),
       DataDisplay(),
       SettingsScreen()
     ];
