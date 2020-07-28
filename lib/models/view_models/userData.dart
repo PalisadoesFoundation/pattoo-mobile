@@ -1,5 +1,11 @@
+import 'dart:core';
+
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:pattoomobile/api/api.dart';
+import 'package:pattoomobile/controllers/agent_controller.dart';
+import 'package:pattoomobile/controllers/client_provider.dart';
+import 'package:pattoomobile/controllers/theme_manager.dart';
 import 'package:pattoomobile/controllers/userState.dart';
 import 'package:pattoomobile/models/view_models/user.dart';
 import 'package:provider/provider.dart';
@@ -11,81 +17,98 @@ class DataDisplay extends StatelessWidget {
   @override
 
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    final HttpLink httpLink =
+        HttpLink(uri: "http://calico.palisadoes.org/pattoo/api/v1/web/graphql");
+    final ValueNotifier<GraphQLClient> client = ValueNotifier<GraphQLClient>(
+      GraphQLClient(
+        link: httpLink,
+        cache: OptimisticCache(
+          dataIdFromObject: typenameDataIdFromObject,
+        ),
       ),
-      home: MyHomePage(),
+    );
+    return GraphQLProvider(
+      child: MaterialApp(
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          ),
+        home: ListPage(),
+    ),
+    client: client,
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
+class ListPage extends StatelessWidget {
 
-
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
+  final String getFavoriteData = """
+query getFavoriteData(\$username: String)
+{
+  allUser(username: "pattoo") {
+    edges {
+      node {
+        id
+        username
+        favoriteUser {
+          edges {
+            node {
+              order 
+              chart {
+                id
+                idxChart
+                name
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }
+""";
 
 
 
-class _MyHomePageState extends State<MyHomePage> {
-
-  //String cursor = ""; idk why this is here yet
-  //ScrollController _scrollController = new ScrollController(); idk why this is here yet
-
-
-  List<String> tempList = [
-    "first element",
-    "second element",
-    "third element",
-    "fifth element",
-    "example 6",
-    "example 7",
-    "example 8",
-  ];
+  get cursor => null;
 
   @override
   Widget build(BuildContext context) {
 
-    final userState = Provider.of<UserState>(context);
+   UserState userState = new UserState();
 
     return Scaffold(
-      appBar:AppBar(
-        title: Text(
-          'My Favourites',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 24.0,
-          ),
-        ),
+      appBar: AppBar(
+        title: Text("My Favourites"),
       ),
-      body: Center(
-        child: ReorderableListView(
-          children: List.generate(tempList.length, (index) {
-            return Card(
-              margin: EdgeInsets.only(left: 5, top: 10, right: 5, bottom: 10),
-              elevation: 10,
-              key: UniqueKey(),
-              child: ListTile(
-                title: Text(tempList[index]),
-                subtitle: Text('details about chart'),
-              ),
+      body: Query(
+        options: QueryOptions(
+          documentNode: gql(getFavoriteData),
+          variables: <String, String>{
+           "username": userState.getUserName,
+           "cursor": cursor,
+          }
+        ),
+        // ignore: missing_return
+        builder: (QueryResult result, {refetch, FetchMore fetchMore}) {
+          if (result.loading && result.data == null) {
+            return const Center(
+              child: CircularProgressIndicator(),
             );
-          }),
-          onReorder: (int oldIndex, int newIndex) {
-            setState(() {
-              if (newIndex > oldIndex) {
-                newIndex -= 1;
-              }
-              final String newString = tempList.removeAt(oldIndex);
-              tempList.insert(newIndex, newString);
-            });
-          },
-        ),
-      ),
+          }
+          if (result.hasException) {
+            return Text('\nErrors: \n  ' + result.exception.toString());
+          }
 
+          if (result.data == null) {
+            return Text("No Data Found !");
+          }
+
+          if (result.data != null) {
+            return Text("Data Found !");
+          }
+        })
     );
   }
 }
+
+
