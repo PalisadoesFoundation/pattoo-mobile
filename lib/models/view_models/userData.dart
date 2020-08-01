@@ -41,31 +41,6 @@ class DataDisplay extends StatelessWidget {
 
 class ListPage extends StatelessWidget {
 
-  final String getFavoriteData = """
-query getFavoriteData(\$username: String)
-{
-  allUser(username: "pattoo") {
-    edges {
-      node {
-        id
-        username
-        favoriteUser {
-          edges {
-            node {
-              order 
-              chart {
-                id
-                idxChart
-                name
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-""";
 
 
 
@@ -74,8 +49,32 @@ query getFavoriteData(\$username: String)
   @override
   Widget build(BuildContext context) {
 
-   UserState userState = new UserState();
+    final userState = Provider.of<UserState>(context);
 
+    final String getFavoriteData = """
+    {
+      allUser(username: "${userState.getUserName}") {
+        edges {
+          node {
+            id
+            username
+            favoriteUser {
+              edges {
+                node {
+                  order 
+                  chart {
+                    id
+                    idxChart
+                    name
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    """;
     return Scaffold(
       appBar: AppBar(
         title: Text("My Favourites"),
@@ -84,30 +83,32 @@ query getFavoriteData(\$username: String)
         options: QueryOptions(
           documentNode: gql(getFavoriteData),
           variables: <String, String>{
-           "username": userState.getUserName,
+           "name": userState.getUserName,
            "cursor": cursor,
           }
         ),
         // ignore: missing_return
         builder: (QueryResult result, {refetch, FetchMore fetchMore}) {
-          if (result.loading && result.data == null) {
+          if (result.loading) {
             return const Center(
               child: CircularProgressIndicator(),
             );
           }
-          if (result.hasException) {
-            return Text('\nErrors: \n  ' + result.exception.toString());
-          }
 
           if (result.data == null) {
-            return Text("No Data Found !");
+            return Text("User has no favourites!");
           }
 
           if (result.data != null) {
-            return Text("Data Found !");
+            return Text("User has favourites!");
           }
+
         })
+
+
     );
+
+
   }
 }
 
