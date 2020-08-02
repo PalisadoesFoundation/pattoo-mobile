@@ -1,4 +1,5 @@
 import 'dart:core';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -41,9 +42,6 @@ class DataDisplay extends StatelessWidget {
 
 class ListPage extends StatelessWidget {
 
-
-
-
   get cursor => null;
 
   @override
@@ -52,29 +50,30 @@ class ListPage extends StatelessWidget {
     final userState = Provider.of<UserState>(context);
 
     final String getFavoriteData = """
-    {
-      allUser(username: "${userState.getUserName}") {
-        edges {
-          node {
-            id
-            username
-            favoriteUser {
-              edges {
-                node {
-                  order 
-                  chart {
-                    id
-                    idxChart
-                    name
-                  }
-                }
+query getFavoriteData(\$username: String)
+{
+  allUser(username: \$username) {
+    edges {
+      node {
+        id
+        username
+        favoriteUser {
+          edges {
+            node {
+              order 
+              chart {
+                id
+                idxChart
+                name
               }
             }
           }
         }
       }
     }
-    """;
+  }
+}
+""";
     return Scaffold(
       appBar: AppBar(
         title: Text("My Favourites"),
@@ -82,33 +81,33 @@ class ListPage extends StatelessWidget {
       body: Query(
         options: QueryOptions(
           documentNode: gql(getFavoriteData),
-          variables: <String, String>{
-           "name": userState.getUserName,
+          variables: {
+           "username": userState.getUserName,
            "cursor": cursor,
           }
         ),
         // ignore: missing_return
-        builder: (QueryResult result, {refetch, FetchMore fetchMore}) {
+        builder: (QueryResult result, {VoidCallback refetch, FetchMore fetchMore}) {
+          if (result.hasException) {
+            return Text(result.exception.toString());
+          }
+
           if (result.loading) {
             return const Center(
               child: CircularProgressIndicator(),
             );
           }
+          List favList = result.data['allUser']['edges']['node']['favoriteUser']['edges']['node'];
 
-          if (result.data == null) {
-            return Text("User has no favourites!");
-          }
+          return ListView.builder(
+              itemCount: favList.length,
+              itemBuilder: (context, index) {
+                final data = favList[index];
 
-          if (result.data != null) {
-            return Text("User has favourites!");
-          }
-
+                return Text(data['name']);
+              });
         })
-
-
     );
-
-
   }
 }
 
