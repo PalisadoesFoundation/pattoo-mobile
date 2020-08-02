@@ -104,6 +104,7 @@ query getFavoriteData(\$username: String)
               itemBuilder: (context, index) {
                 final data = favList[index];
 
+                log(data['allUser']['edges']['node']['id']);
                 return Text(data['name']);
               });
         })
