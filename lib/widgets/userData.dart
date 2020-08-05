@@ -20,6 +20,7 @@ class _DataDisplayState extends State<DataDisplay> {
   List<User> _users;
   bool _loading;
 
+
   Future<List<User>> fetchData() async {
     try{
       final response = await http.get("http://calico.palisadoes.org/pattoo/api/v1/web/graphql");
@@ -286,7 +287,7 @@ class _ListScreenState extends State<ListScreen> {
                       return Card(
                         margin: EdgeInsets.only(left: 5, top: 10, right: 5, bottom: 10),
                         elevation: 10,
-                        //key: UniqueKey(),
+                        key: UniqueKey(),
                         child: ListTile(
                           title: Text(data[index].id),
                           subtitle: Text(data[index].idxChart),
