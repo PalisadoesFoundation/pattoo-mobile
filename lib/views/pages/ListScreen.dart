@@ -7,7 +7,7 @@ import 'package:pattoomobile/controllers/client_provider.dart';
 import 'package:pattoomobile/controllers/theme_manager.dart';
 import 'package:pattoomobile/models/agent.dart';
 import 'package:pattoomobile/models/dataPointAgent.dart';
-import 'package:pattoomobile/models/view_models/userData.dart';
+import 'file:///C:/Users/Toast/Desktop/Calico/lib/widgets/userData.dart';
 import 'package:pattoomobile/views/pages/ChartScreen.dart';
 import 'package:provider/provider.dart';
 import 'package:pattoomobile/controllers/userState.dart';
