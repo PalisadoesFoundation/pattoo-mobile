@@ -1,12 +1,9 @@
 import 'dart:core';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:pattoomobile/controllers/userState.dart';
 import 'package:pattoomobile/models/view_models/user.dart';
-import 'package:pattoomobile/widgets/userDataService.dart';
 import 'package:provider/provider.dart';
-import 'dart:collection';
 
 void main() => runApp(DataDisplay());
 

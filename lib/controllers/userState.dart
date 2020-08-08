@@ -14,6 +14,4 @@ class UserState with ChangeNotifier{
 
   String get getUserName => _userName;
 
-
-
 }

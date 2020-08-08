@@ -4,9 +4,7 @@ import 'package:pattoomobile/controllers/client_provider.dart';
 import 'file:///C:/Users/Toast/Desktop/Calico/lib/widgets/userData.dart';
 import 'package:pattoomobile/views/pages/SettingsScreen.dart';
 import 'package:pattoomobile/widgets/AgentsList.dart';
-import 'package:pattoomobile/widgets/userDisplay.dart';
 import 'package:provider/provider.dart';
-import 'package:pattoomobile/controllers/userState.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -22,7 +20,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
     List<Widget> children = [
       AgentsList(),
-      //MainFav(),
       DataDisplay(),
       SettingsScreen()
     ];
