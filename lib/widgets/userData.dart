@@ -17,42 +17,6 @@ class DataDisplay extends StatefulWidget {
 }
 
 class _DataDisplayState extends State<DataDisplay> {
-  List<User> _users;
-  bool _loading;
-
-
-  Future<List<User>> fetchData() async {
-    try{
-      final response = await http.get("http://calico.palisadoes.org/pattoo/api/v1/web/graphql");
-      if(200 == response.statusCode)
-      {
-//        final List<User> users = userFromJson(response.body) as List<User>;
-//        return users;
-      }
-      else
-      {
-        return List<User>();
-      }
-    }
-    catch(e)
-    {
-      return List<User>();
-    }
-  }
-
-  @override
-  void initState()
-  {
-    super.initState();
-    _loading = true;
-    Services.getUsers().then((users)
-    {
-      setState(() {
-        _users =users;
-        _loading = false;
-      });
-    });
-  }
 
 
   Widget build(BuildContext context) {
@@ -78,120 +42,6 @@ class _DataDisplayState extends State<DataDisplay> {
     );
   }
 }
-
-class ListPage extends StatelessWidget {
-
-
-  @override
-  Widget build(BuildContext context) {
-    final userState = Provider.of<UserState>(context);
-
-    final String getFavoriteData = """
-        query getFavoriteData(\$username: String)
-        {
-          allUser(username: \$username) {
-            edges {
-              node {
-                id
-                username
-                favoriteUser {
-                  edges {
-                    node {
-                      order 
-                      chart {
-                        id
-                        idxChart
-                        name
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-        """;
-
-    return Scaffold(
-        appBar: AppBar(
-          title: Text("My Favourites"),
-        ),
-        body: Query(
-            options: QueryOptions(
-                documentNode: gql(getFavoriteData),
-                variables: {
-                  "username": userState.getUserName,
-                }
-            ),
-            // ignore: missing_return
-            builder: (QueryResult result, {VoidCallback refetch, FetchMore fetchMore}) {
-              if (result.hasException) {
-                return Text(result.exception.toString());
-              }
-
-              if (result.loading) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-              //print(result.data.data);
-              //print(result.data.data);
-              Map favdata = result.data.data;
-              var edgeList = favdata["allUser"]["edges"];
-
-              var data = new List<Chart>();//create new instance of list, passing chart object to create new list of charts
-              for( var edge in  edgeList)
-              {
-                var favList = edge["node"]["favoriteUser"]["edges"];
-                //print(favList);
-                for(var fav in favList)
-                {
-//                      var chart = fav["node"]["chart"];
-//                      print(chart);
-
-                  Chart a = new Chart();
-                  a.populateFromMap(fav);
-                  data.add(a);
-
-
-                }
-              }
-
-
-
-              print(data.length);
-
-
-
-
-//              print (favdata);
-//
-//              print (favdata["allUser"]["edges"]);
-//              var edges = favdata["allUser"]["edges"];
-//              print (edges[0]);
-//              // create a new user object andfill it wiht the map data
-//              User user = new User();
-//              user.populateFromMap(edges[0]);
-//              print(user.favoriteCharts[0].id);
-              return Text('Hi');
-//              return Text(user.favoriteCharts[0].id);
-
-//             return Card(
-//              child: Column(
-//                mainAxisSize: MainAxisSize.min,
-//                children: <Widget>[
-//                  ListTile(
-//                    title: Text(user.favoriteCharts[0].id),
-//                    subtitle: Text(user.favoriteCharts[0].idxChart),
-//                  )
-//                ],
-//              ),
-//             );
-            })
-    );
-  }
-}
-
 
 class ListScreen extends StatefulWidget {
   @override
@@ -252,8 +102,6 @@ class _ListScreenState extends State<ListScreen> {
                   child: CircularProgressIndicator(),
                 );
               }
-              //print(result.data.data);
-              //print(result.data.data);
               Map favdata = result.data.data;
               var edgeList = favdata["allUser"]["edges"];
 
@@ -264,12 +112,10 @@ class _ListScreenState extends State<ListScreen> {
                 //print(favList);
                 for(var fav in favList)
                 {
-//                      var chart = fav["node"]["chart"];
-//                      print(chart);
 
-                  Chart a = new Chart();
-                  a.populateFromMap(fav);
-                  data.add(a);
+                  Chart userFavChart = new Chart();
+                  userFavChart.populateFromMap(fav);
+                  data.add(userFavChart);
 
 
                 }
@@ -308,30 +154,6 @@ class _ListScreenState extends State<ListScreen> {
                     },
                   )
               );
-
-//              print (favdata);
-//
-//              print (favdata["allUser"]["edges"]);
-//              var edges = favdata["allUser"]["edges"];
-//              print (edges[0]);
-//              // create a new user object andfill it wiht the map data
-//              User user = new User();
-//              user.populateFromMap(edges[0]);
-//              print(user.favoriteCharts[0].id);
-              //return Text('Hi');
-//              return Text(user.favoriteCharts[0].id);
-
-//             return Card(
-//              child: Column(
-//                mainAxisSize: MainAxisSize.min,
-//                children: <Widget>[
-//                  ListTile(
-//                    title: Text(user.favoriteCharts[0].id),
-//                    subtitle: Text(user.favoriteCharts[0].idxChart),
-//                  )
-//                ],
-//              ),
-//             );
             })
     );
   }
