@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:pattoomobile/api/api.dart';
@@ -7,13 +6,11 @@ import 'package:pattoomobile/controllers/client_provider.dart';
 import 'package:pattoomobile/controllers/theme_manager.dart';
 import 'package:pattoomobile/models/agent.dart';
 import 'package:pattoomobile/models/dataPointAgent.dart';
-import 'file:///C:/Users/Toast/Desktop/Calico/lib/widgets/userData.dart';
 import 'package:pattoomobile/views/pages/ChartScreen.dart';
 import 'package:provider/provider.dart';
-import 'package:pattoomobile/controllers/userState.dart';
 
 class List extends StatefulWidget {
-  Agent agent;
+  final Agent agent;
   @override
   List(this.agent);
   _ListState createState() => _ListState(agent);
@@ -25,23 +22,24 @@ class _ListState extends State<List> {
   String cursor = "";
   ScrollController _scrollController = new ScrollController();
 
-
   @override
   Widget build(BuildContext context) {
-    final appState = Provider.of<UserState>(context);
     this.agent.target_agents = [];
     MediaQueryData queryData;
     queryData = MediaQuery.of(context);
+
     return ClientProvider(
       uri: Provider.of<AgentsManager>(context).loaded
           ? Provider.of<AgentsManager>(context).httpLink
           : "None",
       child: Scaffold(
         appBar: AppBar(
-          title: FittedBox(
-            fit: BoxFit.fitWidth,
-            child: Text('Reports(${agent.program})',
-                style: TextStyle(color: Colors.white)),
+          flexibleSpace: FlexibleSpaceBar(
+            title: FittedBox(
+              fit: BoxFit.fitWidth,
+              child: Text('Reports(${agent.program})',
+                  style: TextStyle(color: Colors.white)),
+            ),
           ),
           backgroundColor: Provider.of<ThemeManager>(context, listen: false)
               .themeData
@@ -70,7 +68,7 @@ class _ListState extends State<List> {
                   result.exception == null) {
                 return Column(
                   children: <Widget>[
-                                        SizedBox(
+                    SizedBox(
                       height: 250,
                     ),
                     Text('No Agents available',
@@ -137,8 +135,6 @@ class _ListState extends State<List> {
                       false) {
                     this.agent.addTarget(datapointagent);
                   }
-
-
                 }
               }
 
@@ -148,9 +144,6 @@ class _ListState extends State<List> {
               FetchMoreOptions opts = FetchMoreOptions(
                   variables: {'id': this.agent.id, 'cursor': fetchMoreCursor},
                   updateQuery: (previousResultData, fetchMoreResultData) {
-                    // this is where you combine your previous data and response
-                    // in this case, we want to display previous repos plus next repos
-                    // so, we combine data in both into a single list of repos
                     for (var i in fetchMoreResultData.data["allDatapoints"]
                         ["edges"]) {
                       DataPointAgent datapointagent = new DataPointAgent(
@@ -158,46 +151,44 @@ class _ListState extends State<List> {
                       for (var j in i["node"]["glueDatapoint"]["edges"]) {
                         if (j["node"]["pair"]["value"] == "pattoo_key") {
                           var state = this.agent.translations[j["node"]["pair"]
-                          ["value"]] ==
-                              null
+                                      ["value"]] ==
+                                  null
                               ? true
                               : false;
                           if (state) {
                             datapointagent.agent_struct.putIfAbsent(
                                 "name",
-                                    () =>
-                                {
-                                  "value": j["node"]["pair"]["value"],
-                                  "unit": "None"
-                                });
+                                () => {
+                                      "value": j["node"]["pair"]["value"],
+                                      "unit": "None"
+                                    });
                           } else {
                             datapointagent.agent_struct.putIfAbsent(
                                 "name",
-                                    () =>
-                                {
-                                  "value": this.agent.translations[j["node"]
-                                  ["pair"]["value"]]["translation"],
-                                  "unit": this.agent.translations[j["node"]
-                                  ["pair"]["value"]]["unit"]
-                                });
+                                () => {
+                                      "value": this.agent.translations[j["node"]
+                                          ["pair"]["value"]]["translation"],
+                                      "unit": this.agent.translations[j["node"]
+                                          ["pair"]["value"]]["unit"]
+                                    });
                           }
                         } else {
                           var state = this
-                              .agent
-                              .translations[j["node"]["pair"]["key"]] ==
-                              null
+                                      .agent
+                                      .translations[j["node"]["pair"]["key"]] ==
+                                  null
                               ? true
                               : false;
                           if (state) {
                             datapointagent.agent_struct.putIfAbsent(
                               j["node"]["pair"]["key"],
-                                  () => j["node"]["pair"]["value"],
+                              () => j["node"]["pair"]["value"],
                             );
                           } else {
                             datapointagent.agent_struct.putIfAbsent(
                               this.agent.translations[j["node"]["pair"]["key"]]
-                              ["translation"],
-                                  () => j["node"]["pair"]["value"],
+                                  ["translation"],
+                              () => j["node"]["pair"]["value"],
                             );
                           }
                         }
@@ -207,6 +198,7 @@ class _ListState extends State<List> {
                         }
                       }
                     }
+                    ;
                   });
 
               _scrollController
@@ -219,8 +211,6 @@ class _ListState extends State<List> {
                   }
                 });
 
-
-
               return Column(children: [
                 Expanded(
                   child: ListView(
@@ -229,38 +219,71 @@ class _ListState extends State<List> {
                       shrinkWrap: true,
                       children: <Widget>[
                         for (var agent in this.agent.target_agents)
-                          Card(
-                            color: Provider.of<ThemeManager>(context)
-                                .themeData
-                                .buttonColor,
-                            child: ListTile(
-                              title: Text(
-                                agent.agent_struct["name"]["value"],
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              subtitle: Text(
-                                'unique identifier',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              leading: SizedBox(
-                                  height: queryData.size.height * 0.09,
-                                  width: queryData.size.width * 0.09,
-                                  child: FittedBox(
-                                      child: Image(
-                                        image:
-                                            AssetImage('images/bar-chart.png'),
+                          Padding(
+                              padding:
+                                  EdgeInsets.fromLTRB(10.0, 12.0, 10.0, 10.0),
+                              child: ButtonTheme(
+                                height: queryData.size.height * 0.25,
+                                minWidth: queryData.size.width * 0.05,
+                                child: RaisedButton(
+                                    elevation: 5.0,
+                                    shape: new RoundedRectangleBorder(
+                                        borderRadius:
+                                            new BorderRadius.circular(30.0)),
+                                    color: Provider.of<ThemeManager>(context)
+                                        .themeData
+                                        .backgroundColor,
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  Chart(agent)));
+                                    },
+                                    child: new Center(
+                                      child: Row(
+                                        children: <Widget>[
+                                          Column(
+                                            children: <Widget>[
+                                              FittedBox(
+                                                fit: BoxFit.contain,
+                                                child: Image(
+                                                  image: AssetImage(
+                                                      'images/bar-chart.png'),
+                                                  height:
+                                                      queryData.size.height *
+                                                          0.14,
+                                                  width: queryData.size.height *
+                                                      0.14,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(
+                                              width:
+                                                  queryData.size.width * 0.1),
+                                          Column(children: <Widget>[
+                                            SizedBox(
+                                              width:
+                                                  queryData.size.width * 0.4908,
+                                              child: Text(
+                                                  "\n" +
+                                                      agent.agent_struct["name"]
+                                                          ["value"] +
+                                                      "\n" +
+                                                      information(agent) +
+                                                      "\n",
+                                                  style: TextStyle(
+                                                      color: Colors.white)),
+                                            )
+                                          ]),
+                                        ],
                                       ),
-                                      fit: BoxFit.contain)),
-                              trailing: Icon(Icons.arrow_forward,
-                                  color: Colors.white),
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => Chart(agent)));
-                              },
-                            ),
-                          ),
+                                    )),
+                              )),
+                        SizedBox(
+                          height: queryData.size.height * 0.005,
+                        ),
                         if (result.loading)
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -276,6 +299,16 @@ class _ListState extends State<List> {
     );
   }
 
+  String information(DataPointAgent agent) {
+    var information = "\nDatapoint Agent ID : ${agent.datapoint_id}";
+    for (MapEntry e in agent.agent_struct.entries) {
+      if (e.key != "name") {
+        information += "\n${e.key} : ${e.value}";
+      }
+    }
+    return information;
+  }
+
   String parseDescriptions(Map map) {
     String result = "";
     for (MapEntry e in map.entries) {
@@ -285,11 +318,5 @@ class _ListState extends State<List> {
       }
     }
     return result;
-  }
-
-
-    Future<bool> wait() async {
-    await new Future.delayed(const Duration(seconds: 0));
-    return true;
   }
 }

@@ -7,7 +7,6 @@ import 'package:pattoomobile/models/agent.dart';
 import 'package:provider/provider.dart';
 import 'package:pattoomobile/controllers/theme_manager.dart';
 import 'package:pattoomobile/controllers/agent_controller.dart';
-import 'package:pattoomobile/widgets/circleMenu.dart';
 
 import 'Display-Messages.dart';
 
@@ -175,6 +174,7 @@ class AgentsList extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Available Agents', style: TextStyle(color: Colors.white)),
+        leading: new Container(),
         backgroundColor:
         Provider.of<ThemeManager>(context).themeData.backgroundColor,
       ),

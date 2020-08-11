@@ -1,14 +1,10 @@
-import 'dart:ffi';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:pattoomobile/api/api.dart';
 import 'package:pattoomobile/controllers/agent_controller.dart';
-import 'package:pattoomobile/controllers/theme_manager.dart';
 import 'package:provider/provider.dart';
 import 'package:pattoomobile/util/AspectRation.dart';
-import 'package:pattoomobile/util/validator.dart';
 import 'DarkModeSwitch.dart';
 import 'ShowFavSwitch.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -155,13 +151,12 @@ class _SettingsContainerState extends State<SettingsContainer> {
     }
   }
 
-  Future Validate_pattoo(text) async {
+  Future Validate_pattoo(String text) async {
     setState(() {
       this.inAsyncCall = true;
     });
     String uri =
-        "${dropdownValue.toLowerCase()}://${text}/pattoo/api/v1/web/graphql";
-    print(uri);
+        "${dropdownValue.toLowerCase()}://${text.trim()}/pattoo/api/v1/web/graphql";
     QueryOptions options = QueryOptions(
       documentNode: gql(AgentFetch().getAllAgents),
       variables: <String, String>{

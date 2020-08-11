@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:pattoomobile/chartdir/chart_util.dart';
 
 class FullScreenChart extends StatefulWidget {
   final Widget child;
@@ -15,14 +13,6 @@ class _fullScreenChartState extends State<FullScreenChart> {
   _fullScreenChartState(this.child);
   @override
   Widget build(BuildContext context) {
-    MediaQueryData queryData;
-    queryData = MediaQuery.of(context);
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
     return Scaffold(
         body: Column(children: <Widget>[
       Expanded(
@@ -32,10 +22,6 @@ class _fullScreenChartState extends State<FullScreenChart> {
         IconButton(
           icon: Icon(Icons.zoom_out_map),
           onPressed: () {
-            SystemChrome.setPreferredOrientations([
-              DeviceOrientation.portraitUp,
-              DeviceOrientation.portraitDown,
-            ]);
             Navigator.pop(context);
           },
         )

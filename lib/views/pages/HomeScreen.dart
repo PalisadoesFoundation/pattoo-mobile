@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pattoomobile/controllers/agent_controller.dart';
 import 'package:pattoomobile/controllers/client_provider.dart';
 import 'file:///C:/Users/Toast/Desktop/Calico/lib/widgets/userData.dart';
+import 'package:pattoomobile/views/pages/ChartLists.dart';
 import 'package:pattoomobile/views/pages/SettingsScreen.dart';
 import 'package:pattoomobile/widgets/AgentsList.dart';
 import 'package:provider/provider.dart';
@@ -30,6 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Scaffold(
           body: children[_currentIndex],
           bottomNavigationBar: BottomNavigationBar(
+            type: BottomNavigationBarType.fixed,
             onTap: onTabTapped,
             currentIndex: _currentIndex,
             items: [
@@ -40,6 +42,10 @@ class _HomeScreenState extends State<HomeScreen> {
               BottomNavigationBarItem(
                 icon: new Icon(Icons.favorite),
                 title: new Text('Favorites'),
+              ),
+              BottomNavigationBarItem(
+                icon: new Icon(Icons.multiline_chart),
+                title: new Text('Charts'),
               ),
               BottomNavigationBarItem(
                   icon: Icon(Icons.settings), title: Text('Settings'))

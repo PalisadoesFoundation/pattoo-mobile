@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:pattoomobile/controllers/theme_manager.dart';
 import 'package:pattoomobile/views/pages/HomeScreen.dart';
 import 'package:pattoomobile/views/pages/LoginScreen.dart';
-import 'package:pattoomobile/views/pages/SettingsScreen.dart';
 
 import 'controllers/userState.dart';
 
