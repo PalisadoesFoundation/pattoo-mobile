@@ -149,36 +149,17 @@ query getFavoriteData(\$username: String)
 }
 """;
 
-  String retrieveFavorites = """
-query retrieveFavorites{
-{
-  allFavorite {
-    edges {
-      node {
-        id
-        idxFavorite
-        order
-        user {
-          id
-          idxUser
-          username
-          firstName
-          lastName
-        }
-        chart {
-          name
-          chartDatapointChart {
-            edges {
-              node {
-                idxDatapoint
-              }
-            }
-          }
-        }
-      }
+String addFavourite ="""
+mutation {
+  createFavorite(Input: {idxUser: "3", idxChart: "149", order: "2"}) {
+    favorite {
+      id
+      idxFavorite
+      idxChart
+      idxUser
+      enabled
     }
   }
 }
 """;
-
 }

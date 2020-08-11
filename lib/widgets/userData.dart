@@ -4,8 +4,9 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:pattoomobile/controllers/userState.dart';
 import 'package:pattoomobile/models/view_models/user.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_test/flutter_test.dart';
 
-void main() => runApp(DataDisplay());
+//void main() => runApp(DataDisplay());
 
 class DataDisplay extends StatefulWidget {
   DataDisplay(): super();
@@ -109,19 +110,13 @@ class _ListScreenState extends State<ListScreen> {
                 //print(favList);
                 for(var fav in favList)
                 {
-
                   Chart userFavChart = new Chart();
                   userFavChart.populateFromMap(fav);
                   data.add(userFavChart);
-
-
                 }
               }
 
-
-
               print(data.length);
-
 
               return Center(
                   child: ReorderableListView(
@@ -154,4 +149,13 @@ class _ListScreenState extends State<ListScreen> {
             })
     );
   }
+}
+
+void main()
+{
+  testWidgets('Display user favs', (WidgetTester tester) async{
+    await tester.pumpWidget(ListScreen());
+    var appBar = find.byType(Card);
+    expect(appBar, findsOneWidget);
+  });
 }
