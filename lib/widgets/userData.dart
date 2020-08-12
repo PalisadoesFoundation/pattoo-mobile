@@ -59,6 +59,7 @@ class _ListScreenState extends State<ListScreen> {
             edges {
               node {
                 id
+                idxUser
                 username
                 favoriteUser {
                   edges {
@@ -101,13 +102,28 @@ class _ListScreenState extends State<ListScreen> {
                 );
               }
               Map favdata = result.data.data;
+//              print(favdata);
               var edgeList = favdata["allUser"]["edges"];
 
               var data = new List<Chart>();//create new instance of list, passing chart object to create new list of charts
               for( var edge in  edgeList)
               {
-                var favList = edge["node"]["favoriteUser"]["edges"];
-                //print(favList);
+                  var favList = edge["node"]["favoriteUser"]["edges"];
+//                print(favList);
+
+                  //String idxUser =edge["node"]["idxUser"];
+//                   User user = new User();
+                  User.idxUser = int.parse(edge["node"]["idxUser"]);
+
+                  print( "user id ${User.idxUser}");
+
+//                Map<String, dynamic> toJson() => {
+//                "idxUser": User.idxUser,
+//                };
+
+
+//                print(favdata);
+
                 for(var fav in favList)
                 {
                   Chart userFavChart = new Chart();

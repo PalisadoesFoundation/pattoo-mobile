@@ -1,8 +1,9 @@
 
 class User{
-  String id =  "";
-  String username = "";
-  List<Chart> favoriteCharts = [];
+   String id =  "";
+   static int idxUser = 0;
+   String username = "";
+   List<Chart> favoriteCharts = [];
 //  String chart_id;
 //  String chartname;
 //  List fav_agents = new List();
@@ -14,6 +15,7 @@ class User{
 
   void populateFromMap(Map userMapData){
     id = userMapData["node"]["id"];
+    idxUser = userMapData["node"]["idxUser"];
     username = userMapData["node"]["username"];
     List charts = userMapData["node"]["favoriteUser"]["edges"];
 
