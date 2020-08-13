@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:pattoomobile/controllers/agent_controller.dart';
 import 'package:pattoomobile/controllers/client_provider.dart';
 import 'package:pattoomobile/controllers/theme_manager.dart';
+import 'package:pattoomobile/widgets/userData.dart';
 import 'package:pattoomobile/views/pages/ChartLists.dart';
 import 'package:pattoomobile/views/pages/SettingsScreen.dart';
 import 'package:pattoomobile/widgets/AgentsList.dart';
 import 'package:provider/provider.dart';
+
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -16,13 +18,11 @@ class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
   @override
   Widget build(BuildContext context) {
+
+
     List<Widget> children = [
       AgentsList(),
-      Scaffold(
-        body: Center(
-            child: Text("Favourites Soon To Come",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30))),
-      ),
+      DataDisplay(),
       ChartList(),
       SettingsScreen()
     ];

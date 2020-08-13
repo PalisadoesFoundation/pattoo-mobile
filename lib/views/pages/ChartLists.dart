@@ -92,12 +92,12 @@ class _ChartListState extends State<ChartList> {
                                                   .themeData
                                                   .backgroundColor,
                                           onPressed: () {
-                                            Navigator.push(
+                                            /* Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
                                                     builder: (context) =>
                                                         MultiChart(snapshot
-                                                            .data[index])));
+                                                            .data[index]))); */
                                           },
                                           child: new Center(
                                             child: Stack(

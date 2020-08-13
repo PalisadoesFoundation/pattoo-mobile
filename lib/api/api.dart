@@ -213,4 +213,46 @@ query getTimeSeries(\$id: String){
 }
 
 """;
+
+//Favourites
+
+  String getFavoriteData = """
+query getFavoriteData(\$username: String)
+{
+  allUser(username: "pattoo") {
+    edges {
+      node {
+        id
+        username
+        favoriteUser {
+          edges {
+            node {
+              order 
+              chart {
+                id
+                idxChart
+                name
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+""";
+
+String addFavourite ="""
+mutation {
+  createFavorite(Input: {idxUser: "3", idxChart: "149", order: "2"}) {
+    favorite {
+      id
+      idxFavorite
+      idxChart
+      idxUser
+      enabled
+    }
+  }
+}
+""";
 }

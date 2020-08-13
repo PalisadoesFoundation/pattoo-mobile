@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:pattoomobile/controllers/userState.dart';
 import 'package:pattoomobile/util/validator.dart';
 import 'package:pattoomobile/models/view_models/login_form_model.dart';
+import 'package:pattoomobile/widgets/emailLogin.dart';
 import 'package:provider/provider.dart';
 import 'package:pattoomobile/controllers/theme_manager.dart';
 import 'package:pattoomobile/utils/app_themes.dart';
@@ -13,6 +15,7 @@ class LoginForm extends StatefulWidget {
 
 class _LoginFormState extends State<LoginForm> {
   LoginFormModel userLogin = new LoginFormModel();
+
   TimeStamp time = new TimeStamp(timestamp: 1591211730580, value: 10);
   String _errorMessage;
   final _formKey = new GlobalKey<FormState>();
@@ -119,7 +122,7 @@ class _LoginFormState extends State<LoginForm> {
             icon: new Icon(
               Icons.mail,
             )),
-        validator: FieldValidator.validateEmail,
+        validator: validateEmail,
         onSaved: (value) => this.userLogin.email = value.trim(),
       ),
     );
@@ -159,6 +162,17 @@ class _LoginFormState extends State<LoginForm> {
             style: TextStyle(fontSize: 20, color: Colors.white)),
       ),
     );
+  }
+
+  //Regular Expression Validation
+  String validateEmail(String value) {
+    Pattern pattern =
+        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+    RegExp regex = new RegExp(pattern);
+    if (!regex.hasMatch(value))
+      return 'Enter Valid Email';
+    else
+      return null;
   }
 
   @override

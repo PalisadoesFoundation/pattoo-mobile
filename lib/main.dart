@@ -7,6 +7,8 @@ import 'package:pattoomobile/controllers/theme_manager.dart';
 import 'package:pattoomobile/views/pages/HomeScreen.dart';
 import 'package:pattoomobile/views/pages/LoginScreen.dart';
 
+import 'controllers/userState.dart';
+
 void main() {
   runApp(DevicePreview(child: App()));
 }
@@ -26,7 +28,8 @@ class _AppState extends State<App> {
     return MultiProvider(
         providers: [
           ChangeNotifierProvider<ThemeManager>(create: (_) => ThemeManager()),
-          ChangeNotifierProvider<AgentsManager>(create: (_) => AgentsManager())
+          ChangeNotifierProvider<AgentsManager>(create: (_) => AgentsManager()),
+          ChangeNotifierProvider<UserState>(create: (_) => UserState())
         ],
         child: Consumer<AgentsManager>(builder: (context, agent, _) {
           return Consumer<ThemeManager>(builder: (context, manager, _) {
