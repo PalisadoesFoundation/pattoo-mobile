@@ -7,50 +7,67 @@ Widget agentButton(BuildContext context, agent) {
   MediaQueryData queryData;
   queryData = MediaQuery.of(context);
 
-  return Padding(
-      padding: EdgeInsets.fromLTRB(10.0, 12.0, 10.0, 10.0),
-      child: ButtonTheme(
-        height: queryData.size.height * 0.04,
-        minWidth: queryData.size.width * 0.1,
-        child: RaisedButton(
-            elevation: 5.0,
+  return InkWell(
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => List(agent),
+        ),
+      );
+    },
+    child: Align(
+      child: Container(
+        width: queryData.size.shortestSide,
+        child: Card(
+            margin: queryData.orientation == Orientation.landscape
+                ? EdgeInsets.only(
+                    top: queryData.size.longestSide * 0.017,
+                    bottom: queryData.size.longestSide * 0.017,
+                    left: queryData.size.shortestSide * 0.017,
+                    right: queryData.size.shortestSide * 0.017)
+                : EdgeInsets.only(
+                    top: queryData.size.longestSide * 0.007,
+                    bottom: queryData.size.longestSide * 0.007,
+                    left: queryData.size.shortestSide * 0.017,
+                    right: queryData.size.shortestSide * 0.017),
+            elevation: 10,
             shape: new RoundedRectangleBorder(
-                borderRadius: new BorderRadius.circular(30.0)),
+                borderRadius:
+                    BorderRadius.circular(queryData.size.shortestSide * 0.015)),
             color: Provider.of<ThemeManager>(context).themeData.backgroundColor,
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => List(agent),
-                ),
-              );
-            },
-            child: new Center(
-              child: Column(children: <Widget>[
-                SizedBox(
-                  height: queryData.size.height * 0.02,
-                ),
-                FittedBox(
-                  fit: BoxFit.contain,
-                  child: Image(
-                    image: AssetImage("images/technical-support.png"),
-                    height: queryData.size.height * 0.14,
-                    width: queryData.size.height * 0.14,
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(
+                    height: queryData.size.longestSide * 0.02,
                   ),
-                ),
-                SizedBox(height: queryData.size.height * 0.01),
-                SizedBox(
-                    height: queryData.size.height * 0.05,
+                  FittedBox(
+                    fit: BoxFit.contain,
+                    child: Image(
+                        image: AssetImage("images/technical-support.png"),
+                        height: queryData.size.longestSide * 0.14,
+                        width: queryData.size.longestSide * 0.14),
+                  ),
+                  SizedBox(height: queryData.size.longestSide * 0.01),
+                  SizedBox(
+                    width: queryData.size.shortestSide * 0.5,
                     child: Wrap(direction: Axis.horizontal, children: <Widget>[
                       Text(agent.program,
                           style: TextStyle(
-                              fontSize: queryData.size.width * 0.032,
+                              fontSize:
+                                  queryData.orientation == Orientation.portrait
+                                      ? queryData.size.shortestSide * 0.042
+                                      : queryData.size.shortestSide * 0.032,
                               color: Colors.white),
                           textAlign: TextAlign.center)
-                    ])),
-              ]),
-            )),
-      ));
+                    ]),
+                  ),
+                ])),
+      ),
+    ),
+  );
 }
 
 class agentoption extends StatefulWidget {

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:pattoomobile/api/api.dart';
 import 'package:pattoomobile/controllers/agent_controller.dart';
+import 'package:pattoomobile/controllers/theme_manager.dart';
 import 'package:provider/provider.dart';
 import 'package:pattoomobile/util/AspectRation.dart';
 import 'DarkModeSwitch.dart';
@@ -94,10 +95,13 @@ class _SettingsContainerState extends State<SettingsContainer> {
                           icon: Icon(Icons.arrow_downward),
                           iconSize: 24,
                           elevation: 16,
-                          style: TextStyle(color: Colors.deepPurple),
                           underline: Container(
                             height: 2,
-                            color: Colors.deepPurpleAccent,
+                            color: Provider.of<ThemeManager>(context)
+                                .themeData
+                                .primaryTextTheme
+                                .headline6
+                                .color,
                           ),
                           onChanged: (String newValue) {
                             setState(() {
@@ -123,8 +127,6 @@ class _SettingsContainerState extends State<SettingsContainer> {
                       Padding(
                         padding: const EdgeInsets.all(20.0),
                         child: RaisedButton(
-                          color: Colors.blue,
-                          splashColor: Colors.blueAccent,
                           onPressed: _submit,
                           textColor: Colors.white,
                           padding: const EdgeInsets.all(0.0),
@@ -209,7 +211,7 @@ class _SettingsContainerState extends State<SettingsContainer> {
       formKey.currentState.save();
       print(_source);
       String uri =
-          "${dropdownValue.toLowerCase()}://${_source}/pattoo/api/v1/web/graphql";
+          "${dropdownValue.toLowerCase()}://${_source.trim()}/pattoo/api/v1/web/graphql";
       Provider.of<AgentsManager>(context, listen: false).setLink(uri);
       Provider.of<AgentsManager>(context, listen: false).loaded = true;
       print(Provider.of<AgentsManager>(context, listen: false).loaded);

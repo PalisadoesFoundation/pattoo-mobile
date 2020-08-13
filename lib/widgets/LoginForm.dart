@@ -54,7 +54,7 @@ class _LoginFormState extends State<LoginForm> {
     );
   }
 
-  Widget _showForm() {
+  Widget _showForm(BuildContext context) {
     return new Container(
         padding: EdgeInsets.all(16.0),
         child: new Form(
@@ -62,11 +62,10 @@ class _LoginFormState extends State<LoginForm> {
           child: new ListView(
             shrinkWrap: true,
             children: <Widget>[
-              showLogo(),
+              showLogo(context),
               showEmailInput(),
               showPasswordInput(),
-              showPrimaryButton(),
-              showSecondaryButton(),
+              showPrimaryButton(context),
               showErrorMessage(),
             ],
           ),
@@ -90,21 +89,20 @@ class _LoginFormState extends State<LoginForm> {
     }
   }
 
-  Widget showLogo() {
+  Widget showLogo(BuildContext context) {
+    MediaQueryData queryData = MediaQuery.of(context);
+
     AppTheme theme = Provider.of<ThemeManager>(context).getTheme();
 
     var logo = theme == AppTheme.Light
         ? 'images/pattoo-light.png'
         : 'images/pattoo-dark.png';
-    return new Hero(
-      tag: 'hero',
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(0.0, 70.0, 0.0, 0.0),
-        child: CircleAvatar(
-          backgroundColor: Colors.transparent,
-          radius: 100.0,
-          child: Image.asset(logo),
-        ),
+    return Padding(
+      padding: EdgeInsets.fromLTRB(0.0, 70.0, 0.0, 0.0),
+      child: CircleAvatar(
+        backgroundColor: Colors.transparent,
+        radius: queryData.size.shortestSide * 0.28,
+        child: Image.asset(logo),
       ),
     );
   }
@@ -145,29 +143,15 @@ class _LoginFormState extends State<LoginForm> {
     );
   }
 
-  Widget showSecondaryButton() {
-    return new FlatButton(
-      child: Container(
-        child: Align(
-          alignment: Alignment.centerRight,
-          child: new Text('Forget Password?',
-              style: new TextStyle(
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.w300,
-                  color: Colors.lightBlue)),
-        ),
-      ),
-      onPressed: () {},
-    );
-  }
-
-  Widget showPrimaryButton() {
+  Widget showPrimaryButton(BuildContext context) {
+    MediaQueryData queryData = MediaQuery.of(context);
     return new Padding(
       padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
       child: RaisedButton(
         elevation: 5.0,
         shape: new RoundedRectangleBorder(
-            borderRadius: new BorderRadius.circular(30.0)),
+            borderRadius:
+                BorderRadius.circular(queryData.size.shortestSide * 0.015)),
         onPressed: () {
           Navigator.pushReplacementNamed(context, '/HomeScreen');
         },
@@ -182,7 +166,7 @@ class _LoginFormState extends State<LoginForm> {
     return new Scaffold(
         body: Stack(
       children: <Widget>[
-        _showForm(),
+        _showForm(context),
         _showCircularProgress(),
       ],
     ));

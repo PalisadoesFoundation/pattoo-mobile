@@ -1,59 +1,29 @@
-[
-                                    new Series<TimeSeriesSales, DateTime>(
-                                      id: 'Desktop',
-                                      colorFn: (_, __) =>
-                                          MaterialPalette.blue.shadeDefault,
-                                      domainFn: (TimeSeriesSales sales, _) =>
-                                          sales.time,
-                                      measureFn: (TimeSeriesSales sales, _) =>
-                                          sales.sales,
-                                      data: [
-                                        new TimeSeriesSales(
-                                            new DateTime(2017, 9, 19), 5),
-                                        new TimeSeriesSales(
-                                            new DateTime(2017, 9, 26), 25),
-                                        new TimeSeriesSales(
-                                            new DateTime(2017, 10, 3), 100),
-                                        new TimeSeriesSales(
-                                            new DateTime(2017, 10, 10), 75),
-                                      ],
-                                    ),
-                                    new Series<TimeSeriesSales, DateTime>(
-                                      id: 'Tablet',
-                                      colorFn: (_, __) =>
-                                          MaterialPalette.red.shadeDefault,
-                                      domainFn: (TimeSeriesSales sales, _) =>
-                                          sales.time,
-                                      measureFn: (TimeSeriesSales sales, _) =>
-                                          sales.sales,
-                                      data: [
-                                        new TimeSeriesSales(
-                                            new DateTime(2017, 9, 19), 10),
-                                        new TimeSeriesSales(
-                                            new DateTime(2017, 9, 26), 50),
-                                        new TimeSeriesSales(
-                                            new DateTime(2017, 10, 3), 200),
-                                        new TimeSeriesSales(
-                                            new DateTime(2017, 10, 10), 150),
-                                      ],
-                                    ),
-                                    new Series<TimeSeriesSales, DateTime>(
-                                        id: 'Mobile',
-                                        colorFn: (_, __) =>
-                                            MaterialPalette.green.shadeDefault,
-                                        domainFn: (TimeSeriesSales sales, _) =>
-                                            sales.time,
-                                        measureFn: (TimeSeriesSales sales, _) =>
-                                            sales.sales,
-                                        data: [
-                                          new TimeSeriesSales(
-                                              new DateTime(2017, 9, 19), 50),
-                                          new TimeSeriesSales(
-                                              new DateTime(2017, 9, 26), 110),
-                                          new TimeSeriesSales(
-                                              new DateTime(2017, 10, 3), 2000),
-                                          new TimeSeriesSales(
-                                              new DateTime(2017, 10, 10), 1510),
-                                        ])
-                                    // Configure our custom point renderer for this series.
-                                  ]
+  @override
+  Widget build(BuildContext context) {
+        return CustomScrollView(
+      slivers: <Widget>[
+        SliverAppBar(
+          expandedHeight: queryData.size.height * 0.3,
+          flexibleSpace: FlexibleSpaceBar(
+            background: Stack(
+              fit: StackFit.passthrough,
+              children: <Widget>[
+                FittedBox(
+                    fit: BoxFit.fill,
+                    child: Center(child: Lottie.asset("assets/agents.json"))),
+              ],
+            ),
+            title: Text("Pattoo Agents",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                )),
+            centerTitle: true,
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: showOptions(context),
+        )
+      ],
+    );
+  }

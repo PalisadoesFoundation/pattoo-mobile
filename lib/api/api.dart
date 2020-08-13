@@ -46,7 +46,7 @@ mutation ModifyChartName(\$name:String,\$id:String) {
 
   String deleteChart = """
 mutation DeleteChart(\$id:String) {
-  updateChart(Input: {idxChart: \$id,enabled:'0'}) {
+  updateChart(Input: {idxChart: \$id,enabled:"0"}) {
     chart {
       id
       idxChart
@@ -70,7 +70,7 @@ mutation addDatapoint(\$idxDatapoint:String,\$idxChart:String){
 """;
   String deleteChartDatapoint = """
 mutation addDatapoint(\$idxChartDatapoint:String,\$idxChart){
-  updateChartDataPoint(Input: {idxChartDatapoint: \$idxChartDatapoint, idxChart: \$idxChart,enabled:'0'}) {
+  updateChartDataPoint(Input: {idxChartDatapoint: \$idxChartDatapoint, idxChart: \$idxChart,enabled:"0"}) {
     chartDatapoint {
       id
       idxChartDatapoint

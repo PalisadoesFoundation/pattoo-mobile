@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:pattoomobile/widgets/AgentOptions.dart';
 import 'package:pattoomobile/api/api.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -14,6 +15,7 @@ class AgentsList extends StatelessWidget {
   Widget showOptions(BuildContext context) {
     Map translationMap = new Map();
     ScrollController _scrollController = new ScrollController();
+    MediaQueryData queryData = MediaQuery.of(context);
     return (Provider.of<AgentsManager>(context).loaded == false)
         ? DisplayMessage()
         : Query(
@@ -143,15 +145,17 @@ class AgentsList extends StatelessWidget {
                       });
 
                     return Column(children: [
-                      Expanded(
-                          child: GridView(
-                              controller: _scrollController,
-                              scrollDirection: Axis.vertical,
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 2),
-                              shrinkWrap: true,
-                              children: <Widget>[
+                      GridView(
+                          controller: _scrollController,
+                          scrollDirection: Axis.vertical,
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: queryData.orientation ==
+                                          Orientation.portrait
+                                      ? 2
+                                      : 3),
+                          shrinkWrap: true,
+                          children: <Widget>[
                             for (var agent
                                 in Provider.of<AgentsManager>(context)
                                     .agentsList)
@@ -163,7 +167,7 @@ class AgentsList extends StatelessWidget {
                                   CircularProgressIndicator(),
                                 ],
                               )
-                          ]))
+                          ])
                     ]);
                   });
             });
@@ -171,20 +175,23 @@ class AgentsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Available Agents', style: TextStyle(color: Colors.white)),
-        leading: new Container(),
-        backgroundColor:
-            Provider.of<ThemeManager>(context).themeData.backgroundColor,
-      ),
-      body: Center(
-        child: Stack(
-          children: <Widget>[
-            showOptions(context),
-          ],
+    return CustomScrollView(
+      slivers: <Widget>[
+        SliverAppBar(
+          forceElevated: true,
+          leading: Container(),
+          pinned: true,
+          title: Text("Pattoo Agents",
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              )),
+          centerTitle: true,
         ),
-      ),
+        SliverToBoxAdapter(
+          child: showOptions(context),
+        )
+      ],
     );
   }
 

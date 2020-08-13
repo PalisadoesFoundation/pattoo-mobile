@@ -9,6 +9,7 @@ import 'package:pattoomobile/controllers/agent_controller.dart';
 import 'package:pattoomobile/controllers/client_provider.dart';
 import 'package:pattoomobile/controllers/theme_manager.dart';
 import 'package:pattoomobile/models/agent.dart';
+import 'package:pattoomobile/models/chart.dart';
 import 'package:pattoomobile/models/dataPointAgent.dart';
 import 'package:pattoomobile/models/timestamp.dart';
 import 'package:pattoomobile/views/pages/FullScreenChart.dart';
@@ -18,9 +19,9 @@ import 'package:pattoomobile/widgets/createChartGroupPopUp.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 
-class Chart extends StatelessWidget {
-  final DataPointAgent agent;
-  Chart(this.agent);
+class MultiChart extends StatelessWidget {
+  final Chart chart;
+  MultiChart(this.chart);
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([
@@ -29,30 +30,30 @@ class Chart extends StatelessWidget {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    return ChartScreen(
-        title: agent.agent_struct["name"]["value"], agent: this.agent);
+    return MultiChartScreen(title: chart.name, chart: this.chart);
   }
 }
 
-class ChartScreen extends StatefulWidget {
-  ChartScreen({Key key, this.title, DataPointAgent this.agent})
-      : super(key: key);
-  final DataPointAgent agent;
+class MultiChartScreen extends StatefulWidget {
+  MultiChartScreen({Key key, this.title, this.chart}) : super(key: key);
+  final Chart chart;
   final String title;
 
   @override
-  _ChartScreenState createState() => _ChartScreenState(agent);
+  _MultiChartScreenState createState() => _MultiChartScreenState(chart);
 }
 
-class _ChartScreenState extends State<ChartScreen> {
-  DataPointAgent agent;
+class _MultiChartScreenState extends State<MultiChartScreen> {
+  Chart chart;
+  List<DataPointAgent> original_agents = List<DataPointAgent>();
   List<DataPointAgent> agents = List<DataPointAgent>();
-  _ChartScreenState(this.agent);
+
+  _MultiChartScreenState(this.chart);
   List<TimeSeriesSales> data_;
   List<TimeSeriesSales> cdata_;
   var fav_color = Colors.grey[100];
   bool favourite = false;
-  Widget chart;
+  Widget chart_;
   final List<bool> isSelected = [false, false, true];
   List<Series<TimeSeriesSales, DateTime>> vibrationData =
       List<Series<TimeSeriesSales, DateTime>>();
@@ -78,9 +79,8 @@ class _ChartScreenState extends State<ChartScreen> {
         ));
     MediaQueryData queryData;
     queryData = MediaQuery.of(context);
-    if (!this.agents.contains(agent)) {
-      this.agents.add(agent);
-    }
+    original_agents = chart.datapoints.values;
+    agents = chart.datapoints.values;
 
     return Scaffold(
       appBar: AppBar(
@@ -88,7 +88,7 @@ class _ChartScreenState extends State<ChartScreen> {
         title: FittedBox(
           fit: BoxFit.fitWidth,
           child: Text(
-            agent.agent_struct["name"]["value"],
+            chart.name,
           ),
         ),
         elevation: 0.0,
@@ -139,7 +139,7 @@ class _ChartScreenState extends State<ChartScreen> {
                                 ));
                               }
 
-                              this.chart = queryData.orientation ==
+                              this.chart_ = queryData.orientation ==
                                       Orientation.landscape
                                   ? Hero(
                                       tag: "chart",
@@ -200,7 +200,7 @@ class _ChartScreenState extends State<ChartScreen> {
                                   height: queryData.size.height * 0.75,
                                   width: queryData.size.width * 0.8,
                                   child: vibrationData != null
-                                      ? chart
+                                      ? chart_
                                       : CircularProgressIndicator(),
                                 )),
                               );
@@ -244,7 +244,7 @@ class _ChartScreenState extends State<ChartScreen> {
                                 Navigator.push(context,
                                     MaterialPageRoute(builder: (_) {
                                   return FullScreenChart(
-                                    child: chart,
+                                    child: chart_,
                                   );
                                 }));
                               },
@@ -315,18 +315,21 @@ class _ChartScreenState extends State<ChartScreen> {
                         context: context,
                         tiles: [
                           ListTile(title: Text("MetaData")),
-                          for (MapEntry e in this.agent.agent_struct.entries)
-                            if (e.key == "name" && e.value["unit"] != "None")
-                              MetaDataTile(
-                                title: "Unit of Measurment",
-                                value: e.value["unit"],
-                              ),
-                          for (MapEntry e in this.agent.agent_struct.entries)
-                            if (e.key != "name")
-                              MetaDataTile(
-                                title: e.key,
-                                value: e.value,
-                              ),
+                          for (DataPointAgent agent in agents)
+                            for (MapEntry e in agent.agent_struct.entries)
+                              if (e.key == "name" && e.value["unit"] != "None")
+                                MetaDataTile(
+                                  title: "Unit of Measurment",
+                                  value: e.value["unit"],
+                                ),
+                          for (DataPointAgent agent in agents)
+                            if (!original_agents.contains(agent))
+                              for (MapEntry e in agent.agent_struct.entries)
+                                if (e.key != "name")
+                                  MetaDataTile(
+                                    title: e.key,
+                                    value: e.value,
+                                  ),
                           if (this.agents.asMap().containsKey(1))
                             for (var agent in this.agents.sublist(1))
                               for (Widget tile in loadSecondAgentData(agent))
@@ -807,7 +810,7 @@ class _ChartScreenState extends State<ChartScreen> {
     this.agents = datapoints;
     print(agents);
     this.vibrationData = List<Series<TimeSeriesSales, DateTime>>();
-    for (agent in datapoints) {
+    for (DataPointAgent agent in datapoints) {
       try {
         var result = await client.get(
             'http://calico.palisadoes.org/pattoo/api/v1/web/rest/data/${agent.datapoint_id}');
@@ -843,7 +846,7 @@ class _ChartScreenState extends State<ChartScreen> {
             data: this.cdata_,
           )
         ];
-        this.chart = TimeSeriesChart(vibrationData,
+        this.chart_ = TimeSeriesChart(vibrationData,
             defaultRenderer:
                 LineRendererConfig(includeArea: true, stacked: true),
             animate: true,
