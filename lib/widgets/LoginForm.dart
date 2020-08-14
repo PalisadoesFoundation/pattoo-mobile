@@ -66,7 +66,7 @@ class _LoginFormState extends State<LoginForm> {
             shrinkWrap: true,
             children: <Widget>[
               showLogo(context),
-              showEmailInput(),
+              showUsernameInput(),
               showPasswordInput(),
               showPrimaryButton(context),
               showErrorMessage(),
@@ -110,7 +110,7 @@ class _LoginFormState extends State<LoginForm> {
     );
   }
 
-  Widget showEmailInput() {
+  Widget showUsernameInput() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 100.0, 0.0, 0.0),
       child: new TextFormField(
@@ -118,12 +118,12 @@ class _LoginFormState extends State<LoginForm> {
         keyboardType: TextInputType.emailAddress,
         autofocus: false,
         decoration: new InputDecoration(
-            hintText: 'Email',
+            hintText: 'Username',
             icon: new Icon(
-              Icons.mail,
+              Icons.person,
             )),
         validator: validateEmail,
-        onSaved: (value) => this.userLogin.email = value.trim(),
+        onSaved: (value) => this.userLogin.username = value.trim(),
       ),
     );
   }
@@ -156,7 +156,11 @@ class _LoginFormState extends State<LoginForm> {
             borderRadius:
                 BorderRadius.circular(queryData.size.shortestSide * 0.015)),
         onPressed: () {
-          Navigator.pushReplacementNamed(context, '/HomeScreen');
+          if (_formKey.currentState.validate()) {
+            Provider.of<UserState>(context, listen: false)
+                .setDisplayName(this.userLogin.username);
+            Navigator.pushReplacementNamed(context, '/HomeScreen');
+          }
         },
         child: const Text('Login',
             style: TextStyle(fontSize: 20, color: Colors.white)),
@@ -166,11 +170,8 @@ class _LoginFormState extends State<LoginForm> {
 
   //Regular Expression Validation
   String validateEmail(String value) {
-    Pattern pattern =
-        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-    RegExp regex = new RegExp(pattern);
-    if (!regex.hasMatch(value))
-      return 'Enter Valid Email';
+    if (value == '' || value == null)
+      return 'Field cannot be blank!';
     else
       return null;
   }

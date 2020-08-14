@@ -217,32 +217,60 @@ query getTimeSeries(\$id: String){
 //Favourites
 
   String getFavoriteData = """
-query getFavoriteData(\$username: String)
-{
-  allUser(username: "pattoo") {
-    edges {
+        query getFavoriteData(\$username: String)
+        {
+          allUser(username: \$username) {
+ edges {
       node {
         id
+        idxUser
         username
         favoriteUser {
           edges {
             node {
-              order 
+              order
               chart {
-                id
                 idxChart
                 name
+                enabled
+                chartDatapointChart {
+                  edges {
+                    node {
+                      idxChartDatapoint
+                      datapoint {
+                        idxDatapoint
+                        idxAgent
+                        glueDatapoint {
+                          edges {
+                            node {
+                              pair {
+                                key
+                                value
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
               }
             }
           }
         }
       }
     }
-  }
-}
-""";
+    pageInfo {
+      startCursor
+      endCursor
+      hasNextPage
+      hasPreviousPage
+    }
+          }
+        }
+        """;
 
-String addFavourite ="""
+  String addFavourite = """
 mutation {
   createFavorite(Input: {idxUser: "3", idxChart: "149", order: "2"}) {
     favorite {

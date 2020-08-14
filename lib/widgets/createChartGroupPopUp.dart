@@ -166,7 +166,8 @@ class _chartGroupPopUpState extends State<ChartGroupPopUp> {
     GraphQLClient _client = GraphQLClient(
       cache: InMemoryCache(),
       link: new HttpLink(
-          uri: Provider.of<AgentsManager>(context, listen: false).httpLink),
+          uri: Provider.of<AgentsManager>(context, listen: false).httpLink +
+              "/graphql"),
     );
 
     QueryOptions options = QueryOptions(

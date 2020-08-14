@@ -58,7 +58,7 @@ Widget agentButton(BuildContext context, agent) {
                           style: TextStyle(
                               fontSize:
                                   queryData.orientation == Orientation.portrait
-                                      ? queryData.size.shortestSide * 0.042
+                                      ? queryData.size.shortestSide * 0.032
                                       : queryData.size.shortestSide * 0.032,
                               color: Colors.white),
                           textAlign: TextAlign.center)

@@ -211,7 +211,7 @@ class _SettingsContainerState extends State<SettingsContainer> {
       formKey.currentState.save();
       print(_source);
       String uri =
-          "${dropdownValue.toLowerCase()}://${_source.trim()}/pattoo/api/v1/web/graphql";
+          "${dropdownValue.toLowerCase()}://${_source.trim()}/pattoo/api/v1/web";
       Provider.of<AgentsManager>(context, listen: false).setLink(uri);
       Provider.of<AgentsManager>(context, listen: false).loaded = true;
       print(Provider.of<AgentsManager>(context, listen: false).loaded);

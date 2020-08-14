@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' hide TextStyle, Axis;
-import 'package:flutter/services.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:pattoomobile/api/api.dart';
 import 'package:pattoomobile/controllers/agent_controller.dart';
@@ -24,12 +23,6 @@ class Chart extends StatelessWidget {
   Chart(this.agent);
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
     return ChartScreen(
         title: agent.agent_struct["name"]["value"], agent: this.agent);
   }
@@ -54,7 +47,13 @@ class _ChartScreenState extends State<ChartScreen> {
   var fav_color = Colors.grey[100];
   bool favourite = false;
   Widget chart;
-  final List<bool> isSelected = [false, false, true];
+  final Map<String, int> timeframe = {
+    "yy": 31536000,
+    'mm': 2628288,
+    "dd": 86400
+  };
+  final List<bool> isSelected = [false, true, false];
+  int current_Timeframe;
   List<Series<TimeSeriesSales, DateTime>> vibrationData =
       List<Series<TimeSeriesSales, DateTime>>();
   @override
@@ -114,7 +113,8 @@ class _ChartScreenState extends State<ChartScreen> {
                   child: Column(
                     children: <Widget>[
                       FutureBuilder(
-                          future: this.fetchTimeSeries(agents),
+                          future:
+                              this.fetchTimeSeries(agents, current_Timeframe),
                           builder:
                               (BuildContext context, AsyncSnapshot snapshot) {
                             if (snapshot.connectionState ==
@@ -229,17 +229,6 @@ class _ChartScreenState extends State<ChartScreen> {
                                     },
                             ),
                             SizedBox(width: queryData.size.width * 0.03),
-                            FloatingActionButton(
-                                heroTag: null,
-                                child: Icon(Icons.favorite, color: fav_color),
-                                onPressed: () {
-                                  setState(() {
-                                    favourite = !favourite;
-                                    fav_color = favourite
-                                        ? Colors.red
-                                        : Colors.grey[100];
-                                  });
-                                }),
                             SizedBox(width: queryData.size.width * 0.03),
                             FloatingActionButton(
                               heroTag: null,
@@ -306,7 +295,17 @@ class _ChartScreenState extends State<ChartScreen> {
                               for (int i = 0; i < isSelected.length; i++) {
                                 isSelected[i] = i == index;
                               }
-
+                              switch (isSelected.indexOf(true)) {
+                                case 0:
+                                  current_Timeframe = timeframe["dd"];
+                                  break;
+                                case 1:
+                                  current_Timeframe = timeframe["mm"];
+                                  break;
+                                case 2:
+                                  current_Timeframe = timeframe["yy"];
+                                  break;
+                              }
                               setState(() {});
                             },
                             isSelected: isSelected,
@@ -583,7 +582,7 @@ class _ChartScreenState extends State<ChartScreen> {
     queryData = MediaQuery.of(context);
     return ClientProvider(
       uri: Provider.of<AgentsManager>(context).loaded
-          ? Provider.of<AgentsManager>(context).httpLink
+          ? Provider.of<AgentsManager>(context).httpLink + "/graphql"
           : "None",
       child: Query(
           options: QueryOptions(
@@ -827,16 +826,18 @@ class _ChartScreenState extends State<ChartScreen> {
     return data;
   }
 
-  fetchTimeSeries(List datapoints) async {
+  fetchTimeSeries(List datapoints, int timeframe) async {
     var client = new http.Client();
     List data_ = new List();
     this.agents = datapoints;
     print(agents);
     this.vibrationData = List<Series<TimeSeriesSales, DateTime>>();
-    for (agent in datapoints) {
+    for (var agent in datapoints) {
       try {
-        var result = await client.get(
-            'http://calico.palisadoes.org/pattoo/api/v1/web/rest/data/${agent.datapoint_id}');
+        var result = await client.get(Provider.of<AgentsManager>(context,
+                    listen: false)
+                .httpLink +
+            '/rest/data/${agent.datapoint_id}?secondsago=${timeframe ?? this.timeframe["mm"]}');
 
         if (result.statusCode == 200) {
           data_.add(parseProducts(result.body));

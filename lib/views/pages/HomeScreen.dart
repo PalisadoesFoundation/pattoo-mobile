@@ -8,7 +8,6 @@ import 'package:pattoomobile/views/pages/SettingsScreen.dart';
 import 'package:pattoomobile/widgets/AgentsList.dart';
 import 'package:provider/provider.dart';
 
-
 class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -18,8 +17,6 @@ class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
   @override
   Widget build(BuildContext context) {
-
-
     List<Widget> children = [
       AgentsList(),
       DataDisplay(),
@@ -28,7 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
     ];
     return ClientProvider(
         uri: Provider.of<AgentsManager>(context).loaded
-            ? Provider.of<AgentsManager>(context).httpLink
+            ? Provider.of<AgentsManager>(context).httpLink + "/graphql"
             : "None",
         child: Scaffold(
           body: children[_currentIndex],

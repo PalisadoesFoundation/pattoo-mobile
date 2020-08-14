@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pattoomobile/api/api.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:pattoomobile/models/agent.dart';
+import 'package:pattoomobile/models/dataPointAgent.dart';
 
 class AgentsManager with ChangeNotifier {
   List<Agent> agents = new List();
@@ -106,7 +107,7 @@ class AgentsManager with ChangeNotifier {
         variables: <String, dynamic>{"id": id_pair});
     GraphQLClient _client = GraphQLClient(
       cache: InMemoryCache(),
-      link: new HttpLink(uri: httpLink),
+      link: new HttpLink(uri: httpLink + "/graphql"),
     );
     QueryResult result2 = await _client.query(options_);
     if (result2.data["allPairXlate"]["edges"].length == 0) {

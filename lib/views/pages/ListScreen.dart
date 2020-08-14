@@ -31,7 +31,7 @@ class _ListState extends State<List> {
 
     return ClientProvider(
         uri: Provider.of<AgentsManager>(context).loaded
-            ? Provider.of<AgentsManager>(context).httpLink
+            ? Provider.of<AgentsManager>(context).httpLink + "/graphql"
             : "None",
         child: Scaffold(
           body: CustomScrollView(
