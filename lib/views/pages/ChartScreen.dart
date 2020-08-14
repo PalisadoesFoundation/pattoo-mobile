@@ -60,10 +60,16 @@ class Chart extends StatelessWidget {
       }
 }
 
+final idxuser = User.idxUser.toString();
+
+final a = "1";
+final b = "149";
+final c = "1";
+
 final String addFavourite = """
       mutation {
-      createFavorite(Input: {idxUser: \$idxUser, idxChart:  \$a, order: \$b }) {
-        favorite {
+      createFavorite(Input: {idxUser: $a, idxChart:  $b, order: $c }) {
+        favorite{
           id
           idxFavorite
           idxChart
@@ -98,10 +104,7 @@ class _ChartScreenState extends State<ChartScreen> {
       List<Series<TimeSeriesSales, DateTime>>();
 
 
-  final idxuser = User.idxUser.toString();
 
-  final a = "3";
-  final b = "4";
 
 
   @override
@@ -156,6 +159,8 @@ class _ChartScreenState extends State<ChartScreen> {
             print(b);
             print(idxuser);
             print(resultData);
+            print(addFavourite);
+
           },
         ),
         builder: (RunMutation insert, QueryResult result)
@@ -296,9 +301,9 @@ class _ChartScreenState extends State<ChartScreen> {
                                       onPressed: ()
                                       {
                                         insert({
-                                          'idxUser': idxuser,
-                                          'idxChart':  a,
-                                          'order': b,
+                                          'idxUser': 2,
+                                          'idxChart':  149,
+                                          'order': 1,
                                         });
                                       },
                                         ),
