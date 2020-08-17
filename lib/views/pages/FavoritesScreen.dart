@@ -53,6 +53,7 @@ class _ListScreenState extends State<ListScreen> {
   Widget build(BuildContext context) {
     final userState = Provider.of<UserState>(context);
 
+    //Query for getting user favourites
     final String getFavoriteData = """
         query getFavoriteData(\$username: String)
         {
@@ -89,7 +90,7 @@ class _ListScreenState extends State<ListScreen> {
             options: QueryOptions(
                 documentNode: gql(getFavoriteData),
                 variables: {
-                  "username": userState.getUserName,
+                  "username": userState.getUserName, //comparing entered user name with username in database
                 }
             ),
             // ignore: missing_return
@@ -100,28 +101,19 @@ class _ListScreenState extends State<ListScreen> {
 
               if (result.loading) {
                 return const Center(
-                  child: CircularProgressIndicator(),
+                  child: CircularProgressIndicator(), //loader when query is running
                 );
               }
-              Map favdata = result.data.data;
+              Map favdata = result.data.data; //stores the resulting query data
 
-              var edgeList = favdata["allUser"]["edges"];
+              var edgeList = favdata["allUser"]["edges"]; //edge list created to to store first edges
 
               var data = new List<Chart>();//create new instance of list, passing chart object to create new list of charts
+
+              //for loop to populate data (of type List Chart) with data from the query
               for( var edge in  edgeList)
               {
-                  var favList = edge["node"]["favoriteUser"]["edges"];
-                  print(favList);
-
-
-                  User.idxUser = int.parse(edge["node"]["idxUser"]);
-                  User.enabled = int.parse(edge["node"]["enabled"]);
-
-                  print("user id ${User.idxUser}");
-                  print("are you enabled ${User.enabled}");
-                  print(validate());
-
-
+                var favList = edge["node"]["favoriteUser"]["edges"];
 
                 for(var fav in favList)
                 {
@@ -131,21 +123,18 @@ class _ListScreenState extends State<ListScreen> {
                 }
               }
 
-              print(data.length);
-
+              //Data collected from query printed in a reorderable list
               return Center(
                   child: ReorderableListView(
                     children: List.generate(data.length, (index)
                     {
-                      print(index);
                       return Card(
                         margin: EdgeInsets.only(left: 5, top: 10, right: 5, bottom: 10),
                         elevation: 10,
                         key: UniqueKey(),
                         child: ListTile(
                           title: Text(data[index].id),
-                          subtitle: Text(data[index].order),
-
+                          subtitle: Text(data[index].idxChart),
                         ),
                       );
                     }),
@@ -168,25 +157,4 @@ class _ListScreenState extends State<ListScreen> {
     );
   }
 
-}
-
-void main()
-{
-  testWidgets('Display user favs', (WidgetTester tester) async{
-    await tester.pumpWidget(ListScreen());
-    var appBar = find.byType(Card);
-    expect(appBar, findsOneWidget);
-  });
-}
-
-Widget validate()
-{
-  if(User.enabled == 0)
-    {
-      print("You are not enabled: ${User.enabled}");
-    }
-  else if(User.enabled == 1)
-    {
-      print("You are enabled: ${User.enabled}");
-    }
 }
