@@ -5,6 +5,7 @@ class listItem{
   // ignore: unnecessary_statements
   listItem(this.id, this.item);
 
+  //Chart options for api link on options page
   static List<listItem> getItems()
   {
     return <listItem>[
@@ -13,22 +14,5 @@ class listItem{
     ];
   }
 }
-
-
-class listItem2{
-  int id;
-  String item;
-
-  // ignore: unnecessary_statements
-  listItem2(this.id, this.item);
-
-  static List<listItem> getItems2()
-  {
-    return <listItem>[
-      listItem(1, '/pattoo/api/v1/'),
-    ];
-  }
-}
-
 
 

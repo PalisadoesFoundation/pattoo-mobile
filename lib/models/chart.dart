@@ -1,3 +1,5 @@
+//Variables for charts
+
 import 'dart:convert';
 
 import 'package:pattoomobile/models/dataPointAgent.dart';

@@ -1,3 +1,5 @@
+//Variables for tile items
+
 import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
 

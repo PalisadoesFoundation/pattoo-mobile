@@ -1,3 +1,5 @@
+//The class collects username/email on input to be used in the graph database
+
 import 'package:flutter/cupertino.dart';
 
 class UserState with ChangeNotifier{

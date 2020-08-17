@@ -1,3 +1,5 @@
+//Variables for agents
+
 import 'dart:convert';
 
 import './dataPointAgent.dart';

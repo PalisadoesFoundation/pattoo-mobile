@@ -1,3 +1,4 @@
+//Variables for Data point agent
 
 class DataPointAgent {
   String agent_id;
