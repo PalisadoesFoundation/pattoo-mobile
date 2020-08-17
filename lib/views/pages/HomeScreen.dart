@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:pattoomobile/controllers/agent_controller.dart';
 import 'package:pattoomobile/controllers/client_provider.dart';
-import 'file:///C:/Users/Toast/Desktop/Calico/lib/widgets/userData.dart';
 import 'package:pattoomobile/views/pages/ChartLists.dart';
 import 'package:pattoomobile/views/pages/SettingsScreen.dart';
+import 'package:pattoomobile/views/pages/FavoritesScreen.dart';
 import 'package:pattoomobile/widgets/AgentsList.dart';
 import 'package:provider/provider.dart';
 
@@ -21,7 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     List<Widget> children = [
       AgentsList(),
-      DataDisplay(),
+      DataDisplay(), //User favorite screen
       ChartList(),
       SettingsScreen()
     ];

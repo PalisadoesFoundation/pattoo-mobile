@@ -201,10 +201,10 @@ class _LoginFormState extends State<LoginForm> {
   Widget build(BuildContext context) {
     return new Scaffold(
         body: Stack(
-      children: <Widget>[
-        _showForm(),
-        _showCircularProgress(),
-      ],
-    ));
+          children: <Widget>[
+            _showForm(),
+            _showCircularProgress(),
+          ],
+        ));
   }
 }

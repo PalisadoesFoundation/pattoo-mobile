@@ -2,6 +2,7 @@
 class User{
    String id =  "";
    static int idxUser = 0;
+   static int enabled = 5;
    String username = "";
    List<Chart> favoriteCharts = [];
 //  String chart_id;

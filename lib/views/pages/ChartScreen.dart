@@ -20,7 +20,7 @@ import 'package:pattoomobile/widgets/createChartGroupPopUp.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:pattoomobile/models/chart.dart';
-import 'package:pattoomobile/widgets/userData.dart';
+import 'file:///C:/Users/Toast/Desktop/Calico/lib/views/pages/FavoritesScreen.dart';
 
 
 class Chart extends StatelessWidget {

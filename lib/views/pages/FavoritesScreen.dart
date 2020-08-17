@@ -10,6 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 class DataDisplay extends StatefulWidget {
   DataDisplay(): super();
+  int a;
   @override
   _DataDisplayState createState() => _DataDisplayState();
 }
@@ -60,6 +61,7 @@ class _ListScreenState extends State<ListScreen> {
               node {
                 id
                 idxUser
+                enabled
                 username
                 favoriteUser {
                   edges {
@@ -102,27 +104,24 @@ class _ListScreenState extends State<ListScreen> {
                 );
               }
               Map favdata = result.data.data;
-//              print(favdata);
+
               var edgeList = favdata["allUser"]["edges"];
 
               var data = new List<Chart>();//create new instance of list, passing chart object to create new list of charts
               for( var edge in  edgeList)
               {
                   var favList = edge["node"]["favoriteUser"]["edges"];
-//                print(favList);
+                  print(favList);
 
-                  //String idxUser =edge["node"]["idxUser"];
-//                   User user = new User();
+
                   User.idxUser = int.parse(edge["node"]["idxUser"]);
+                  User.enabled = int.parse(edge["node"]["enabled"]);
 
-                  print( "user id ${User.idxUser}");
-
-//                Map<String, dynamic> toJson() => {
-//                "idxUser": User.idxUser,
-//                };
+                  print("user id ${User.idxUser}");
+                  print("are you enabled ${User.enabled}");
+                  print(validate());
 
 
-//                print(favdata);
 
                 for(var fav in favList)
                 {
@@ -138,13 +137,15 @@ class _ListScreenState extends State<ListScreen> {
                   child: ReorderableListView(
                     children: List.generate(data.length, (index)
                     {
+                      print(index);
                       return Card(
                         margin: EdgeInsets.only(left: 5, top: 10, right: 5, bottom: 10),
                         elevation: 10,
                         key: UniqueKey(),
                         child: ListTile(
                           title: Text(data[index].id),
-                          subtitle: Text(data[index].idxChart),
+                          subtitle: Text(data[index].order),
+
                         ),
                       );
                     }),
@@ -158,6 +159,7 @@ class _ListScreenState extends State<ListScreen> {
                         }
                         final Chart newString = data.removeAt(oldIndex);
                         data.insert(newIndex, newString);
+
                       });
                     },
                   )
@@ -165,6 +167,7 @@ class _ListScreenState extends State<ListScreen> {
             })
     );
   }
+
 }
 
 void main()
@@ -174,4 +177,16 @@ void main()
     var appBar = find.byType(Card);
     expect(appBar, findsOneWidget);
   });
+}
+
+Widget validate()
+{
+  if(User.enabled == 0)
+    {
+      print("You are not enabled: ${User.enabled}");
+    }
+  else if(User.enabled == 1)
+    {
+      print("You are enabled: ${User.enabled}");
+    }
 }
