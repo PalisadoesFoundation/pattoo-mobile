@@ -1,21 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pattoomobile/controllers/theme_manager.dart';
+import 'package:pattoomobile/utils/app_themes.dart';
 import 'package:pattoomobile/widgets/ShowFavSwitch.dart';
-
+import 'package:provider/provider.dart';
 
 void main() {
-  Widget buildTestableWidget(Widget widget)
-  {
-    return MediaQuery(data: MediaQueryData(), child: MaterialApp(home: widget));
-  }
 
-  testWidgets('Switch test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(buildTestableWidget(ShowFavWidget()));
+  MaterialApp app = MaterialApp(
+    home: Scaffold(
+        body: ShowFavWidget(),
+    ),
+  );
 
-    // Verify that our counter starts at 0.
-    expect(find.byType(SwitchListTile), findsOneWidget);
+  testWidgets('Fav Switch container test', (WidgetTester tester) async {
+    // Create the widget by telling the tester to build it.
+    await tester.pumpWidget(app);
+    await tester.tap(find.byType(SwitchListTile));
+    await tester.pump();
+
+    final sometext = find.text('Show Favourites');
+    expect(sometext, findsOneWidget);
 
 
   });
+
 }
+//var result = FieldValidator.validateEmail('');
+//expect(result, 'Enter Email!');

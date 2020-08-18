@@ -7,8 +7,8 @@ Widget agentButton(BuildContext context, agent) {
   MediaQueryData queryData;
   queryData = MediaQuery.of(context);
 
-  return new Padding(
-      padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+  return Padding(
+      padding: EdgeInsets.fromLTRB(10.0, 12.0, 10.0, 10.0),
       child: ButtonTheme(
         height: queryData.size.height * 0.04,
         minWidth: queryData.size.width * 0.1,
@@ -39,9 +39,15 @@ Widget agentButton(BuildContext context, agent) {
                   ),
                 ),
                 SizedBox(height: queryData.size.height * 0.01),
-                Text(agent.program,
-                    style: TextStyle(fontSize: 14, color: Colors.white),
-                    textAlign: TextAlign.center),
+                SizedBox(
+                    height: queryData.size.height * 0.05,
+                    child: Wrap(direction: Axis.horizontal, children: <Widget>[
+                      Text(agent.program,
+                          style: TextStyle(
+                              fontSize: queryData.size.width * 0.032,
+                              color: Colors.white),
+                          textAlign: TextAlign.center)
+                    ])),
               ]),
             )),
       ));

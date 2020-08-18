@@ -1,3 +1,5 @@
+//Variables for agents
+
 import 'dart:convert';
 
 import './dataPointAgent.dart';
@@ -6,6 +8,7 @@ class Agent {
   String id;
   String program;
   List target_agents = new List();
+  Map translations = new Map();
   Agent(
     this.id,
     this.program,

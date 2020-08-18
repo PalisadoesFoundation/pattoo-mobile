@@ -7,16 +7,16 @@ import 'package:pattoomobile/models/agent.dart';
 import 'package:provider/provider.dart';
 import 'package:pattoomobile/controllers/theme_manager.dart';
 import 'package:pattoomobile/controllers/agent_controller.dart';
-import 'package:pattoomobile/widgets/circleMenu.dart';
 
 import 'Display-Messages.dart';
+
 class AgentsList extends StatelessWidget {
   Widget showOptions(BuildContext context) {
     Map translationMap = new Map();
     ScrollController _scrollController = new ScrollController();
-    print("Loaded = ");
-    print(Provider.of<AgentsManager>(context).loaded);
-    return (Provider.of<AgentsManager>(context).loaded == false) ? DisplayMessage() : Query(
+    return (Provider.of<AgentsManager>(context).loaded == false)
+        ? DisplayMessage()
+        : Query(
         options: QueryOptions(
           documentNode: gql(AgentFetch().translateAgent),
           variables: <String, String>{
@@ -46,7 +46,8 @@ class AgentsList extends StatelessWidget {
                   // 'cursor': 10
                 },
               ),
-              builder: (QueryResult result, {refetch, FetchMore fetchMore}) {
+              builder: (QueryResult result,
+                  {refetch, FetchMore fetchMore}) {
                 if (result.loading && result.data == null) {
                   return const Center(
                     child: CircularProgressIndicator(),
@@ -54,7 +55,8 @@ class AgentsList extends StatelessWidget {
                 }
 
                 if (result.hasException) {
-                  return Text('\nErrors: \n  ' + result.exception.toString());
+                  return Text(
+                      '\nErrors: \n  ' + result.exception.toString());
                 }
 
                 if (result.data["allAgent"]["edges"].length == 0 &&
@@ -78,15 +80,27 @@ class AgentsList extends StatelessWidget {
                     ],
                   );
                 }
-                Provider.of<AgentsManager>(context).agents = new List();;
+                Provider.of<AgentsManager>(context).agents = new List();
+                ;
 
-                for (var i in result.data['allAgent']['edges']){
-                      Agent agent = new Agent(i["node"]["idxAgent"],
-                          translationMap[i["node"]["agentProgram"]]);
-                      Provider.of<AgentsManager>(context, listen: false)
-                          .agents
-                          .add(agent);
-                    }
+                for (var i in result.data['allAgent']['edges']) {
+                  Agent agent = new Agent(i["node"]["idxAgent"],
+                      translationMap[i["node"]["agentProgram"]]);
+                  Provider.of<AgentsManager>(context, listen: false)
+                      .agents
+                      .add(agent);
+                  var translations = i["node"]["pairXlateGroup"]
+                  ["pairXlatePairXlateGroup"]["edges"];
+                  for (var translation in translations) {
+                    agent.translations.putIfAbsent(
+                        translation["node"]["key"],
+                            () => {
+                          "translation": translation["node"]
+                          ["translation"],
+                          "unit": translation["node"]["units"]
+                        });
+                  }
+                }
                 final Map pageInfo = result.data['allAgent']['pageInfo'];
                 final String fetchMoreCursor = pageInfo['endCursor'];
 
@@ -96,12 +110,24 @@ class AgentsList extends StatelessWidget {
                     // this is where you combine your previous data and response
                     // in this case, we want to display previous repos plus next repos
                     // so, we combine data in both into a single list of repos
-                    for (var i in fetchMoreResultData["allAgent"]["edges"]){
+                    for (var i in fetchMoreResultData["allAgent"]
+                    ["edges"]) {
                       Agent agent = new Agent(i["node"]["idxAgent"],
                           translationMap[i["node"]["agentProgram"]]);
                       Provider.of<AgentsManager>(context, listen: false)
                           .agents
                           .add(agent);
+                      var translations = i["node"]["pairXlateGroup"]
+                      ["pairXlatePairXlateGroup"]["edges"];
+                      for (var translation in translations) {
+                        agent.translations.putIfAbsent(
+                            translation["node"]["key"],
+                                () => {
+                              "translation": translation["node"]
+                              ["translation"],
+                              "unit": translation["node"]["units"]
+                            });
+                      }
                     }
                   },
                 );
@@ -122,21 +148,22 @@ class AgentsList extends StatelessWidget {
                           controller: _scrollController,
                           scrollDirection: Axis.vertical,
                           gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2),
+                          SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2),
                           shrinkWrap: true,
                           children: <Widget>[
-                        for (var agent
-                            in Provider.of<AgentsManager>(context).agentsList)
-                          agentButton(context, agent),
-                        if (result.loading)
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              CircularProgressIndicator(),
-                            ],
-                          )
-                      ]))
+                            for (var agent
+                            in Provider.of<AgentsManager>(context)
+                                .agentsList)
+                              agentButton(context, agent),
+                            if (result.loading)
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  CircularProgressIndicator(),
+                                ],
+                              )
+                          ]))
                 ]);
               });
         });
@@ -146,10 +173,10 @@ class AgentsList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Available Agents',style: TextStyle(color:Colors.white)),
+        title: Text('Available Agents', style: TextStyle(color: Colors.white)),
+        leading: new Container(),
         backgroundColor:
-            Provider.of<ThemeManager>(context).themeData.backgroundColor,
-            actions: <Widget>[Menu()],
+        Provider.of<ThemeManager>(context).themeData.backgroundColor,
       ),
       body: Center(
         child: Stack(

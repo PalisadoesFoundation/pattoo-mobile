@@ -1,3 +1,5 @@
+//Variables for the user login screen
+
 class LoginFormModel {
   String email;
   String password;

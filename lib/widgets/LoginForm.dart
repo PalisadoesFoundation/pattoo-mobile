@@ -1,17 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:pattoomobile/controllers/userState.dart';
 import 'package:pattoomobile/util/validator.dart';
 import 'package:pattoomobile/models/view_models/login_form_model.dart';
+import 'package:pattoomobile/widgets/emailLogin.dart';
 import 'package:provider/provider.dart';
 import 'package:pattoomobile/controllers/theme_manager.dart';
 import 'package:pattoomobile/utils/app_themes.dart';
 import 'package:pattoomobile/models/timestamp.dart';
+
+
 class LoginForm extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => new _LoginFormState();
 }
 
 class _LoginFormState extends State<LoginForm> {
+
   LoginFormModel userLogin = new LoginFormModel();
+
   TimeStamp time = new TimeStamp(timestamp: 1591211730580, value: 10);
   String _errorMessage;
   final _formKey = new GlobalKey<FormState>();
@@ -62,7 +68,7 @@ class _LoginFormState extends State<LoginForm> {
             shrinkWrap: true,
             children: <Widget>[
               showLogo(),
-              showEmailInput(),
+              emailLogin(),
               showPasswordInput(),
               showPrimaryButton(),
               showSecondaryButton(),
@@ -92,7 +98,9 @@ class _LoginFormState extends State<LoginForm> {
   Widget showLogo() {
     AppTheme theme = Provider.of<ThemeManager>(context).getTheme();
 
-    var logo = theme == AppTheme.Light ? 'images/pattoo-light.png': 'images/pattoo-dark.png';
+    var logo = theme == AppTheme.Light
+        ? 'images/pattoo-light.png'
+        : 'images/pattoo-dark.png';
     return new Hero(
       tag: 'hero',
       child: Padding(
@@ -118,7 +126,8 @@ class _LoginFormState extends State<LoginForm> {
             icon: new Icon(
               Icons.mail,
             )),
-        validator: FieldValidator.validateEmail,
+
+        validator: validateEmail,
         onSaved: (value) => this.userLogin.email = value.trim(),
       ),
     );
@@ -147,13 +156,16 @@ class _LoginFormState extends State<LoginForm> {
       child: Container(
         child: Align(
           alignment: Alignment.centerRight,
-          child: new Text(
-              'Forget Password?',
-              style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300,color: Colors.lightBlue)),
+          child: new Text('Forget Password?',
+              style: new TextStyle(
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.w300,
+                  color: Colors.lightBlue)),
         ),
       ),
-      onPressed: (){},
-);
+
+      onPressed: () {},
+    );
   }
 
   Widget showPrimaryButton() {
@@ -164,19 +176,30 @@ class _LoginFormState extends State<LoginForm> {
         shape: new RoundedRectangleBorder(
             borderRadius: new BorderRadius.circular(30.0)),
         onPressed: () {
-          Navigator.pushNamed(context, '/HomeScreen');
+          Navigator.pushReplacementNamed(context, '/HomeScreen');
+
         },
-        child: const Text('Login', style: TextStyle(fontSize: 20, color: Colors.white)),
+        child: const Text('Login',
+            style: TextStyle(fontSize: 20, color: Colors.white)),
       ),
     );
   }
 
+  //Regular Expression Validation
+  String validateEmail(String value) {
+    Pattern pattern =
+        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+    RegExp regex = new RegExp(pattern);
+    if (!regex.hasMatch(value))
+      return 'Enter Valid Email';
+    else
+      return null;
+  }
 
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-
         body: Stack(
           children: <Widget>[
             _showForm(),
@@ -184,10 +207,4 @@ class _LoginFormState extends State<LoginForm> {
           ],
         ));
   }
-
-
-
-
-
 }
-

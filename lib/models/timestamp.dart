@@ -1,3 +1,4 @@
+//Variables for time stamp (time series data)
 import 'dart:convert';
 
 class TimeStamp {
