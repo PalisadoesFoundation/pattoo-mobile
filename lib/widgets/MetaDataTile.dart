@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pattoomobile/controllers/theme_manager.dart';
+import 'package:provider/provider.dart';
 
 class MetaDataTile extends StatefulWidget {
   final title;
@@ -20,15 +22,36 @@ class _metaDataTileState extends State<MetaDataTile> {
     MediaQueryData queryData;
     queryData = MediaQuery.of(context);
     return ListTile(
-        leading: Icon(Icons.timeline),
-        title: Text(this.title, style: TextStyle(fontWeight: FontWeight.bold)),
+        leading: Icon(
+          Icons.timeline,
+          color: Provider.of<ThemeManager>(context)
+              .themeData
+              .textTheme
+              .headline4
+              .color,
+        ),
+        title: Text(this.title,
+            style: TextStyle(
+                color: Provider.of<ThemeManager>(context)
+                    .themeData
+                    .textTheme
+                    .headline4
+                    .color,
+                fontWeight: FontWeight.bold)),
         trailing: SizedBox(
           width: queryData.size.width * 0.32,
           child: Wrap(
               textDirection: TextDirection.ltr,
               direction: Axis.horizontal,
               children: <Widget>[
-                Text(this.value, style: TextStyle(fontWeight: FontWeight.bold))
+                Text(this.value,
+                    style: TextStyle(
+                        color: Provider.of<ThemeManager>(context)
+                            .themeData
+                            .textTheme
+                            .headline5
+                            .color,
+                        fontWeight: FontWeight.bold))
               ]),
         ));
   }

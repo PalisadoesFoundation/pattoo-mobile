@@ -1,160 +1,195 @@
+import 'dart:collection';
 import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:pattoomobile/api/api.dart';
+import 'package:pattoomobile/controllers/agent_controller.dart';
+import 'package:pattoomobile/controllers/theme_manager.dart';
 import 'package:pattoomobile/controllers/userState.dart';
-import 'package:pattoomobile/models/view_models/user.dart';
+import 'package:pattoomobile/views/pages/ChartScreen.dart';
+import 'package:pattoomobile/widgets/Display-Messages.dart';
+
 import 'package:provider/provider.dart';
-import 'package:flutter_test/flutter_test.dart';
+import 'package:pattoomobile/models/chart.dart';
+import 'package:reorderables/reorderables.dart';
 
 //void main() => runApp(DataDisplay());
 
 class DataDisplay extends StatefulWidget {
-  DataDisplay(): super();
-  int a;
+  DataDisplay() : super();
   @override
   _DataDisplayState createState() => _DataDisplayState();
 }
 
 class _DataDisplayState extends State<DataDisplay> {
-
-
-  Widget build(BuildContext context) {
-
-    final HttpLink httpLink =
-    HttpLink(uri: "http://calico.palisadoes.org/pattoo/api/v1/web/graphql");
-    final ValueNotifier<GraphQLClient> client = ValueNotifier<GraphQLClient>(
-      GraphQLClient(
-        link: httpLink,
-        cache: OptimisticCache(
-          dataIdFromObject: typenameDataIdFromObject,
-        ),
-      ),
-    );
-    return GraphQLProvider(
-      child: MaterialApp(
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        home: ListScreen(),
-      ),
-      client: client,
-    );
-  }
-}
-
-class ListScreen extends StatefulWidget {
-  @override
-  _ListScreenState createState() => _ListScreenState();
-}
-
-class _ListScreenState extends State<ListScreen> {
-
-  @override
   Widget build(BuildContext context) {
     final userState = Provider.of<UserState>(context);
-
-    //Query for getting user favourites
-    final String getFavoriteData = """
-        query getFavoriteData(\$username: String)
-        {
-          allUser(username: \$username) {
-            edges {
-              node {
-                id
-                idxUser
-                enabled
-                username
-                favoriteUser {
-                  edges {
-                    node {
-                      order 
-                      chart {
-                        id
-                        idxChart
-                        name
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-        """;
-
+    setState(() {});
+    MediaQueryData queryData = MediaQuery.of(context);
     return Scaffold(
-        appBar: AppBar(
-          title: Text("My Favourites"),
-        ),
-        body: Query(
-            options: QueryOptions(
-                documentNode: gql(getFavoriteData),
-                variables: {
-                  "username": userState.getUserName, //comparing entered user name with username in database
-                }
-            ),
-            // ignore: missing_return
-            builder: (QueryResult result, {VoidCallback refetch, FetchMore fetchMore}) {
-              if (result.hasException) {
-                return Text(result.exception.toString());
-              }
-
-              if (result.loading) {
-                return const Center(
-                  child: CircularProgressIndicator(), //loader when query is running
-                );
-              }
-              Map favdata = result.data.data; //stores the resulting query data
-
-              var edgeList = favdata["allUser"]["edges"]; //edge list created to to store first edges
-
-              var data = new List<Chart>();//create new instance of list, passing chart object to create new list of charts
-
-              //for loop to populate data (of type List Chart) with data from the query
-              for( var edge in  edgeList)
-              {
-                var favList = edge["node"]["favoriteUser"]["edges"];
-
-                for(var fav in favList)
-                {
-                  Chart userFavChart = new Chart();
-                  userFavChart.populateFromMap(fav);
-                  data.add(userFavChart);
-                }
-              }
-
-              //Data collected from query printed in a reorderable list
-              return Center(
-                  child: ReorderableListView(
-                    children: List.generate(data.length, (index)
-                    {
-                      return Card(
-                        margin: EdgeInsets.only(left: 5, top: 10, right: 5, bottom: 10),
-                        elevation: 10,
-                        key: UniqueKey(),
-                        child: ListTile(
-                          title: Text(data[index].id),
-                          subtitle: Text(data[index].idxChart),
+      appBar: AppBar(
+          leading: Container(),
+          centerTitle: true,
+          elevation: 20,
+          title: Text("Favourite Charts",
+              style:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold))),
+      body: (Provider.of<AgentsManager>(context).loaded == false)
+          ? DisplayMessage()
+          : Column(children: <Widget>[
+              SizedBox(
+                height: queryData.size.longestSide * 0.05,
+              ),
+              Expanded(
+                child: StatefulBuilder(builder: (context, updateState) {
+                  return ReorderableWrap(
+                    spacing: 8.0,
+                    runSpacing: 4.0,
+                    padding: const EdgeInsets.all(8),
+                    children:
+                        List.generate(userState.chartsList.length, (index) {
+                      return InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => MultiChart(
+                                      chart: userState.chartsList[index]
+                                          ["chart"])));
+                        },
+                        child: Align(
+                          child: Container(
+                            height: queryData.size.longestSide * 0.2,
+                            child: Card(
+                                elevation: 10.0,
+                                margin: queryData.orientation ==
+                                        Orientation.landscape
+                                    ? EdgeInsets.only(
+                                        top: queryData.size.longestSide * 0.017,
+                                        bottom:
+                                            queryData.size.longestSide * 0.017,
+                                        left:
+                                            queryData.size.shortestSide * 0.017,
+                                        right:
+                                            queryData.size.shortestSide * 0.017)
+                                    : EdgeInsets.only(
+                                        top: queryData.size.longestSide * 0.007,
+                                        bottom:
+                                            queryData.size.longestSide * 0.007,
+                                        left:
+                                            queryData.size.shortestSide * 0.017,
+                                        right: queryData.size.shortestSide *
+                                            0.017),
+                                shape: new RoundedRectangleBorder(
+                                    borderRadius: new BorderRadius.circular(
+                                        queryData.size.shortestSide * 0.015)),
+                                color: Provider.of<ThemeManager>(context)
+                                    .themeData
+                                    .backgroundColor,
+                                child: new Center(
+                                  child: Stack(
+                                      fit: StackFit.passthrough,
+                                      children: <Widget>[
+                                        Center(
+                                          child: Align(
+                                            alignment: Alignment.topLeft,
+                                            child: SizedBox(
+                                                height: queryData.size.height *
+                                                    0.04,
+                                                width: queryData.size.height *
+                                                    0.04,
+                                                child: Icon(
+                                                  Icons.favorite,
+                                                  color: Colors.red,
+                                                )),
+                                          ),
+                                        ),
+                                        Center(
+                                          child: Wrap(
+                                              direction: Axis.horizontal,
+                                              children: <Widget>[
+                                                Text(
+                                                    userState
+                                                        .chartsList[index]
+                                                            ["chart"]
+                                                        .name,
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: queryData.size
+                                                                            .shortestSide *
+                                                                        0.05 >
+                                                                    40 ||
+                                                                queryData.size
+                                                                            .shortestSide *
+                                                                        0.05 <
+                                                                    20
+                                                            ? 24
+                                                            : queryData.size
+                                                                    .width *
+                                                                0.05,
+                                                        color: Colors.white),
+                                                    textAlign: TextAlign.center)
+                                              ]),
+                                        ),
+                                      ]),
+                                )),
+                          ),
                         ),
                       );
                     }),
-
-                    onReorder: (int oldIndex, int newIndex)
-                    {
-                      setState(()
-                      {
+                    onReorder: (int oldIndex, int newIndex) {
+                      updateState(() {
                         if (newIndex > oldIndex) {
                           newIndex -= 1;
                         }
-                        final Chart newString = data.removeAt(oldIndex);
-                        data.insert(newIndex, newString);
+                        var oldChart = userState.chartsList.elementAt(newIndex);
+                        var newChart = userState.chartsList.removeAt(oldIndex);
+                        userState.chartsList.insert(newIndex, newChart);
+                        List update = List();
 
+                        update.add({
+                          "chart": newChart["idFavorite"],
+                          "order": newIndex
+                        });
+                        update.add({
+                          "chart": oldChart["idFavorite"],
+                          "order": oldIndex
+                        });
+                        updateOrder(update).then((value) => {});
                       });
                     },
-                  )
-              );
-            })
+                  );
+                }),
+              )
+            ]),
     );
   }
 
+  Future updateOrder(List charts) async {
+    print(charts);
+    List results = List();
+    for (var chart in charts) {
+      QueryOptions options = QueryOptions(
+        documentNode: gql(AgentFetch().updateFavouriteOrder),
+        variables: <String, String>{
+          "order": chart["order"].toString(),
+          "idxFavorite": chart["chart"]
+        },
+      );
+      print(Provider.of<AgentsManager>(context, listen: false).httpLink +
+          "/graphql");
+      GraphQLClient _client = GraphQLClient(
+        cache: InMemoryCache(),
+        link: new HttpLink(
+            uri: Provider.of<AgentsManager>(context, listen: false).httpLink +
+                "/graphql"),
+      );
+      QueryResult result = await _client.query(options);
+      results.add(result.data);
+    }
+    await Provider.of<UserState>(context, listen: false)
+        .loadFavourites(context);
+    return results;
+  }
 }

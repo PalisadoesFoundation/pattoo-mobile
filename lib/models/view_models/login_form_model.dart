@@ -1,7 +1,7 @@
 //Variables for the user login screen
 
 class LoginFormModel {
-  String email;
+  String username;
   String password;
-  LoginFormModel({this.email, this.password});
+  LoginFormModel({this.username, this.password});
 }
