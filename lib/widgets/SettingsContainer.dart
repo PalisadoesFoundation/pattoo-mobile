@@ -62,7 +62,6 @@ class _SettingsContainerState extends State<SettingsContainer> {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   DarkModeWidget(),
-                  ShowFavWidget(),
                   Container(
                     child: Row(
                       children: <Widget>[

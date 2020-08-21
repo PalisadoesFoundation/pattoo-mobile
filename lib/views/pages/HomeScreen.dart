@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:pattoomobile/controllers/agent_controller.dart';
 import 'package:pattoomobile/controllers/client_provider.dart';
 import 'package:pattoomobile/controllers/theme_manager.dart';
-import 'package:pattoomobile/widgets/userData.dart';
+//import 'package:pattoomobile/widgets/userData.dart';
+import 'package:pattoomobile/views/pages/FavoritesScreen.dart';
 import 'package:pattoomobile/views/pages/ChartLists.dart';
 import 'package:pattoomobile/views/pages/SettingsScreen.dart';
 import 'package:pattoomobile/widgets/AgentsList.dart';
 import 'package:provider/provider.dart';
+
+import 'FavoritesScreen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
