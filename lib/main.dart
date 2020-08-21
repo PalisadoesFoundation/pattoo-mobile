@@ -1,3 +1,4 @@
+import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pattoomobile/controllers/agent_controller.dart';
@@ -32,17 +33,14 @@ class _AppState extends State<App> {
         ],
         child: Consumer<AgentsManager>(builder: (context, agent, _) {
           return Consumer<ThemeManager>(builder: (context, manager, _) {
-               return Consumer<UserState>(builder: (context, user, _)
-               {
-                 return MaterialApp(
-                     debugShowCheckedModeBanner: false,
-                     theme: manager.themeData,
-                     initialRoute: '/',
-                     routes: {
-                       '/': (context) => LoginScreen(),
-                       '/HomeScreen': (context) => HomeScreen(),
-                     });
-               });
+            return MaterialApp(
+                debugShowCheckedModeBanner: false,
+                theme: manager.themeData,
+                initialRoute: '/',
+                routes: {
+                  '/': (context) => LoginScreen(),
+                  '/HomeScreen': (context) => HomeScreen(),
+                });
           });
         }));
   }

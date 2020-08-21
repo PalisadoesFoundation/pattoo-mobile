@@ -46,7 +46,7 @@ mutation ModifyChartName(\$name:String,\$id:String) {
 
   String deleteChart = """
 mutation DeleteChart(\$id:String) {
-  updateChart(Input: {idxChart: \$id,enabled:'0'}) {
+  updateChart(Input: {idxChart: \$id,enabled:"0"}) {
     chart {
       id
       idxChart
@@ -70,7 +70,7 @@ mutation addDatapoint(\$idxDatapoint:String,\$idxChart:String){
 """;
   String deleteChartDatapoint = """
 mutation addDatapoint(\$idxChartDatapoint:String,\$idxChart){
-  updateChartDataPoint(Input: {idxChartDatapoint: \$idxChartDatapoint, idxChart: \$idxChart,enabled:'0'}) {
+  updateChartDataPoint(Input: {idxChartDatapoint: \$idxChartDatapoint, idxChart: \$idxChart,enabled:"0"}) {
     chartDatapoint {
       id
       idxChartDatapoint
@@ -81,6 +81,59 @@ mutation addDatapoint(\$idxChartDatapoint:String,\$idxChart){
   }
 }
 """;
+
+  String updateFavouriteOrder = """
+  mutation updateOrder(\$idxFavorite:String!, \$order:String!){
+  updateFavorite(Input: {idxFavorite: \$idxFavorite, order: \$order}) {
+    favorite {
+      idxFavorite
+      idxChart
+      idxUser
+      enabled
+    }
+  }
+}
+""";
+  String createFavouriteChart = """
+  mutation createFav(\$idxUser:String! \$idxChart:String!, \$order:String!  ) {
+  createFavorite(Input: {idxUser:\$idxUser, idxChart: \$idxChart, order:\$order}) {
+    favorite{
+      id
+      idxFavorite
+      idxChart
+      idxUser
+      enabled
+    }
+  }
+}
+ """;
+
+  String removeFavouriteChart = """
+  mutation removeFavourite(\$idxFavorite:String!) {
+  updateFavorite(Input: {idxFavorite: \$idxFavorite, enabled:"0"}) {
+    favorite {
+      idxFavorite
+      idxChart
+      idxUser
+      enabled
+    }
+  }
+} 
+""";
+
+  String getUserInfo = """
+  query getUserInfo(\$username:String!){
+  allUser(username:\$username){
+    edges{
+      node{
+        idxUser
+        username
+        firstName
+        lastName
+      }
+    }
+  }
+} """;
   String getAllAgents = """
 query getAllAgents(\$cursor: String) {
   allAgent(first: 12, after: \$cursor) {
@@ -217,32 +270,62 @@ query getTimeSeries(\$id: String){
 //Favourites
 
   String getFavoriteData = """
-query getFavoriteData(\$username: String)
-{
-  allUser(username: "pattoo") {
-    edges {
+        query getFavoriteData(\$username: String)
+        {
+          allUser(username: \$username) {
+ edges {
       node {
         id
+        idxUser
         username
         favoriteUser {
           edges {
             node {
-              order 
+              order
+              enabled
+              idxFavorite
               chart {
-                id
                 idxChart
                 name
+                enabled
+                chartDatapointChart {
+                  edges {
+                    node {
+                      idxChartDatapoint
+                      datapoint {
+                        idxDatapoint
+                        idxAgent
+                        glueDatapoint {
+                          edges {
+                            node {
+                              pair {
+                                key
+                                value
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
               }
             }
           }
         }
       }
     }
-  }
-}
-""";
+    pageInfo {
+      startCursor
+      endCursor
+      hasNextPage
+      hasPreviousPage
+    }
+          }
+        }
+        """;
 
-String addFavourite ="""
+  String addFavourite = """
 mutation {
   createFavorite(Input: {idxUser: "3", idxChart: "149", order: "2"}) {
     favorite {
