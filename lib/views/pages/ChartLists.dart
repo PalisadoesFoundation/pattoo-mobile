@@ -40,9 +40,27 @@ class _ChartListState extends State<ChartList> {
             ),
             SliverToBoxAdapter(child: DisplayMessage())
           ])
-        : FutureBuilder(
-            future: getCharts(),
-            builder: (context, snapshot) {
+        : Query(
+            options: QueryOptions(
+              documentNode: gql(AgentFetch().getAllCharts),
+            ),
+            builder: (QueryResult result, {refetch, FetchMore fetchMore}) {
+              List<Chart> charts = new List<Chart>();
+              if (result.loading && result.data == null) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+
+              if (result.hasException) {
+                return Text('\nErrors: \n  ' + result.exception.toString());
+              }
+              for (var json in result.data["allChart"]["edges"]) {
+                if (json['node']['name'] != "") {
+                  Chart chart = Chart.fromJson(json['node'], context);
+                  charts.add(chart);
+                }
+              }
               return Scaffold(
                 body: CustomScrollView(
                   slivers: <Widget>[
@@ -58,116 +76,107 @@ class _ChartListState extends State<ChartList> {
                             color: Colors.white,
                           ),
                         )),
-                    snapshot.connectionState == ConnectionState.waiting
-                        ? SliverToBoxAdapter(
-                            child: this.body,
-                          )
-                        : SliverGrid(
-                            gridDelegate:
-                                SliverGridDelegateWithMaxCrossAxisExtent(
-                              maxCrossAxisExtent: 200.0,
-                              mainAxisSpacing: 10.0,
-                              crossAxisSpacing: 10.0,
+                    SliverGrid(
+                      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                        maxCrossAxisExtent: 200.0,
+                        mainAxisSpacing: 10.0,
+                        crossAxisSpacing: 10.0,
+                      ),
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        return InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        MultiChart(chart: charts[index])));
+                          },
+                          child: Align(
+                            child: Container(
+                              child: Card(
+                                  elevation: 10.0,
+                                  margin: queryData.orientation ==
+                                          Orientation.landscape
+                                      ? EdgeInsets.only(
+                                          top: queryData.size.longestSide *
+                                              0.017,
+                                          bottom: queryData.size.longestSide *
+                                              0.017,
+                                          left: queryData.size.shortestSide *
+                                              0.017,
+                                          right: queryData.size.shortestSide *
+                                              0.017)
+                                      : EdgeInsets.only(
+                                          top: queryData.size.longestSide *
+                                              0.007,
+                                          bottom: queryData.size.longestSide *
+                                              0.007,
+                                          left: queryData.size.shortestSide *
+                                              0.017,
+                                          right: queryData.size.shortestSide *
+                                              0.017),
+                                  shape: new RoundedRectangleBorder(
+                                      borderRadius: new BorderRadius.circular(
+                                          queryData.size.shortestSide * 0.015)),
+                                  color: Provider.of<ThemeManager>(context)
+                                      .themeData
+                                      .backgroundColor,
+                                  child: new Center(
+                                    child: Stack(
+                                        fit: StackFit.passthrough,
+                                        children: <Widget>[
+                                          Center(
+                                            child: Align(
+                                              alignment: Alignment.topLeft,
+                                              child: SizedBox(
+                                                height: queryData.size.height *
+                                                    0.04,
+                                                width: queryData.size.height *
+                                                    0.04,
+                                                child: FittedBox(
+                                                  fit: BoxFit.contain,
+                                                  child:
+                                                      Stack(children: <Widget>[
+                                                    Image(
+                                                        image: AssetImage(
+                                                            assetName)),
+                                                  ]),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          Center(
+                                            child: Wrap(
+                                                direction: Axis.horizontal,
+                                                children: <Widget>[
+                                                  Text("${charts[index].name}",
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: queryData.size
+                                                                              .shortestSide *
+                                                                          0.05 >
+                                                                      40 ||
+                                                                  queryData.size
+                                                                              .shortestSide *
+                                                                          0.05 <
+                                                                      20
+                                                              ? 24
+                                                              : queryData.size
+                                                                      .width *
+                                                                  0.05,
+                                                          color: Colors.white),
+                                                      textAlign:
+                                                          TextAlign.center)
+                                                ]),
+                                          ),
+                                        ]),
+                                  )),
                             ),
-                            delegate:
-                                SliverChildBuilderDelegate((context, index) {
-                              return InkWell(
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => MultiChart(
-                                              chart: snapshot.data[index])));
-                                },
-                                child: Align(
-                                  child: Container(
-                                    child: Card(
-                                        elevation: 10.0,
-                                        margin: queryData.orientation ==
-                                                Orientation.landscape
-                                            ? EdgeInsets.only(
-                                                top: queryData.size.longestSide *
-                                                    0.017,
-                                                bottom: queryData.size.longestSide *
-                                                    0.017,
-                                                left: queryData.size.shortestSide *
-                                                    0.017,
-                                                right: queryData.size.shortestSide *
-                                                    0.017)
-                                            : EdgeInsets.only(
-                                                top: queryData.size.longestSide *
-                                                    0.007,
-                                                bottom: queryData.size.longestSide *
-                                                    0.007,
-                                                left: queryData.size.shortestSide *
-                                                    0.017,
-                                                right: queryData.size.shortestSide *
-                                                    0.017),
-                                        shape: new RoundedRectangleBorder(
-                                            borderRadius: new BorderRadius.circular(queryData.size.shortestSide * 0.015)),
-                                        color: Provider.of<ThemeManager>(context).themeData.backgroundColor,
-                                        child: new Center(
-                                          child: Stack(
-                                              fit: StackFit.passthrough,
-                                              children: <Widget>[
-                                                Center(
-                                                  child: Align(
-                                                    alignment:
-                                                        Alignment.topLeft,
-                                                    child: SizedBox(
-                                                      height: queryData
-                                                              .size.height *
-                                                          0.04,
-                                                      width: queryData
-                                                              .size.height *
-                                                          0.04,
-                                                      child: FittedBox(
-                                                        fit: BoxFit.contain,
-                                                        child: Stack(
-                                                            children: <Widget>[
-                                                              Image(
-                                                                  image: AssetImage(
-                                                                      assetName)),
-                                                            ]),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                                Center(
-                                                  child: Wrap(
-                                                      direction:
-                                                          Axis.horizontal,
-                                                      children: <Widget>[
-                                                        Text(
-                                                            "${snapshot.data[index].name}",
-                                                            style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                fontSize: queryData.size.shortestSide *
-                                                                                0.05 >
-                                                                            40 ||
-                                                                        queryData.size.shortestSide *
-                                                                                0.05 <
-                                                                            20
-                                                                    ? 24
-                                                                    : queryData
-                                                                            .size
-                                                                            .width *
-                                                                        0.05,
-                                                                color: Colors
-                                                                    .white),
-                                                            textAlign: TextAlign
-                                                                .center)
-                                                      ]),
-                                                ),
-                                              ]),
-                                        )),
-                                  ),
-                                ),
-                              );
-                            }, childCount: snapshot.data.length),
                           ),
+                        );
+                      }, childCount: charts.length),
+                    ),
                   ],
                 ),
               );

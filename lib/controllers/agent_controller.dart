@@ -119,6 +119,53 @@ class AgentsManager with ChangeNotifier {
     }
   }
 
+  Future loadAgents(BuildContext context) async {
+    QueryOptions options = QueryOptions(
+      documentNode: gql(AgentFetch().translateAgent),
+      variables: <String, String>{
+        // set cursor to null so as to start at the beginning
+        // 'cursor': 10
+      },
+    );
+    GraphQLClient _client = GraphQLClient(
+      cache: InMemoryCache(),
+      link: new HttpLink(uri: this.httpLink + "/graphql"),
+    );
+    Map translationMap = Map();
+    QueryResult result = await _client.query(options);
+    for (var i in result.data["allAgentXlate"]["edges"]) {
+      translationMap.putIfAbsent(
+          i["node"]["agentProgram"], () => i["node"]["translation"]);
+    }
+    QueryOptions options2 = QueryOptions(
+      documentNode: gql(AgentFetch().getAllAgents),
+      variables: <String, String>{
+        // set cursor to null so as to start at the beginning
+        // 'cursor': 10
+      },
+    );
+    GraphQLClient _client2 = GraphQLClient(
+      cache: InMemoryCache(),
+      link: new HttpLink(uri: this.httpLink + "/graphql"),
+    );
+    QueryResult result2 = await _client2.query(options2);
+    for (var i in result2.data['allAgent']['edges']) {
+      Agent agent = new Agent(
+          i["node"]["idxAgent"], translationMap[i["node"]["agentProgram"]]);
+      this.agents.add(agent);
+      var translations =
+          i["node"]["pairXlateGroup"]["pairXlatePairXlateGroup"]["edges"];
+      for (var translation in translations) {
+        agent.translations.putIfAbsent(
+            translation["node"]["key"],
+            () => {
+                  "translation": translation["node"]["translation"],
+                  "unit": translation["node"]["units"]
+                });
+      }
+    }
+  }
+
   List get agentsList {
     return this.agents;
   }

@@ -509,7 +509,7 @@ final appThemeData = {
     accentColor: Color(0xff4d79ff),
     accentColorBrightness: Brightness.light,
     canvasColor: Color(0xff303030),
-    scaffoldBackgroundColor: Color(0xff303030),
+    scaffoldBackgroundColor: Color(0xff444444),
     bottomAppBarColor: Color(0xff424242),
     cardColor: Colors.black26,
     dividerColor: Color(0x1fffffff),

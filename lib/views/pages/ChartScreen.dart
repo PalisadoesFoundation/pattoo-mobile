@@ -946,6 +946,7 @@ import 'package:pattoomobile/api/api.dart';
 import 'package:pattoomobile/controllers/agent_controller.dart';
 import 'package:pattoomobile/controllers/client_provider.dart';
 import 'package:pattoomobile/controllers/theme_manager.dart';
+import 'package:pattoomobile/controllers/userState.dart';
 import 'package:pattoomobile/models/agent.dart';
 import 'package:pattoomobile/models/chart.dart';
 import 'package:pattoomobile/models/dataPointAgent.dart';
@@ -974,8 +975,7 @@ class _MultiChartState extends State<MultiChart> {
   List<DataPointAgent> agents = List<DataPointAgent>();
   List<TimeSeriesSales> data_;
   List<TimeSeriesSales> cdata_;
-  var fav_color = Colors.grey[100];
-  bool favourite = false;
+
   Widget chart_data;
   final Map<String, int> timeframe = {
     "yy": 31536000,
@@ -989,6 +989,10 @@ class _MultiChartState extends State<MultiChart> {
 
   @override
   Widget build(BuildContext context) {
+    bool favourite = Provider.of<UserState>(context, listen: false)
+        .favCharts
+        .contains(this.chart);
+    var fav_color = favourite ? Colors.red : Colors.grey[100];
     Widget saveButton = Padding(
         padding: EdgeInsets.all(10.0),
         child: RaisedButton(
@@ -1165,10 +1169,9 @@ class _MultiChartState extends State<MultiChart> {
                                 child: Icon(Icons.favorite, color: fav_color),
                                 onPressed: () {
                                   setState(() {
-                                    favourite = !favourite;
-                                    fav_color = favourite
-                                        ? Colors.red
-                                        : Colors.grey[100];
+                                    !favourite
+                                        ? this.addFavourite().then((val) {})
+                                        : this.removeFavourite().then((val) {});
                                   });
                                 }),
                             SizedBox(width: queryData.size.width * 0.03),
@@ -1499,7 +1502,7 @@ class _MultiChartState extends State<MultiChart> {
     queryData = MediaQuery.of(context);
     return ClientProvider(
       uri: Provider.of<AgentsManager>(context).loaded
-          ? Provider.of<AgentsManager>(context).httpLink
+          ? Provider.of<AgentsManager>(context).httpLink + "/graphql"
           : "None",
       child: Query(
           options: QueryOptions(
@@ -1717,6 +1720,54 @@ class _MultiChartState extends State<MultiChart> {
             );
           }),
     );
+  }
+
+  Future addFavourite() async {
+    String id = this.chart.idxChart;
+    int order =
+        Provider.of<UserState>(context, listen: false).favCharts.length + 1;
+    String userId = Provider.of<UserState>(context, listen: false).idxUser;
+    QueryOptions options = QueryOptions(
+        documentNode: gql(AgentFetch().createFavouriteChart),
+        variables: {
+          "idxChart": id,
+          "idxUser": userId,
+          "order": order.toString()
+        });
+    GraphQLClient _client = GraphQLClient(
+      cache: InMemoryCache(),
+      link: new HttpLink(
+          uri: Provider.of<AgentsManager>(context, listen: false).httpLink +
+              "/graphql"),
+    );
+    QueryResult result = await _client.query(options);
+    Provider.of<UserState>(context, listen: false).loadFavourites(context);
+    Provider.of<UserState>(context, listen: false).favCharts.add(this.chart);
+    setState(() {});
+  }
+
+  Future removeFavourite() async {
+    List favCharts =
+        Provider.of<UserState>(context, listen: false).charts.values.toList();
+    String favId;
+    for (var data in favCharts) {
+      if (data["chart"] == this.chart) {
+        favId = data["idFavorite"];
+      }
+    }
+    QueryOptions options = QueryOptions(
+        documentNode: gql(AgentFetch().removeFavouriteChart),
+        variables: {"idxFavorite": favId});
+    GraphQLClient _client = GraphQLClient(
+      cache: InMemoryCache(),
+      link: new HttpLink(
+          uri: Provider.of<AgentsManager>(context, listen: false).httpLink +
+              "/graphql"),
+    );
+    QueryResult result = await _client.query(options);
+    Provider.of<UserState>(context, listen: false).loadFavourites(context);
+    Provider.of<UserState>(context, listen: false).favCharts.remove(this.chart);
+    setState(() {});
   }
 
   String information(DataPointAgent agent) {

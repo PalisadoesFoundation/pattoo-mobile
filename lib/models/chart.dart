@@ -93,7 +93,6 @@ class Chart {
           agent.addTarget(datapointagent);
         }
       }
-      print("${datapoints}");
       datapoints.addAll({idxChartDatapoint: datapointagent});
     }
     return Chart(idxChart: id, name: name, datapoints: datapoints);

@@ -4,6 +4,7 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:pattoomobile/api/api.dart';
 import 'package:pattoomobile/controllers/agent_controller.dart';
 import 'package:pattoomobile/controllers/theme_manager.dart';
+import 'package:pattoomobile/controllers/userState.dart';
 import 'package:provider/provider.dart';
 import 'package:pattoomobile/util/AspectRation.dart';
 import 'DarkModeSwitch.dart';
@@ -216,8 +217,16 @@ class _SettingsContainerState extends State<SettingsContainer> {
       Provider.of<AgentsManager>(context, listen: false).loaded = true;
       print(Provider.of<AgentsManager>(context, listen: false).loaded);
       print(Provider.of<AgentsManager>(context, listen: false).link);
-      Future.delayed(Duration(seconds: 3), () {
-        Navigator.pushNamed(context, '/HomeScreen');
+      Provider.of<AgentsManager>(context, listen: false)
+          .loadAgents(context)
+          .then((val) {
+        Provider.of<UserState>(context, listen: false)
+            .loadFavourites(context)
+            .then((res) {
+          Future.delayed(Duration(seconds: 3), () {
+            Navigator.pushNamed(context, '/HomeScreen');
+          });
+        });
       });
     }
   }

@@ -81,6 +81,59 @@ mutation addDatapoint(\$idxChartDatapoint:String,\$idxChart){
   }
 }
 """;
+
+  String updateFavouriteOrder = """
+  mutation updateOrder(\$idxFavorite:String!, \$order:String!){
+  updateFavorite(Input: {idxFavorite: \$idxFavorite, order: \$order}) {
+    favorite {
+      idxFavorite
+      idxChart
+      idxUser
+      enabled
+    }
+  }
+}
+""";
+  String createFavouriteChart = """
+  mutation createFav(\$idxUser:String! \$idxChart:String!, \$order:String!  ) {
+  createFavorite(Input: {idxUser:\$idxUser, idxChart: \$idxChart, order:\$order}) {
+    favorite{
+      id
+      idxFavorite
+      idxChart
+      idxUser
+      enabled
+    }
+  }
+}
+ """;
+
+  String removeFavouriteChart = """
+  mutation removeFavourite(\$idxFavorite:String!) {
+  updateFavorite(Input: {idxFavorite: \$idxFavorite, enabled:"0"}) {
+    favorite {
+      idxFavorite
+      idxChart
+      idxUser
+      enabled
+    }
+  }
+} 
+""";
+
+  String getUserInfo = """
+  query getUserInfo(\$username:String!){
+  allUser(username:\$username){
+    edges{
+      node{
+        idxUser
+        username
+        firstName
+        lastName
+      }
+    }
+  }
+} """;
   String getAllAgents = """
 query getAllAgents(\$cursor: String) {
   allAgent(first: 12, after: \$cursor) {
@@ -229,6 +282,8 @@ query getTimeSeries(\$id: String){
           edges {
             node {
               order
+              enabled
+              idxFavorite
               chart {
                 idxChart
                 name

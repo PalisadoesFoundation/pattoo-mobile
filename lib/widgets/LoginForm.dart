@@ -21,6 +21,7 @@ class _LoginFormState extends State<LoginForm> {
   final _formKey = new GlobalKey<FormState>();
   bool _isLoading;
   bool _isLoginForm;
+  TextEditingController _controller = TextEditingController();
 
   @override
   void initState() {
@@ -114,6 +115,7 @@ class _LoginFormState extends State<LoginForm> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 100.0, 0.0, 0.0),
       child: new TextFormField(
+        controller: _controller,
         maxLines: 1,
         keyboardType: TextInputType.emailAddress,
         autofocus: false,
@@ -158,7 +160,7 @@ class _LoginFormState extends State<LoginForm> {
         onPressed: () {
           if (_formKey.currentState.validate()) {
             Provider.of<UserState>(context, listen: false)
-                .setDisplayName(this.userLogin.username);
+                .setDisplayName(this._controller.text);
             Navigator.pushReplacementNamed(context, '/HomeScreen');
           }
         },
