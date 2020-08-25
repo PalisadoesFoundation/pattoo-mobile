@@ -134,7 +134,8 @@ class _SettingsContainerState extends State<SettingsContainer> {
                         ),
                       )
                     ],
-                  )
+                  ),
+
                 ],
               ),
             ),
@@ -198,6 +199,11 @@ class _SettingsContainerState extends State<SettingsContainer> {
         this.inAsyncCall = false;
       });
     }
+    //Pop login information
+    if(!result.hasException)
+      {
+        getUserInfo(context);
+      }
     setState(() {
       this.inAsyncCall = false;
     });
@@ -210,8 +216,7 @@ class _SettingsContainerState extends State<SettingsContainer> {
     if (formKey.currentState.validate()) {
       formKey.currentState.save();
       print(_source);
-      String uri =
-          "${dropdownValue.toLowerCase()}://${_source.trim()}/pattoo/api/v1/web";
+      String uri = "${dropdownValue.toLowerCase()}://${_source.trim()}/pattoo/api/v1/web";
       Provider.of<AgentsManager>(context, listen: false).setLink(uri);
       Provider.of<AgentsManager>(context, listen: false).loaded = true;
       print(Provider.of<AgentsManager>(context, listen: false).loaded);
@@ -228,5 +233,50 @@ class _SettingsContainerState extends State<SettingsContainer> {
         });
       });
     }
+  }
+
+
+  getUserInfo(BuildContext context)
+  {
+    MediaQueryData queryData = MediaQuery.of(context);
+    TextEditingController email = TextEditingController();
+    TextEditingController password = TextEditingController();
+    return showDialog(context: context, builder: (context)
+    {
+      return AlertDialog(
+        title: Text("LOGIN"),
+        content: Column(
+
+          children: <Widget>[
+            TextField(
+              controller: email,
+              decoration: InputDecoration(
+                icon: Icon(Icons.account_circle),
+                labelText: 'Username',
+              ),
+            ),
+            TextField(
+              obscureText: true,
+              controller: password,
+              decoration: InputDecoration(
+                icon: Icon(Icons.lock),
+                labelText: 'Password',
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
+              child: RaisedButton(
+                elevation: 5.0,
+                shape: new RoundedRectangleBorder(
+                    borderRadius:
+                    BorderRadius.circular(queryData.size.shortestSide * 0.015)),
+                onPressed: () {},
+              child: const Text('Login',
+                style: TextStyle(fontSize: 20, color: Colors.white)),
+                     ),
+                  ),
+              ],
+          ));
+    });
   }
 }

@@ -2,6 +2,7 @@ import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pattoomobile/controllers/agent_controller.dart';
+import 'package:pattoomobile/widgets/ContinueWidget.dart';
 import 'package:provider/provider.dart';
 import 'package:pattoomobile/controllers/theme_manager.dart';
 import 'package:pattoomobile/views/pages/HomeScreen.dart';
@@ -38,7 +39,7 @@ class _AppState extends State<App> {
                 theme: manager.themeData,
                 initialRoute: '/',
                 routes: {
-                  '/': (context) => LoginScreen(),
+                  '/': (context) => ContinueWidget(),
                   '/HomeScreen': (context) => HomeScreen(),
                 });
           });
