@@ -8,14 +8,12 @@ import 'package:pattoomobile/controllers/theme_manager.dart';
 import 'package:pattoomobile/utils/app_themes.dart';
 import 'package:pattoomobile/models/timestamp.dart';
 
-
 class LoginForm extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => new _LoginFormState();
 }
 
 class _LoginFormState extends State<LoginForm> {
-
   LoginFormModel userLogin = new LoginFormModel();
 
   TimeStamp time = new TimeStamp(timestamp: 1591211730580, value: 10);
@@ -23,6 +21,7 @@ class _LoginFormState extends State<LoginForm> {
   final _formKey = new GlobalKey<FormState>();
   bool _isLoading;
   bool _isLoginForm;
+  TextEditingController _controller = TextEditingController();
 
   @override
   void initState() {
@@ -59,7 +58,7 @@ class _LoginFormState extends State<LoginForm> {
     );
   }
 
-  Widget _showForm() {
+  Widget _showForm(BuildContext context) {
     return new Container(
         padding: EdgeInsets.all(16.0),
         child: new Form(
@@ -67,11 +66,10 @@ class _LoginFormState extends State<LoginForm> {
           child: new ListView(
             shrinkWrap: true,
             children: <Widget>[
-              showLogo(),
-              emailLogin(),
+              showLogo(context),
+              showUsernameInput(),
               showPasswordInput(),
-              showPrimaryButton(),
-              showSecondaryButton(),
+              showPrimaryButton(context),
               showErrorMessage(),
             ],
           ),
@@ -95,40 +93,39 @@ class _LoginFormState extends State<LoginForm> {
     }
   }
 
-  Widget showLogo() {
+  Widget showLogo(BuildContext context) {
+    MediaQueryData queryData = MediaQuery.of(context);
+
     AppTheme theme = Provider.of<ThemeManager>(context).getTheme();
 
     var logo = theme == AppTheme.Light
         ? 'images/pattoo-light.png'
         : 'images/pattoo-dark.png';
-    return new Hero(
-      tag: 'hero',
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(0.0, 70.0, 0.0, 0.0),
-        child: CircleAvatar(
-          backgroundColor: Colors.transparent,
-          radius: 100.0,
-          child: Image.asset(logo),
-        ),
+    return Padding(
+      padding: EdgeInsets.fromLTRB(0.0, 70.0, 0.0, 0.0),
+      child: CircleAvatar(
+        backgroundColor: Colors.transparent,
+        radius: queryData.size.shortestSide * 0.28,
+        child: Image.asset(logo),
       ),
     );
   }
 
-  Widget showEmailInput() {
+  Widget showUsernameInput() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 100.0, 0.0, 0.0),
       child: new TextFormField(
+        controller: _controller,
         maxLines: 1,
         keyboardType: TextInputType.emailAddress,
         autofocus: false,
         decoration: new InputDecoration(
-            hintText: 'Email',
+            hintText: 'Username',
             icon: new Icon(
-              Icons.mail,
+              Icons.person,
             )),
-
         validator: validateEmail,
-        onSaved: (value) => this.userLogin.email = value.trim(),
+        onSaved: (value) => this.userLogin.username = value.trim(),
       ),
     );
   }
@@ -151,33 +148,21 @@ class _LoginFormState extends State<LoginForm> {
     );
   }
 
-  Widget showSecondaryButton() {
-    return new FlatButton(
-      child: Container(
-        child: Align(
-          alignment: Alignment.centerRight,
-          child: new Text('Forget Password?',
-              style: new TextStyle(
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.w300,
-                  color: Colors.lightBlue)),
-        ),
-      ),
-
-      onPressed: () {},
-    );
-  }
-
-  Widget showPrimaryButton() {
+  Widget showPrimaryButton(BuildContext context) {
+    MediaQueryData queryData = MediaQuery.of(context);
     return new Padding(
       padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
       child: RaisedButton(
         elevation: 5.0,
         shape: new RoundedRectangleBorder(
-            borderRadius: new BorderRadius.circular(30.0)),
+            borderRadius:
+                BorderRadius.circular(queryData.size.shortestSide * 0.015)),
         onPressed: () {
-          Navigator.pushReplacementNamed(context, '/HomeScreen');
-
+          if (_formKey.currentState.validate()) {
+            Provider.of<UserState>(context, listen: false)
+                .setDisplayName(this._controller.text);
+            Navigator.pushReplacementNamed(context, '/HomeScreen');
+          }
         },
         child: const Text('Login',
             style: TextStyle(fontSize: 20, color: Colors.white)),
@@ -187,24 +172,20 @@ class _LoginFormState extends State<LoginForm> {
 
   //Regular Expression Validation
   String validateEmail(String value) {
-    Pattern pattern =
-        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-    RegExp regex = new RegExp(pattern);
-    if (!regex.hasMatch(value))
-      return 'Enter Valid Email';
+    if (value == '' || value == null)
+      return 'Field cannot be blank!';
     else
       return null;
   }
-
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
         body: Stack(
-          children: <Widget>[
-            _showForm(),
-            _showCircularProgress(),
-          ],
-        ));
+      children: <Widget>[
+        _showForm(context),
+        _showCircularProgress(),
+      ],
+    ));
   }
 }

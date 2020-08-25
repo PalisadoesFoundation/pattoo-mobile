@@ -37,108 +37,111 @@ class _chartGroupPopUpState extends State<ChartGroupPopUp> {
         inAsyncCall: inAsync,
         progressIndicator: CircularProgressIndicator(),
         child: Builder(builder: (context) {
-          return AlertDialog(
-            title: Row(
-              children: <Widget>[
-                Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(50),
-                      color: Colors.blue[900]),
-                  child: Center(
-                    child: Icon(
-                      Icons.multiline_chart,
-                      color: Colors.white,
+          return new _SystemPadding(
+            child: AlertDialog(
+              contentPadding: const EdgeInsets.all(16.0),
+              title: Row(
+                children: <Widget>[
+                  Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(50),
+                        color: Colors.blue[900]),
+                    child: Center(
+                      child: Icon(
+                        Icons.multiline_chart,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
+                  SizedBox(width: 10),
+                  Text("Create Chart Group")
+                ],
+              ),
+              content: Container(
+                  width: queryData.size.width,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      SizedBox(height: 20),
+                      Form(
+                        key: _formKey,
+                        child: TextFormField(
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return 'Chart name can not be blank';
+                              }
+                              return null;
+                            },
+                            controller: _nameController,
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.blueAccent,
+                            ),
+                            decoration: InputDecoration(
+                                prefixIcon: Icon(Icons.people),
+                                hintText: "Chart Name",
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Colors.grey, width: 32.0),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Colors.white, width: 32.0),
+                                ))),
+                      ),
+                      Expanded(
+                        child: SizedBox(
+                          width: queryData.size.width,
+                          child: ListView.builder(
+                              itemBuilder: (context, index) => Container(
+                                    decoration:
+                                        BoxDecoration(color: colors[index % 2]),
+                                    child: ListTile(
+                                        leading: Icon(Icons.person_outline),
+                                        title: Text(
+                                            "Agent Group: ${getAgent(context, agents[index].agent_id)}"),
+                                        subtitle: Text(
+                                            "${agents[index].agent_struct['name']['value']}")),
+                                  ),
+                              itemCount: agents.length),
+                        ),
+                      )
+                    ],
+                  )),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text('CREATE'),
+                  onPressed: () {
+                    if (_formKey.currentState.validate()) {
+                      setState(() {
+                        this.inAsync = true;
+                        chartCreation(context, agents, _nameController.text)
+                            .then((value) => {
+                                  this.inAsync = false,
+                                  Scaffold.of(context).showSnackBar(SnackBar(
+                                      content: Text(
+                                          'Chart ${_nameController.text} added successfully'))),
+                                  setState(() {})
+                                })
+                            .catchError((err) => {
+                                  print(err.toString()),
+                                  this.inAsync = false,
+                                  Scaffold.of(context).showSnackBar(SnackBar(
+                                      content: Text('${err.toString()}'))),
+                                  setState(() {})
+                                });
+                      });
+                    }
+                  },
                 ),
-                SizedBox(width: 10),
-                Text("Create Chart Group")
+                FlatButton(
+                  child: Text('CANCEL'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
               ],
             ),
-            content: Container(
-                width: queryData.size.width,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    SizedBox(height: 20),
-                    Form(
-                      key: _formKey,
-                      child: TextFormField(
-                          validator: (value) {
-                            if (value.isEmpty) {
-                              return 'Chart name can not be blank';
-                            }
-                            return null;
-                          },
-                          controller: _nameController,
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.blueAccent,
-                          ),
-                          decoration: InputDecoration(
-                              prefixIcon: Icon(Icons.people),
-                              hintText: "Chart Name",
-                              border: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Colors.grey, width: 32.0),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Colors.white, width: 32.0),
-                              ))),
-                    ),
-                    Expanded(
-                      child: SizedBox(
-                        width: queryData.size.width,
-                        child: ListView.builder(
-                            itemBuilder: (context, index) => Container(
-                                  decoration:
-                                      BoxDecoration(color: colors[index % 2]),
-                                  child: ListTile(
-                                      leading: Icon(Icons.person_outline),
-                                      title: Text(
-                                          "Agent Group: ${getAgent(context, agents[index].agent_id)}"),
-                                      subtitle: Text(
-                                          "${agents[index].agent_struct['name']['value']}")),
-                                ),
-                            itemCount: agents.length),
-                      ),
-                    )
-                  ],
-                )),
-            actions: <Widget>[
-              FlatButton(
-                child: Text('CREATE'),
-                onPressed: () {
-                  if (_formKey.currentState.validate()) {
-                    setState(() {
-                      this.inAsync = true;
-                      chartCreation(context, agents, _nameController.text)
-                          .then((value) => {
-                                this.inAsync = false,
-                                Scaffold.of(context).showSnackBar(SnackBar(
-                                    content: Text(
-                                        'Chart ${_nameController.text} added successfully'))),
-                                setState(() {})
-                              })
-                          .catchError((err) => {
-                                print(err.toString()),
-                                this.inAsync = false,
-                                Scaffold.of(context).showSnackBar(SnackBar(
-                                    content: Text('${err.toString()}'))),
-                                setState(() {})
-                              });
-                    });
-                  }
-                },
-              ),
-              FlatButton(
-                child: Text('CANCEL'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              )
-            ],
           );
         }),
       ),
@@ -163,7 +166,8 @@ class _chartGroupPopUpState extends State<ChartGroupPopUp> {
     GraphQLClient _client = GraphQLClient(
       cache: InMemoryCache(),
       link: new HttpLink(
-          uri: Provider.of<AgentsManager>(context, listen: false).httpLink),
+          uri: Provider.of<AgentsManager>(context, listen: false).httpLink +
+              "/graphql"),
     );
 
     QueryOptions options = QueryOptions(
@@ -186,5 +190,20 @@ class _chartGroupPopUpState extends State<ChartGroupPopUp> {
       print(
           "Datapoint ${result.data['createChartDataPoint']['chartDatapoint']['idxDatapoint']} was added to Chart ${result.data['createChartDataPoint']['chartDatapoint']['idxChart']} ");
     }
+  }
+}
+
+class _SystemPadding extends StatelessWidget {
+  final Widget child;
+
+  _SystemPadding({Key key, this.child}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    var mediaQuery = MediaQuery.of(context);
+    return new AnimatedContainer(
+        padding: mediaQuery.viewInsets,
+        duration: const Duration(milliseconds: 300),
+        child: child);
   }
 }

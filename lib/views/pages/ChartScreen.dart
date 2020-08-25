@@ -1,235 +1,198 @@
 import 'dart:convert';
-
-import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' hide TextStyle, Axis;
-import 'package:flutter/services.dart';
+import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:pattoomobile/api/api.dart';
 import 'package:pattoomobile/controllers/agent_controller.dart';
 import 'package:pattoomobile/controllers/client_provider.dart';
 import 'package:pattoomobile/controllers/theme_manager.dart';
+import 'package:pattoomobile/controllers/userState.dart';
 import 'package:pattoomobile/models/agent.dart';
+import 'package:pattoomobile/models/chart.dart';
 import 'package:pattoomobile/models/dataPointAgent.dart';
 import 'package:pattoomobile/models/timestamp.dart';
-import 'package:pattoomobile/models/view_models/user.dart';
-import 'package:pattoomobile/views/pages/ChartLists.dart';
+import 'package:pattoomobile/utils/app_themes.dart';
 import 'package:pattoomobile/views/pages/FullScreenChart.dart';
 import 'package:pattoomobile/widgets/MetaDataTile.dart';
 import 'package:pattoomobile/widgets/SampleChart.dart';
+import 'package:pattoomobile/widgets/chartAppBar.dart';
 import 'package:pattoomobile/widgets/createChartGroupPopUp.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
-import 'package:pattoomobile/models/chart.dart';
-import 'file:///C:/Users/Toast/Desktop/Calico/lib/views/pages/FavoritesScreen.dart';
 
+class MultiChart extends StatefulWidget {
+  final Chart chart;
 
-class Chart extends StatelessWidget {
-  final DataPointAgent agent;
-  Chart(this.agent);
-  @override
-  Widget build(BuildContext context) {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
-
-    final HttpLink httpLink =
-    HttpLink(uri: "http://calico.palisadoes.org/pattoo/api/v1/web/graphql");
-    final ValueNotifier<GraphQLClient> client = ValueNotifier<GraphQLClient>(
-      GraphQLClient(
-        link: httpLink,
-        cache: OptimisticCache(
-          dataIdFromObject: typenameDataIdFromObject,
-        ),
-      ),
-    );
-
-    return GraphQLProvider(
-      child: MaterialApp(
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        home: ChartScreen(
-            title: agent.agent_struct["name"]["value"], agent: this.agent),
-      ),
-      client: client,
-    );
-
-      }
-}
-
-final idxuser = User.idxUser.toString();
-
-final a = "1";
-final b = "149";
-final c = "1";
-
-final String addFavourite = """
-      mutation {
-      createFavorite(Input: {idxUser: $a, idxChart:  $b, order: $c }) {
-        favorite{
-          id
-          idxFavorite
-          idxChart
-          idxUser
-          enabled
-        }
-      }
-    }
-""";
-
-class ChartScreen extends StatefulWidget {
-  ChartScreen({Key key, this.title, DataPointAgent this.agent})
-      : super(key: key);
-  final DataPointAgent agent;
-  final String title;
+  MultiChart({Key key, @required this.chart}) : super(key: key);
 
   @override
-  _ChartScreenState createState() => _ChartScreenState(agent);
+  _MultiChartState createState() => _MultiChartState(chart: chart);
 }
 
-class _ChartScreenState extends State<ChartScreen> {
-  DataPointAgent agent;
+class _MultiChartState extends State<MultiChart> {
+  final Chart chart;
+  _MultiChartState({@required this.chart});
+  List<DataPointAgent> original_agents = List<DataPointAgent>();
   List<DataPointAgent> agents = List<DataPointAgent>();
-  _ChartScreenState(this.agent);
   List<TimeSeriesSales> data_;
   List<TimeSeriesSales> cdata_;
-  var fav_color = Colors.grey[100];
-  bool favourite = false;
-  Widget chart;
-  final List<bool> isSelected = [false, false, true];
+  bool _renaming = false;
+  Widget chart_data;
+  final Map<String, int> timeframe = {
+    "yy": 31536000,
+    'mm': 2628288,
+    "dd": 86400
+  };
+  final List<bool> isSelected = [false, true, false];
+  int current_Timeframe;
   List<Series<TimeSeriesSales, DateTime>> vibrationData =
       List<Series<TimeSeriesSales, DateTime>>();
-
-
-
-
-
+  static final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  static TextEditingController _controller = TextEditingController();
+  static final TextField _renameField = TextField(
+    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+    controller: _controller,
+  );
   @override
   Widget build(BuildContext context) {
-    Widget saveButton = Padding(
-        padding: EdgeInsets.all(10.0),
-        child: RaisedButton(
-          color: Colors.green,
-          child: Text("SAVE",
-              style:
-                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-          onPressed: (() {
-            showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return ChartGroupPopUp(
-                    context: context,
-                    agents: agents,
-                  );
-                });
-          }),
-        ));
+    bool favourite = Provider.of<UserState>(context, listen: false)
+        .favCharts
+        .contains(this.chart);
+    var fav_color = favourite ? Colors.red : Colors.grey[100];
+    ThemeManager _themeManager =
+        Provider.of<ThemeManager>(context, listen: false);
+    AgentsManager _agentManager =
+        Provider.of<AgentsManager>(context, listen: false);
     MediaQueryData queryData;
     queryData = MediaQuery.of(context);
-    if (!this.agents.contains(agent)) {
-      this.agents.add(agent);
-    }
-    //Chart chart= new Chart();
-    //User user = new User();
 
+    String _title = chart.name;
 
-
+    original_agents = chart.datapoints.values.toList();
+    agents = chart.datapoints.values.toList();
 
     return Scaffold(
-      appBar: AppBar(
-        actions: <Widget>[agents.length > 1 ? saveButton : Container()],
-        title: FittedBox(
-          fit: BoxFit.fitWidth,
-          child: Text(
-            agent.agent_struct["name"]["value"],
-          ),
-        ),
-        elevation: 0.0,
-        backgroundColor: Colors.transparent,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(kToolbarHeight),
+        child: StatefulBuilder(builder: (context, updateState) {
+          return AppBar(
+            actions: _renaming
+                ? <Widget>[
+                    IconButton(
+                      icon: Icon(Icons.check),
+                      onPressed: () {
+                        this.renameChart(chart, _controller.text).then((value) {
+                          _title = value;
+                          _renaming = false;
+                          Provider.of<UserState>(context, listen: false)
+                              .loadFavourites(context);
+                          updateState(() {});
+                        });
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.cancel),
+                      onPressed: () {
+                        updateState(() {
+                          _renaming = false;
+                        });
+                      },
+                    )
+                  ]
+                : <Widget>[
+                    IconButton(
+                      icon: Icon(Icons.create),
+                      onPressed: () {
+                        updateState(() {
+                          _renaming = true;
+                        });
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.delete),
+                      onPressed: () {},
+                    )
+                  ],
+            title: _renaming
+                ? Form(key: _formKey, child: _renameField)
+                : FittedBox(
+                    fit: BoxFit.fitWidth,
+                    child: Text(_title,
+                        style: TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold))),
+            elevation: 0.0,
+          );
+        }),
       ),
-      body: Mutation(
-        options: MutationOptions(
-          documentNode: gql(addFavourite),
-
-          onCompleted: (dynamic resultData) {
-            print(a);
-            print(b);
-            print(idxuser);
-            print(resultData);
-            print(addFavourite);
-
-          },
-        ),
-        builder: (RunMutation insert, QueryResult result)
-        {
-          return Container(
-            padding: EdgeInsets.all(8.0),
-            color: Colors.grey[100],
-            child: ListView(
-              shrinkWrap: true,
+      body: Container(
+        padding: EdgeInsets.all(8.0),
+        child: ListView(
+          shrinkWrap: true,
+          children: <Widget>[
+            Column(
               children: <Widget>[
-                Column(
-                  children: <Widget>[
-                    Container(
-                      color: Colors.white,
-                      width: queryData.size.width * 1,
-                      height: queryData.size.width * 0.8,
-                      child: Column(
-                        children: <Widget>[
-                          FutureBuilder(
-                              future: this.fetchTimeSeries(agents),
-                              builder:
-                              // ignore: missing_return
-                                  (BuildContext context, AsyncSnapshot snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return Expanded(
-                                    child: Center(
-                                        child: Container(
-                                          height: queryData.size.height * 0.35,
-                                          width: queryData.size.width * 0.8,
-                                          child: Center(
-                                              child: CircularProgressIndicator()),
-                                        )),
-                                  );
-                                } else if (snapshot.hasData &&
-                                    snapshot.connectionState ==
-                                        ConnectionState.done) {
-                                  for (var result in snapshot.data) {
-                                    vibrationData
-                                        .add(new Series<TimeSeriesSales, DateTime>(
-                                      id: agents[snapshot.data.indexOf(result)]
-                                          .agent_struct['name']['value'],
-                                      domainFn: (TimeSeriesSales sales, _) =>
+                Container(
+                  decoration: BoxDecoration(
+                      color: _themeManager.localTheme == AppTheme.Light
+                          ? Colors.white
+                          : Colors.grey[300],
+                      borderRadius: BorderRadius.circular(
+                          queryData.size.shortestSide * 0.015)),
+                  width: queryData.size.width * 1,
+                  height: queryData.size.longestSide * 0.75,
+                  child: Column(
+                    children: <Widget>[
+                      FutureBuilder(
+                          future:
+                              this.fetchTimeSeries(agents, current_Timeframe),
+                          builder:
+                              (BuildContext context, AsyncSnapshot snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Expanded(
+                                child: Center(
+                                    child: Container(
+                                  height: queryData.size.height * 0.35,
+                                  width: queryData.size.width * 0.8,
+                                  child: Center(
+                                      child: CircularProgressIndicator()),
+                                )),
+                              );
+                            } else if (snapshot.hasData &&
+                                snapshot.connectionState ==
+                                    ConnectionState.done) {
+                              for (var result in snapshot.data) {
+                                vibrationData
+                                    .add(new Series<TimeSeriesSales, DateTime>(
+                                  id: agents[snapshot.data.indexOf(result)]
+                                      .agent_struct['name']['value'],
+                                  domainFn: (TimeSeriesSales sales, _) =>
                                       sales.time,
-                                      measureFn: (TimeSeriesSales sales, _) =>
+                                  measureFn: (TimeSeriesSales sales, _) =>
                                       sales.sales,
-                                      data: result,
-                                    ));
-                                  }
+                                  data: result,
+                                ));
+                              }
 
-                                  this.chart = queryData.orientation ==
+                              this.chart_data = queryData.orientation ==
                                       Orientation.landscape
-                                      ? Hero(
+                                  ? Hero(
                                       tag: "chart",
                                       child: TimeSeriesChart(vibrationData,
                                           behaviors: [
                                             SeriesLegend(
                                                 entryTextStyle:
-                                                TextStyleSpec(fontSize: 12),
+                                                    TextStyleSpec(fontSize: 12),
                                                 position:
-                                                BehaviorPosition.bottom,
+                                                    BehaviorPosition.bottom,
                                                 horizontalFirst: true,
                                                 desiredMaxRows: 3,
                                                 desiredMaxColumns: 2),
                                             LinePointHighlighter(
                                               drawFollowLinesAcrossChart: true,
                                               showHorizontalFollowLine:
-                                              LinePointHighlighterFollowLineType
-                                                  .all,
+                                                  LinePointHighlighterFollowLineType
+                                                      .all,
                                             ),
                                           ],
                                           defaultRenderer: LineRendererConfig(),
@@ -238,20 +201,20 @@ class _ChartScreenState extends State<ChartScreen> {
                                               renderSpec: SmallTickRendererSpec(
                                                   labelRotation: 45),
                                               tickFormatterSpec:
-                                              AutoDateTimeTickFormatterSpec(
-                                                  day: TimeFormatterSpec(
-                                                      format: 'dd/MM',
-                                                      transitionFormat:
-                                                      'yyyy')))))
-                                      : Hero(
+                                                  AutoDateTimeTickFormatterSpec(
+                                                      day: TimeFormatterSpec(
+                                                          format: 'dd/MM',
+                                                          transitionFormat:
+                                                              'yyyy')))))
+                                  : Hero(
                                       tag: "chart",
                                       child: TimeSeriesChart(vibrationData,
                                           behaviors: [
                                             LinePointHighlighter(
                                               drawFollowLinesAcrossChart: true,
                                               showHorizontalFollowLine:
-                                              LinePointHighlighterFollowLineType
-                                                  .all,
+                                                  LinePointHighlighterFollowLineType
+                                                      .all,
                                             ),
                                           ],
                                           defaultRenderer: LineRendererConfig(),
@@ -260,181 +223,183 @@ class _ChartScreenState extends State<ChartScreen> {
                                               renderSpec: SmallTickRendererSpec(
                                                   labelRotation: 45),
                                               tickFormatterSpec:
-                                              AutoDateTimeTickFormatterSpec(
-                                                  day: TimeFormatterSpec(
-                                                      format: 'dd/MM',
-                                                      transitionFormat:
-                                                      'yyyy')))));
+                                                  AutoDateTimeTickFormatterSpec(
+                                                      day: TimeFormatterSpec(
+                                                          format: 'dd/MM',
+                                                          transitionFormat:
+                                                              'yyyy')))));
 
-                                  return Expanded(
-                                    child: Center(
-                                        child: Container(
-                                          height: queryData.size.height * 0.75,
-                                          width: queryData.size.width * 0.8,
-                                          child: vibrationData != null
-                                              ? chart
-                                              : CircularProgressIndicator(),
-                                        )),
-                                  );
-                                }
-                              }),
-                          Container(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: <Widget>[
-                                  Wrap(direction: Axis.horizontal, children: <Widget>[
-                                    FloatingActionButton(
-                                      backgroundColor:
-                                      agents.length >= 7 ? Colors.grey : null,
-                                      heroTag: null,
-                                      child: Icon(Icons.filter_9_plus),
-                                      onPressed: agents.length >= 7
-                                          ? () {}
-                                          : () {
-                                        _addChart(context);
-                                      },
-                                    ),
-                                    SizedBox(width: queryData.size.width * 0.03),
-                                    FloatingActionButton(
-                                        heroTag: null,
-                                        child: Icon(Icons.favorite, color: fav_color),
-                                      onPressed: ()
-                                      {
-                                        insert({
-                                          'idxUser': 2,
-                                          'idxChart':  149,
-                                          'order': 1,
-                                        });
-                                      },
-                                        ),
-                                    SizedBox(width: queryData.size.width * 0.03),
-                                    FloatingActionButton(
-                                      heroTag: null,
-                                      child: Icon(
-                                        Icons.zoom_out_map,
-                                      ),
-                                      onPressed: () {
-                                        Navigator.push(context,
-                                            MaterialPageRoute(builder: (_) {
-                                              return FullScreenChart(
-                                                child: chart,
-                                              );
-                                            }));
-                                      },
-                                    ),
-                                  ])
-                                ],
-                              )),
-                          SizedBox(height: queryData.size.height * 0.03),
-                          Container(
-                            child: LayoutBuilder(builder: (context, constraints) {
-                              return ToggleButtons(
-                                renderBorder: false,
-                                constraints: BoxConstraints.expand(
-                                    height: constraints.maxHeight * 0.5,
-                                    width: constraints.maxWidth * 0.325),
-                                borderRadius: BorderRadius.circular(5),
-                                children: <Widget>[
-                                  Text("1D",
-                                      style: TextStyle(
-                                          fontSize:
-                                          queryData.size.width * 0.036 > 24
-                                              ? 18
-                                              : queryData.size.width * 0.036,
-                                          fontWeight: FontWeight.bold)),
-                                  Text("1M",
-                                      style: TextStyle(
-                                          fontSize:
-                                          queryData.size.width * 0.036 > 24
-                                              ? 18
-                                              : queryData.size.width * 0.036,
-                                          fontWeight: FontWeight.bold)),
-                                  Text("1Y",
-                                      style: TextStyle(
-                                          fontSize:
-                                          queryData.size.width * 0.036 > 24
-                                              ? 18
-                                              : queryData.size.width * 0.036,
-                                          fontWeight: FontWeight.bold)),
-                                ],
-                                onPressed: (int index) {
-                                  int count = 0;
-                                  isSelected.forEach((bool val) {
-                                    if (val) count++;
-                                  });
-
-                                  if (isSelected[index] && count < 2) return;
-
-                                  setState(() {
-                                    isSelected[index] = !isSelected[index];
-                                  });
-                                },
-                                isSelected: isSelected,
+                              return Expanded(
+                                child: Center(
+                                    child: Container(
+                                  height: queryData.size.height * 0.75,
+                                  width: queryData.size.width * 0.8,
+                                  child: vibrationData != null
+                                      ? chart_data
+                                      : CircularProgressIndicator(),
+                                )),
                               );
-                            }),
-                          ),
-                          SizedBox(height: queryData.size.height * 0.01)
+                            }
+                          }),
+                      SizedBox(height: queryData.size.longestSide * 0.03),
+                      Container(
+                          child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          Wrap(direction: Axis.horizontal, children: <Widget>[
+                            FloatingActionButton(
+                              backgroundColor:
+                                  agents.length >= 7 ? Colors.grey : null,
+                              heroTag: null,
+                              child: Icon(Icons.filter_9_plus),
+                              onPressed: agents.length >= 7
+                                  ? () {}
+                                  : () {
+                                      _addChart(context);
+                                    },
+                            ),
+                            SizedBox(width: queryData.size.width * 0.03),
+                            FloatingActionButton(
+                                heroTag: null,
+                                child: Icon(Icons.favorite, color: fav_color),
+                                onPressed: () {
+                                  setState(() {
+                                    !favourite
+                                        ? this.addFavourite().then((val) {})
+                                        : this.removeFavourite().then((val) {});
+                                  });
+                                }),
+                            SizedBox(width: queryData.size.width * 0.03),
+                            FloatingActionButton(
+                              heroTag: null,
+                              child: Icon(
+                                Icons.zoom_out_map,
+                              ),
+                              onPressed: () {
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (_) {
+                                  return FullScreenChart(
+                                    child: chart_data,
+                                  );
+                                }));
+                              },
+                            ),
+                          ])
                         ],
-                      ),
-                    ),
-                    SizedBox(height: queryData.size.height * 0.035),
-                    Container(
-                      color: Colors.white,
-                      width: queryData.size.width * 0.9,
-                      child: StatefulBuilder(builder: (context, fixState) {
-                        fixState(() {});
-                        return Column(
-                          children: ListTile.divideTiles(
-                            context: context,
-                            tiles: [
-                              ListTile(title: Text("MetaData")),
-                              for (MapEntry e in this.agent.agent_struct.entries)
-                                if (e.key == "name" && e.value["unit"] != "None")
-                                  MetaDataTile(
-                                    title: "Unit of Measurment",
-                                    value: e.value["unit"],
-                                  ),
-                              for (MapEntry e in this.agent.agent_struct.entries)
-                                if (e.key != "name")
-                                  MetaDataTile(
-                                    title: e.key,
-                                    value: e.value,
-                                  ),
-                              if (this.agents.asMap().containsKey(1))
-                                for (var agent in this.agents.sublist(1))
-                                  for (Widget tile in loadSecondAgentData(agent))
-                                    tile
+                      )),
+                      SizedBox(height: queryData.size.height * 0.03),
+                      Container(
+                        child: LayoutBuilder(builder: (context, constraints) {
+                          return ToggleButtons(
+                            fillColor: Provider.of<ThemeManager>(context)
+                                .themeData
+                                .accentColor,
+                            renderBorder: false,
+                            constraints: BoxConstraints.expand(
+                                height: constraints.maxHeight * 0.5,
+                                width: constraints.maxWidth * 0.325),
+                            borderRadius: BorderRadius.circular(5),
+                            children: <Widget>[
+                              Text("1D",
+                                  style: TextStyle(
+                                      color: isSelected[0]
+                                          ? Colors.white
+                                          : Colors.black,
+                                      fontSize:
+                                          queryData.size.width * 0.036 > 24
+                                              ? 18
+                                              : queryData.size.width * 0.036,
+                                      fontWeight: FontWeight.bold)),
+                              Text("1M",
+                                  style: TextStyle(
+                                      color: isSelected[1]
+                                          ? Colors.white
+                                          : Colors.black,
+                                      fontSize:
+                                          queryData.size.width * 0.036 > 24
+                                              ? 18
+                                              : queryData.size.width * 0.036,
+                                      fontWeight: FontWeight.bold)),
+                              Text("1Y",
+                                  style: TextStyle(
+                                      color: isSelected[2]
+                                          ? Colors.white
+                                          : Colors.black,
+                                      fontSize:
+                                          queryData.size.width * 0.036 > 24
+                                              ? 18
+                                              : queryData.size.width * 0.036,
+                                      fontWeight: FontWeight.bold)),
                             ],
-                          ).toList(),
-                        );
-                      }),
-                    )
-                  ],
+                            onPressed: (int index) {
+                              for (int i = 0; i < isSelected.length; i++) {
+                                isSelected[i] = i == index;
+                              }
+                              switch (isSelected.indexOf(true)) {
+                                case 0:
+                                  current_Timeframe = timeframe["dd"];
+                                  break;
+                                case 1:
+                                  current_Timeframe = timeframe["mm"];
+                                  break;
+                                case 2:
+                                  current_Timeframe = timeframe["yy"];
+                                  break;
+                              }
+                              setState(() {});
+                            },
+                            isSelected: isSelected,
+                          );
+                        }),
+                      ),
+                      SizedBox(height: queryData.size.height * 0.01)
+                    ],
+                  ),
+                ),
+                SizedBox(height: queryData.size.height * 0.035),
+                Container(
+                  decoration: BoxDecoration(
+                      color: Provider.of<ThemeManager>(context)
+                          .themeData
+                          .cardColor,
+                      borderRadius: BorderRadius.circular(
+                          queryData.size.shortestSide * 0.015)),
+                  width: queryData.size.width,
+                  child: StatefulBuilder(builder: (context, fixState) {
+                    fixState(() {});
+                    return Column(
+                      children: ListTile.divideTiles(
+                        context: context,
+                        tiles: [
+                          ListTile(
+                              title: Text("MetaData",
+                                  style: TextStyle(
+                                      color: Provider.of<ThemeManager>(context)
+                                          .themeData
+                                          .textTheme
+                                          .headline5
+                                          .color,
+                                      fontWeight: FontWeight.bold))),
+                          for (var agent in this.agents)
+                            for (Widget tile in loadAgentData(agent)) tile
+                        ],
+                      ).toList(),
+                    );
+                  }),
                 )
               ],
-            ),
-          );
-        },
+            )
+          ],
+        ),
       ),
     );
   }
 
-  List loadSecondAgentData(DataPointAgent agent) {
+  List loadAgentData(DataPointAgent agent) {
     List<dynamic> lst = List.filled(
         1,
         ListTile(
           title: Text(agent.agent_struct["name"]["value"]),
-          trailing: IconButton(
-            icon: Icon(
-              Icons.remove_circle,
-              color: Colors.red,
-            ),
-            onPressed: (() {
-              setState(() {
-                agents.remove(agent);
-              });
-            }),
-          ),
         ),
         growable: true);
     for (MapEntry e in agent.agent_struct.entries) {
@@ -464,7 +429,6 @@ class _ChartScreenState extends State<ChartScreen> {
         builder: (context) {
           return StatefulBuilder(builder: (context, updateState) {
             return OrientationBuilder(
-                // ignore: missing_return
                 builder: (BuildContext context, Orientation orientation) {
               switch (orientation) {
                 case Orientation.portrait:
@@ -633,7 +597,7 @@ class _ChartScreenState extends State<ChartScreen> {
     queryData = MediaQuery.of(context);
     return ClientProvider(
       uri: Provider.of<AgentsManager>(context).loaded
-          ? Provider.of<AgentsManager>(context).httpLink
+          ? Provider.of<AgentsManager>(context).httpLink + "/graphql"
           : "None",
       child: Query(
           options: QueryOptions(
@@ -853,6 +817,54 @@ class _ChartScreenState extends State<ChartScreen> {
     );
   }
 
+  Future addFavourite() async {
+    String id = this.chart.idxChart;
+    int order =
+        Provider.of<UserState>(context, listen: false).favCharts.length + 1;
+    String userId = Provider.of<UserState>(context, listen: false).idxUser;
+    QueryOptions options = QueryOptions(
+        documentNode: gql(AgentFetch().createFavouriteChart),
+        variables: {
+          "idxChart": id,
+          "idxUser": userId,
+          "order": order.toString()
+        });
+    GraphQLClient _client = GraphQLClient(
+      cache: InMemoryCache(),
+      link: new HttpLink(
+          uri: Provider.of<AgentsManager>(context, listen: false).httpLink +
+              "/graphql"),
+    );
+    QueryResult result = await _client.query(options);
+    Provider.of<UserState>(context, listen: false).loadFavourites(context);
+    Provider.of<UserState>(context, listen: false).favCharts.add(this.chart);
+    setState(() {});
+  }
+
+  Future removeFavourite() async {
+    List favCharts =
+        Provider.of<UserState>(context, listen: false).charts.values.toList();
+    String favId;
+    for (var data in favCharts) {
+      if (data["chart"] == this.chart) {
+        favId = data["idFavorite"];
+      }
+    }
+    QueryOptions options = QueryOptions(
+        documentNode: gql(AgentFetch().removeFavouriteChart),
+        variables: {"idxFavorite": favId});
+    GraphQLClient _client = GraphQLClient(
+      cache: InMemoryCache(),
+      link: new HttpLink(
+          uri: Provider.of<AgentsManager>(context, listen: false).httpLink +
+              "/graphql"),
+    );
+    QueryResult result = await _client.query(options);
+    Provider.of<UserState>(context, listen: false).loadFavourites(context);
+    Provider.of<UserState>(context, listen: false).favCharts.remove(this.chart);
+    setState(() {});
+  }
+
   String information(DataPointAgent agent) {
     var information = "ID : ${agent.datapoint_id}";
     for (MapEntry e in agent.agent_struct.entries) {
@@ -877,16 +889,18 @@ class _ChartScreenState extends State<ChartScreen> {
     return data;
   }
 
-  fetchTimeSeries(List datapoints) async {
+  fetchTimeSeries(List datapoints, int timeframe) async {
     var client = new http.Client();
     List data_ = new List();
     this.agents = datapoints;
     print(agents);
     this.vibrationData = List<Series<TimeSeriesSales, DateTime>>();
-    for (agent in datapoints) {
+    for (var agent in datapoints) {
       try {
-        var result = await client.get(
-            'http://calico.palisadoes.org/pattoo/api/v1/web/rest/data/${agent.datapoint_id}');
+        var result = await client.get(Provider.of<AgentsManager>(context,
+                    listen: false)
+                .httpLink +
+            '/rest/data/${agent.datapoint_id}?secondsago=${timeframe ?? this.timeframe["mm"]}');
 
         if (result.statusCode == 200) {
           data_.add(parseProducts(result.body));
@@ -900,34 +914,21 @@ class _ChartScreenState extends State<ChartScreen> {
     return data_;
   }
 
-  void changeView(int view) {
-    Map views = {1: 12, 2: 288, 3: 8760, 4: 52560, 5: 525601};
-    if (this.data_.length >= views[view]) {
-      this.cdata_ = this
-          .data_
-          .where((x) => this.data_.indexOf(x) % views[view] == 0)
-          .toList();
+  Future renameChart(Chart chart, String newName) async {
+    print(chart);
+    String chartID = chart.idxChart;
+    QueryOptions options = QueryOptions(
+        documentNode: gql(AgentFetch().modifyChartNamne),
+        variables: {"id": chartID, "name": newName});
+    GraphQLClient _client = GraphQLClient(
+      cache: InMemoryCache(),
+      link: new HttpLink(
+          uri: Provider.of<AgentsManager>(context, listen: false).httpLink +
+              "/graphql"),
+    );
+    QueryResult result = await _client.query(options);
 
-      Map format = {1: "h", 2: "dd/mm", 3: "M", 4: "M", 5: "Y"};
-      setState(() {
-        this.vibrationData = [
-          Series<TimeSeriesSales, DateTime>(
-            id: 'Sales',
-            colorFn: (_, __) => MaterialPalette.blue.shadeDefault,
-            domainFn: (TimeSeriesSales sales, _) => sales.time,
-            measureFn: (TimeSeriesSales sales, _) => sales.sales,
-            data: this.cdata_,
-          )
-        ];
-        this.chart = TimeSeriesChart(vibrationData,
-            defaultRenderer:
-                LineRendererConfig(includeArea: true, stacked: true),
-            animate: true,
-            domainAxis: DateTimeAxisSpec(
-                tickFormatterSpec: AutoDateTimeTickFormatterSpec(
-                    day: TimeFormatterSpec(
-                        format: format[view], transitionFormat: 'yyyy '))));
-      });
-    }
+    print("result is ${result.data}");
+    return newName;
   }
 }
