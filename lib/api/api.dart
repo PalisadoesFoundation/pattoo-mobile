@@ -32,7 +32,7 @@ mutation CreateChart(\$name:String) {
 """;
 
   String modifyChartNamne = """
-mutation ModifyChartName(\$name:String,\$id:String) {
+mutation ModifyChartName(\$name:String!,\$id:String!) {
   updateChart(Input: {idxChart: \$id,name: \$name}) {
     chart {
       id

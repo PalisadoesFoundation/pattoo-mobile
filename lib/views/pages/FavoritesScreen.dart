@@ -10,7 +10,6 @@ import 'package:pattoomobile/views/pages/ChartScreen.dart';
 import 'package:pattoomobile/widgets/Display-Messages.dart';
 
 import 'package:provider/provider.dart';
-import 'package:pattoomobile/models/chart.dart';
 import 'package:reorderables/reorderables.dart';
 
 //void main() => runApp(DataDisplay());
@@ -36,133 +35,141 @@ class _DataDisplayState extends State<DataDisplay> {
                   TextStyle(color: Colors.white, fontWeight: FontWeight.bold))),
       body: (Provider.of<AgentsManager>(context).loaded == false)
           ? DisplayMessage()
-          : Column(children: <Widget>[
-              SizedBox(
-                height: queryData.size.longestSide * 0.05,
-              ),
-              Expanded(
-                child: StatefulBuilder(builder: (context, updateState) {
-                  return ReorderableWrap(
-                    spacing: 8.0,
-                    runSpacing: 4.0,
-                    padding: const EdgeInsets.all(8),
-                    children:
-                        List.generate(userState.chartsList.length, (index) {
-                      return InkWell(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => MultiChart(
-                                      chart: userState.chartsList[index]
-                                          ["chart"])));
+          : Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                  SizedBox(
+                    height: queryData.size.longestSide * 0.05,
+                  ),
+                  Expanded(
+                    child: StatefulBuilder(builder: (context, updateState) {
+                      return ReorderableWrap(
+                        direction: Axis.horizontal,
+                        padding: const EdgeInsets.all(8),
+                        children: List<Widget>.generate(
+                            userState.chartsList.length, (index) {
+                          return InkWell(
+                            key: UniqueKey(),
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => MultiChart(
+                                          chart: userState.chartsList[index]
+                                              ["chart"])));
+                            },
+                            child: Align(
+                              child: Container(
+                                height: queryData.size.longestSide * 0.2,
+                                child: Card(
+                                    elevation: 10.0,
+                                    margin: queryData.orientation ==
+                                            Orientation.landscape
+                                        ? EdgeInsets.only(
+                                            top: queryData.size.longestSide *
+                                                0.017,
+                                            bottom: queryData.size.longestSide *
+                                                0.017,
+                                            left: queryData.size.shortestSide *
+                                                0.017,
+                                            right: queryData.size.shortestSide *
+                                                0.017)
+                                        : EdgeInsets.only(
+                                            top: queryData.size.longestSide *
+                                                0.007,
+                                            bottom: queryData.size.longestSide *
+                                                0.007,
+                                            left: queryData.size.shortestSide *
+                                                0.017,
+                                            right: queryData.size.shortestSide *
+                                                0.017),
+                                    shape: new RoundedRectangleBorder(
+                                        borderRadius: new BorderRadius.circular(
+                                            queryData.size.shortestSide *
+                                                0.015)),
+                                    color: Provider.of<ThemeManager>(context).themeData.backgroundColor,
+                                    child: new Center(
+                                      child: Stack(
+                                          fit: StackFit.passthrough,
+                                          children: <Widget>[
+                                            Center(
+                                              child: Align(
+                                                alignment: Alignment.topLeft,
+                                                child: SizedBox(
+                                                    height:
+                                                        queryData.size.height *
+                                                            0.04,
+                                                    width:
+                                                        queryData.size.height *
+                                                            0.04,
+                                                    child: Icon(
+                                                      Icons.favorite,
+                                                      color: Colors.red,
+                                                    )),
+                                              ),
+                                            ),
+                                            Center(
+                                              child: Wrap(
+                                                  direction: Axis.horizontal,
+                                                  children: <Widget>[
+                                                    Text(
+                                                        userState
+                                                            .chartsList[index]
+                                                                ["chart"]
+                                                            .name,
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: queryData.size.shortestSide *
+                                                                            0.05 >
+                                                                        40 ||
+                                                                    queryData.size.shortestSide *
+                                                                            0.05 <
+                                                                        20
+                                                                ? 24
+                                                                : queryData.size
+                                                                        .width *
+                                                                    0.05,
+                                                            color:
+                                                                Colors.white),
+                                                        textAlign:
+                                                            TextAlign.center)
+                                                  ]),
+                                            ),
+                                          ]),
+                                    )),
+                              ),
+                            ),
+                          );
+                        }),
+                        onReorder: (int oldIndex, int newIndex) {
+                          updateState(() {
+                            if (newIndex > oldIndex) {
+                              newIndex -= 1;
+                            }
+                            var oldChart =
+                                userState.chartsList.elementAt(newIndex);
+                            var newChart =
+                                userState.chartsList.removeAt(oldIndex);
+                            userState.chartsList.insert(newIndex, newChart);
+                            List update = List();
+
+                            update.add({
+                              "chart": newChart["idFavorite"],
+                              "order": newIndex
+                            });
+                            update.add({
+                              "chart": oldChart["idFavorite"],
+                              "order": oldIndex
+                            });
+                            updateOrder(update).then((value) => {});
+                          });
                         },
-                        child: Align(
-                          child: Container(
-                            height: queryData.size.longestSide * 0.2,
-                            child: Card(
-                                elevation: 10.0,
-                                margin: queryData.orientation ==
-                                        Orientation.landscape
-                                    ? EdgeInsets.only(
-                                        top: queryData.size.longestSide * 0.017,
-                                        bottom:
-                                            queryData.size.longestSide * 0.017,
-                                        left:
-                                            queryData.size.shortestSide * 0.017,
-                                        right:
-                                            queryData.size.shortestSide * 0.017)
-                                    : EdgeInsets.only(
-                                        top: queryData.size.longestSide * 0.007,
-                                        bottom:
-                                            queryData.size.longestSide * 0.007,
-                                        left:
-                                            queryData.size.shortestSide * 0.017,
-                                        right: queryData.size.shortestSide *
-                                            0.017),
-                                shape: new RoundedRectangleBorder(
-                                    borderRadius: new BorderRadius.circular(
-                                        queryData.size.shortestSide * 0.015)),
-                                color: Provider.of<ThemeManager>(context)
-                                    .themeData
-                                    .backgroundColor,
-                                child: new Center(
-                                  child: Stack(
-                                      fit: StackFit.passthrough,
-                                      children: <Widget>[
-                                        Center(
-                                          child: Align(
-                                            alignment: Alignment.topLeft,
-                                            child: SizedBox(
-                                                height: queryData.size.height *
-                                                    0.04,
-                                                width: queryData.size.height *
-                                                    0.04,
-                                                child: Icon(
-                                                  Icons.favorite,
-                                                  color: Colors.red,
-                                                )),
-                                          ),
-                                        ),
-                                        Center(
-                                          child: Wrap(
-                                              direction: Axis.horizontal,
-                                              children: <Widget>[
-                                                Text(
-                                                    userState
-                                                        .chartsList[index]
-                                                            ["chart"]
-                                                        .name,
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: queryData.size
-                                                                            .shortestSide *
-                                                                        0.05 >
-                                                                    40 ||
-                                                                queryData.size
-                                                                            .shortestSide *
-                                                                        0.05 <
-                                                                    20
-                                                            ? 24
-                                                            : queryData.size
-                                                                    .width *
-                                                                0.05,
-                                                        color: Colors.white),
-                                                    textAlign: TextAlign.center)
-                                              ]),
-                                        ),
-                                      ]),
-                                )),
-                          ),
-                        ),
                       );
                     }),
-                    onReorder: (int oldIndex, int newIndex) {
-                      updateState(() {
-                        if (newIndex > oldIndex) {
-                          newIndex -= 1;
-                        }
-                        var oldChart = userState.chartsList.elementAt(newIndex);
-                        var newChart = userState.chartsList.removeAt(oldIndex);
-                        userState.chartsList.insert(newIndex, newChart);
-                        List update = List();
-
-                        update.add({
-                          "chart": newChart["idFavorite"],
-                          "order": newIndex
-                        });
-                        update.add({
-                          "chart": oldChart["idFavorite"],
-                          "order": oldIndex
-                        });
-                        updateOrder(update).then((value) => {});
-                      });
-                    },
-                  );
-                }),
-              )
-            ]),
+                  )
+                ]),
     );
   }
 

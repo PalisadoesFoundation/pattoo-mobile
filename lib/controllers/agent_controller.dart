@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:pattoomobile/api/api.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:pattoomobile/models/agent.dart';
-import 'package:pattoomobile/models/dataPointAgent.dart';
 
 class AgentsManager with ChangeNotifier {
   List<Agent> agents = new List();

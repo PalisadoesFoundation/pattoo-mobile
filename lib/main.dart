@@ -10,7 +10,7 @@ import 'package:pattoomobile/views/pages/LoginScreen.dart';
 import 'controllers/userState.dart';
 
 void main() {
-  runApp(App());
+  runApp(DevicePreview(child: App()));
 }
 
 class App extends StatefulWidget {
@@ -34,6 +34,7 @@ class _AppState extends State<App> {
         child: Consumer<AgentsManager>(builder: (context, agent, _) {
           return Consumer<ThemeManager>(builder: (context, manager, _) {
             return MaterialApp(
+                builder: DevicePreview.appBuilder,
                 debugShowCheckedModeBanner: false,
                 theme: manager.themeData,
                 initialRoute: '/',
