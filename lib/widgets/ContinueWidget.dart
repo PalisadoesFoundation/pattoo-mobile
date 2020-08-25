@@ -29,6 +29,7 @@ class _ContinueWidgetState extends State<ContinueWidget> {
             shrinkWrap: true,
             children: <Widget>[
               showLogo(context),
+              SizedBox(height: 90),
               showPrimaryButton(context),
             ],
           ),

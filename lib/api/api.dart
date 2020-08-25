@@ -82,6 +82,16 @@ mutation addDatapoint(\$idxChartDatapoint:String,\$idxChart){
 }
 """;
 
+
+  String Authentication = """
+  query AuthenticateUser(\$username: String!, \$password: String!){
+    authenticate(username: \$username, password: \$password) {
+    	id
+  	}
+  }
+  
+  """;
+
   String updateFavouriteOrder = """
   mutation updateOrder(\$idxFavorite:String!, \$order:String!){
   updateFavorite(Input: {idxFavorite: \$idxFavorite, order: \$order}) {

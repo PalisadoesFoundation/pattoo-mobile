@@ -17,8 +17,14 @@ class SettingsContainer extends StatefulWidget {
 }
 
 class _SettingsContainerState extends State<SettingsContainer> {
+
+
   final formKey = GlobalKey<FormState>();
   final textController = TextEditingController();
+
+  final email = TextEditingController();
+  final password = TextEditingController();
+
   String dropdownValue = 'HTTP';
   String dropdownValue2 = '/pattoo/api/v1/web/graphql';
   bool inAsyncCall = false;
@@ -234,13 +240,62 @@ class _SettingsContainerState extends State<SettingsContainer> {
       });
     }
   }
+//  String Authentication = """
+//  {
+//  authenticate(username: \$username, password: \$password) {
+//    id
+//  }
+//}
+//  """;
 
+  //Authentication
+  Future ValidateUser(String text) async{
+    var userEmail = email.text;
+    var userPassword = password.text;
+    print(userEmail);
+    print(userPassword);
+    setState(() {
+      this.inAsyncCall = true;
+    });
+    String uri =
+        "${dropdownValue.toLowerCase()}://${text.trim()}/pattoo/api/v1/web/graphql";
+    QueryOptions options = QueryOptions(
+      documentNode: gql(AgentFetch().Authentication),
+      variables: <String, String>{
+        'username': userEmail,
+        'password': userPassword,
+      },
+    );
+    GraphQLClient _client = GraphQLClient(
+      cache: InMemoryCache(),
+      link: new HttpLink(uri: uri),
+    );
+    QueryResult result = await _client.query(options);
+    if (result.loading && result.data == null) {
+      print("loading");
+    }
+    if(!result.hasException)
+      {
+          print(result.data["id"]);
+          //give welcome message?
+          //Then navigate close and navigate to home
+          Navigator.pushNamed(context, '/HomeScreen');
+      }
+    else
+      {
+        print(result.exception.toString());
+        print(uri);
+        //Message user not in system
 
+      }
+  }
+
+  //Getting user info from pop/up login screen
   getUserInfo(BuildContext context)
   {
+    var _source = textController.text;
     MediaQueryData queryData = MediaQuery.of(context);
-    TextEditingController email = TextEditingController();
-    TextEditingController password = TextEditingController();
+
     return showDialog(context: context, builder: (context)
     {
       return AlertDialog(
@@ -270,7 +325,9 @@ class _SettingsContainerState extends State<SettingsContainer> {
                 shape: new RoundedRectangleBorder(
                     borderRadius:
                     BorderRadius.circular(queryData.size.shortestSide * 0.015)),
-                onPressed: () {},
+                onPressed: () {
+                  ValidateUser(_source);
+                },
               child: const Text('Login',
                 style: TextStyle(fontSize: 20, color: Colors.white)),
                      ),
