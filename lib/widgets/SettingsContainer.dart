@@ -215,6 +215,7 @@ class _SettingsContainerState extends State<SettingsContainer> {
     });
   }
 
+  //function to validate url input
   void _submit() async {
     var _source = textController.text;
     await Validate_pattoo(_source);
@@ -240,13 +241,6 @@ class _SettingsContainerState extends State<SettingsContainer> {
       });
     }
   }
-//  String Authentication = """
-//  {
-//  authenticate(username: \$username, password: \$password) {
-//    id
-//  }
-//}
-//  """;
 
   //Authentication
   Future ValidateUser(String text) async{
@@ -279,6 +273,7 @@ class _SettingsContainerState extends State<SettingsContainer> {
           print(result.data["id"]);
           if(result.data["id"]== null)
             {
+              Navigator.of(context).pop();
               _notInSystem();
             }
           else
@@ -304,6 +299,7 @@ class _SettingsContainerState extends State<SettingsContainer> {
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
+
           title: Text('This user is not in the system'),
           content: SingleChildScrollView(
             child: ListBody(
@@ -327,7 +323,8 @@ class _SettingsContainerState extends State<SettingsContainer> {
     );
   }
 
-  //Getting user info from pop/up login screen
+
+    //Getting user info from pop/up login screen
   getUserInfo(BuildContext context)
   {
     var _source = textController.text;
@@ -336,40 +333,46 @@ class _SettingsContainerState extends State<SettingsContainer> {
     return showDialog(context: context, builder: (context)
     {
       return AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0))
+          ),
         title: Text("LOGIN"),
-        content: Column(
-          children: <Widget>[
-            TextField(
-              controller: email,
-              decoration: InputDecoration(
-                icon: Icon(Icons.account_circle),
-                labelText: 'Username',
+        content: Container(
+          child: Column(
+            children: <Widget>[
+              TextField(
+                controller: email,
+                decoration: InputDecoration(
+                  icon: Icon(Icons.account_circle),
+                  labelText: 'Username',
+                ),
               ),
-            ),
-            TextField(
-              obscureText: true,
-              controller: password,
-              decoration: InputDecoration(
-                icon: Icon(Icons.lock),
-                labelText: 'Password',
+
+              TextField(
+                obscureText: true,
+                controller: password,
+                decoration: InputDecoration(
+                  icon: Icon(Icons.lock),
+                  labelText: 'Password',
+                ),
               ),
-            ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
-              child: RaisedButton(
-                elevation: 5.0,
-                shape: new RoundedRectangleBorder(
-                    borderRadius:
-                    BorderRadius.circular(queryData.size.shortestSide * 0.015)),
-                onPressed: () {
-                  ValidateUser(_source);
-                },
-              child: const Text('Login',
-                style: TextStyle(fontSize: 20, color: Colors.white)),
-                     ),
-                  ),
-              ],
-          ));
+              Padding(
+                padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
+                child: RaisedButton(
+                  elevation: 5.0,
+                  shape: new RoundedRectangleBorder(
+                      borderRadius:
+                      BorderRadius.circular(queryData.size.shortestSide * 0.015)),
+                  onPressed: () {
+                    ValidateUser(_source);
+                  },
+                  child: const Text('Login',
+                      style: TextStyle(fontSize: 20, color: Colors.white)),
+                ),
+              ),
+            ],
+          ),
+        ));
     });
   }
 }
