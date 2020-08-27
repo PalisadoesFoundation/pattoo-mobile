@@ -277,9 +277,17 @@ class _SettingsContainerState extends State<SettingsContainer> {
     if(!result.hasException)
       {
           print(result.data["id"]);
+          if(result.data["id"]== null)
+            {
+              _notInSystem();
+            }
+          else
+            {
+              Navigator.pushNamed(context, '/HomeScreen');
+            }
           //give welcome message?
           //Then navigate close and navigate to home
-          Navigator.pushNamed(context, '/HomeScreen');
+
       }
     else
       {
@@ -288,6 +296,35 @@ class _SettingsContainerState extends State<SettingsContainer> {
         //Message user not in system
 
       }
+  }
+
+  Future<void> _notInSystem() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('This user is not in the system'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Try re-entering user login details or contact server admin'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Close'),
+              onPressed: () {
+                email.clear();
+                password.clear();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   //Getting user info from pop/up login screen
@@ -301,7 +338,6 @@ class _SettingsContainerState extends State<SettingsContainer> {
       return AlertDialog(
         title: Text("LOGIN"),
         content: Column(
-
           children: <Widget>[
             TextField(
               controller: email,
