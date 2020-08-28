@@ -242,6 +242,7 @@ class _SettingsContainerState extends State<SettingsContainer> {
     }
   }
 
+
   //Authentication
   Future ValidateUser(String text) async{
     var userEmail = email.text;
@@ -270,14 +271,18 @@ class _SettingsContainerState extends State<SettingsContainer> {
     }
     if(!result.hasException)
       {
-          print(result.data["id"]);
+        print(userEmail);
+        print(userPassword);
+        print(result.data["id"]);
           if(result.data["id"]== null)
             {
+              print(uri);
               Navigator.of(context).pop();
               _notInSystem();
             }
           else
             {
+              print(uri);
               Navigator.pushNamed(context, '/HomeScreen');
             }
           //give welcome message?

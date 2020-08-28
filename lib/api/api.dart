@@ -84,7 +84,7 @@ mutation addDatapoint(\$idxChartDatapoint:String,\$idxChart){
 
 
   String Authentication = """
-  query AuthenticateUser(\$username: String!, \$password: String!){
+  query AuthenticateUser(\$username:String!, \$password:String!){
     authenticate(username: \$username, password: \$password) {
     	id
   	}
