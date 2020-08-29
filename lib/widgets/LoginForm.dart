@@ -233,6 +233,23 @@ class _LoginFormState extends State<LoginForm> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0.0,
+        actions: <Widget>[
+          IconButton(
+            icon: new Icon(
+        Icons.build,
+              size: 40,
+              color: Colors.blueAccent,
+      ),
+            onPressed: () {
+             _notInSystem();
+            },),
+
+
+        ],
+      ),
         body: Stack(
       children: <Widget>[
         _showForm(context),
