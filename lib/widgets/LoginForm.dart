@@ -23,6 +23,9 @@ class _LoginFormState extends State<LoginForm> {
   bool _isLoginForm;
   TextEditingController _controller = TextEditingController();
 
+  TextEditingController username = TextEditingController();
+  TextEditingController password = TextEditingController();
+
   @override
   void initState() {
     _errorMessage = "";
@@ -71,6 +74,8 @@ class _LoginFormState extends State<LoginForm> {
               showPasswordInput(),
               showPrimaryButton(context),
               showErrorMessage(),
+              urlInput(context),
+
             ],
           ),
         ));
@@ -115,12 +120,12 @@ class _LoginFormState extends State<LoginForm> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 100.0, 0.0, 0.0),
       child: new TextFormField(
-        controller: _controller,
+        controller: username,
         maxLines: 1,
         keyboardType: TextInputType.emailAddress,
         autofocus: false,
         decoration: new InputDecoration(
-            hintText: 'Username',
+            hintText: 'Email',
             icon: new Icon(
               Icons.person,
             )),
@@ -134,6 +139,7 @@ class _LoginFormState extends State<LoginForm> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 0.0),
       child: new TextFormField(
+        controller: password,
         maxLines: 1,
         obscureText: true,
         autofocus: false,
@@ -151,7 +157,7 @@ class _LoginFormState extends State<LoginForm> {
   Widget showPrimaryButton(BuildContext context) {
     MediaQueryData queryData = MediaQuery.of(context);
     return new Padding(
-      padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
+      padding: EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 0.0),
       child: RaisedButton(
         elevation: 5.0,
         shape: new RoundedRectangleBorder(
@@ -170,6 +176,52 @@ class _LoginFormState extends State<LoginForm> {
     );
   }
 
+  Widget urlInput(BuildContext context)
+  {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0.0, 40.0, 0.0, 0.0),
+      child: Center(
+        child:
+        GestureDetector(
+            child: Text("Change url", style: TextStyle(decoration: TextDecoration.underline, color: Colors.blue, fontStyle: FontStyle.italic)),
+            onTap: () {
+              _notInSystem();
+            }
+        ),
+      ),
+    );
+  }
+
+
+  Future<void> _notInSystem() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+
+          title: Text('Enter desired url'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Try re-entering user login details or contact server admin'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Close'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
   //Regular Expression Validation
   String validateEmail(String value) {
     if (value == '' || value == null)
@@ -185,6 +237,7 @@ class _LoginFormState extends State<LoginForm> {
       children: <Widget>[
         _showForm(context),
         _showCircularProgress(),
+
       ],
     ));
   }
