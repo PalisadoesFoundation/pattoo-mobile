@@ -240,7 +240,7 @@ class _LoginFormState extends State<LoginForm> {
           IconButton(
             icon: new Icon(
         Icons.build,
-              size: 40,
+              size: 35,
               color: Colors.blueAccent,
       ),
             onPressed: () {
