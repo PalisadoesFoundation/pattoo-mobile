@@ -74,8 +74,6 @@ class _LoginFormState extends State<LoginForm> {
               showPasswordInput(),
               showPrimaryButton(context),
               showErrorMessage(),
-              urlInput(context),
-
             ],
           ),
         ));
@@ -200,11 +198,17 @@ class _LoginFormState extends State<LoginForm> {
       builder: (BuildContext context) {
         return AlertDialog(
 
-          title: Text('Enter desired url'),
+          title: Text('This user is not in the system'),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text('Try re-entering user login details or contact server admin'),
+                TextField(
+                  //controller: email,
+                  decoration: InputDecoration(
+                    icon: Icon(Icons.account_circle),
+                    labelText: 'Pattoo Url',
+                  ),
+                ),
               ],
             ),
           ),
@@ -212,6 +216,7 @@ class _LoginFormState extends State<LoginForm> {
             FlatButton(
               child: Text('Close'),
               onPressed: () {
+
                 Navigator.of(context).pop();
               },
             ),
