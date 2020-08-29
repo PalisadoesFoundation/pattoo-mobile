@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:pattoomobile/controllers/theme_manager.dart';
 import 'package:pattoomobile/utils/app_themes.dart';
 import 'package:pattoomobile/models/timestamp.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginForm extends StatefulWidget {
   @override
@@ -25,6 +26,8 @@ class _LoginFormState extends State<LoginForm> {
 
   TextEditingController username = TextEditingController();
   TextEditingController password = TextEditingController();
+
+  final keyIsFirstLoaded = 'is_first_loaded';
 
   @override
   void initState() {
@@ -183,47 +186,125 @@ class _LoginFormState extends State<LoginForm> {
         GestureDetector(
             child: Text("Change url", style: TextStyle(decoration: TextDecoration.underline, color: Colors.blue, fontStyle: FontStyle.italic)),
             onTap: () {
-              _notInSystem();
+              _enterURL();
             }
         ),
       ),
     );
   }
 
+  Future<void> _firstURL() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isFirstLoaded = prefs.getBool(keyIsFirstLoaded);
+    if (isFirstLoaded == null)
+    {
+      return showDialog<void>(
+        context: context,
+        barrierDismissible: false, // user must tap button!
+        builder: (BuildContext context) {
+          return AlertDialog(
 
-  Future<void> _notInSystem() async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-
-          title: Text('This user is not in the system'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                TextField(
-                  //controller: email,
-                  decoration: InputDecoration(
-                    icon: Icon(Icons.account_circle),
-                    labelText: 'Pattoo Url',
+            title: Text('Enter desired url'),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  TextField(
+                    //controller: email,
+                    decoration: InputDecoration(
+                      icon: Icon(Icons.insert_chart),
+                      labelText: 'Pattoo Url',
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          actions: <Widget>[
-            FlatButton(
-              child: Text('Close'),
-              onPressed: () {
+            actions: <Widget>[
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  RaisedButton(
+                    onPressed: ()
+                    {
+                      //submit url
+                    },
+                    textColor: Colors.white,
+                    color: Colors.blueAccent,
+                    padding: const EdgeInsets.all(8.0),
+                    child: new Text(
+                      "Submit",
+                    ),
+                  ),
+                  FlatButton(
+                    child: Text('Close'),
+                    onPressed: () {
 
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
+                      Navigator.of(context).pop();
+                      prefs.setBool(keyIsFirstLoaded, false);
+                    },),
+                ],
+              )
+            ],
+          );
+        },
+      );
+    }
+  }
+
+  Future<void> _enterURL() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isFirstLoaded = prefs.getBool(keyIsFirstLoaded);
+    if (isFirstLoaded != null)
+      {
+        return showDialog<void>(
+          context: context,
+          barrierDismissible: false, // user must tap button!
+          builder: (BuildContext context) {
+            return AlertDialog(
+
+              title: Text('Enter desired url'),
+              content: SingleChildScrollView(
+                child: ListBody(
+                  children: <Widget>[
+                    TextField(
+                      //controller: email,
+                      decoration: InputDecoration(
+                        icon: Icon(Icons.insert_chart),
+                        labelText: 'Pattoo Url',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    RaisedButton(
+                      onPressed: ()
+                      {
+                        //submit url
+                      },
+                      textColor: Colors.white,
+                      color: Colors.blueAccent,
+                      padding: const EdgeInsets.all(8.0),
+                      child: new Text(
+                        "Submit",
+                      ),
+                    ),
+                    FlatButton(
+                      child: Text('Close'),
+                      onPressed: () {
+
+                        Navigator.of(context).pop();
+                        prefs.setBool(keyIsFirstLoaded, false);
+                      },),
+                  ],
+                )
+              ],
+            );
+          },
         );
-      },
-    );
+      }
   }
 
 
@@ -237,6 +318,7 @@ class _LoginFormState extends State<LoginForm> {
 
   @override
   Widget build(BuildContext context) {
+    Future.delayed(Duration.zero, () => _firstURL());
     return new Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -249,7 +331,7 @@ class _LoginFormState extends State<LoginForm> {
               color: Colors.blueAccent,
       ),
             onPressed: () {
-             _notInSystem();
+              _enterURL();
             },),
 
 
