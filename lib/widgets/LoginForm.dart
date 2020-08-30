@@ -257,8 +257,136 @@ class _LoginFormState extends State<LoginForm> {
   Future<void> _firstPopUp() async{
       SharedPreferences prefs = await SharedPreferences.getInstance();
       bool isFirstLoaded = prefs.getBool(keyIsFirstLoaded);
+      var queryData = MediaQuery.of(context);
       if (isFirstLoaded == null) {
+        return showGeneralDialog(
 
+            context: context,
+            barrierDismissible: true,
+            barrierLabel: MaterialLocalizations.of(context)
+                .modalBarrierDismissLabel,
+            barrierColor: Colors.black45,
+            transitionDuration: const Duration(milliseconds: 200),
+            pageBuilder: (BuildContext buildContext,
+                Animation animation,
+                Animation secondaryAnimation) {
+              return Scaffold(
+                backgroundColor: Colors.transparent,
+                body: Center(
+
+                  child: Container(
+
+                      width: MediaQuery.of(context).size.width - 10,
+                      height: MediaQuery.of(context).size.height -500,
+                      padding: EdgeInsets.all(20),
+                      color: Colors.white,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Container(
+                            child: SingleChildScrollView(
+                                child: Form(
+
+                                  child: Container(
+                                    child:
+                                    Row(
+                                      children: <Widget>[
+                                        SizedBox(
+                                          width: 15,
+                                        ),
+                                        new Flexible(
+                                          child: icon,
+                                        ),
+                                        SizedBox(
+                                          width: 38,
+                                        ),
+                                        SizedBox(
+                                          width: queryData.size.width * 0.45,
+                                          child: TextFormField(
+                                            //controller: urlTextController,
+                                            decoration: const InputDecoration(
+                                              hintText: "Pattoo API URL",
+                                              helperText: "eg. Calico.palisadoes.org",
+                                            ),
+                                            //validator: validate,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: queryData.size.width * 0.05,
+                                        ),
+                                        new DropdownButton<String>(
+                                          value: dropdownValue,
+                                          icon: Icon(Icons.arrow_downward),
+                                          iconSize: 24,
+                                          elevation: 16,
+                                          underline: Container(
+                                            height: 2,
+                                            color: Provider.of<ThemeManager>(context)
+                                                .themeData
+                                                .primaryTextTheme
+                                                .headline6
+                                                .color,
+                                          ),
+                                          onChanged: (String newValue) {
+                                            setState(() {
+                                              dropdownValue = newValue;
+                                            });
+                                          },
+                                          items: <String>[
+                                            'HTTP',
+                                            'HTTPS',
+                                          ].map<DropdownMenuItem<String>>((String value) {
+                                            return DropdownMenuItem<String>(
+                                              value: value,
+                                              child: Text(value),
+                                            );
+                                          }).toList(),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+
+
+                                )
+                            ),
+
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.all(20.0),
+                                child: RaisedButton(
+                                  color: Colors.blueAccent,
+                                  onPressed: (){},
+                                  textColor: Colors.white,
+                                  padding: const EdgeInsets.all(0.0),
+                                  child: Text('Submit'),
+                                ),
+                              ),
+                              Padding(
+                                  padding: const EdgeInsets.all(20.0),
+                                  child: FlatButton(
+                                    color: Colors.transparent,
+                                    onPressed: (){
+                                      prefs.setBool(keyIsFirstLoaded, false);
+                                      Navigator.pop(context);
+                                    },
+                                    textColor: Colors.blueAccent,
+                                    padding: const EdgeInsets.all(0.0),
+                                    child: Text('Close'),
+                                  )
+                              ),
+                            ],
+                          ),
+
+                        ],
+                      )
+
+                  ),
+                ),
+              );
+            });
       }
     }
 
@@ -441,7 +569,7 @@ class _LoginFormState extends State<LoginForm> {
 
   @override
   Widget build(BuildContext context) {
-    //Future.delayed(Duration.zero, () => _firstURL());
+    Future.delayed(Duration.zero, () => _firstPopUp());
     return new Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.transparent,
