@@ -277,7 +277,7 @@ class _LoginFormState extends State<LoginForm> {
                   child: Container(
 
                       width: MediaQuery.of(context).size.width - 10,
-                      height: MediaQuery.of(context).size.height -500,
+                      height: MediaQuery.of(context).size.height -200,
                       padding: EdgeInsets.all(20),
                       color: Colors.white,
                       child: Column(
