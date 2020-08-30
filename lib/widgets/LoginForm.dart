@@ -186,7 +186,7 @@ class _LoginFormState extends State<LoginForm> {
             borderRadius:
             BorderRadius.circular(queryData.size.shortestSide * 0.015)),
         onPressed: () {
-          validateUser;
+          validateUser();
         },
         child: const Text('Login',
             style: TextStyle(fontSize: 20, color: Colors.white)),
@@ -420,7 +420,7 @@ class _LoginFormState extends State<LoginForm> {
                       Container(
                         child: SingleChildScrollView(
                             child: Form(
-
+                              key: formKey,
                               child: Container(
                                   child:
                                   Row(
@@ -653,7 +653,7 @@ class _LoginFormState extends State<LoginForm> {
         }else{
           String userId =result.data["authenticate"][0]["id"];
           print("User ID is ${userId}");
-          // Navigator.pushReplacementNamed(context, '/HomeScreen');
+          Navigator.pushReplacementNamed(context, '/HomeScreen');
         }
         // give welcome message?
         // Then navigate close and navigate to home
