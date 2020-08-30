@@ -303,7 +303,7 @@ class _LoginFormState extends State<LoginForm> {
                                         SizedBox(
                                           width: queryData.size.width * 0.45,
                                           child: TextFormField(
-                                            //controller: urlTextController,
+                                            controller: urlTextController,
                                             decoration: const InputDecoration(
                                               hintText: "Pattoo API URL",
                                               helperText: "eg. Calico.palisadoes.org",
@@ -358,7 +358,7 @@ class _LoginFormState extends State<LoginForm> {
                                 padding: const EdgeInsets.all(20.0),
                                 child: RaisedButton(
                                   color: Colors.blueAccent,
-                                  onPressed: (){},
+                                  onPressed: _submit,
                                   textColor: Colors.white,
                                   padding: const EdgeInsets.all(0.0),
                                   child: Text('Submit'),
@@ -437,7 +437,7 @@ class _LoginFormState extends State<LoginForm> {
                                       SizedBox(
                                         width: queryData.size.width * 0.45,
                                         child: TextFormField(
-                                          //controller: urlTextController,
+                                          controller: urlTextController,
                                           decoration: const InputDecoration(
                                             hintText: "Pattoo API URL",
                                             helperText: "eg. Calico.palisadoes.org",
@@ -492,7 +492,7 @@ class _LoginFormState extends State<LoginForm> {
                              padding: const EdgeInsets.all(20.0),
                              child: RaisedButton(
                                color: Colors.blueAccent,
-                               onPressed: (){},
+                               onPressed: _submit,
                                textColor: Colors.white,
                                padding: const EdgeInsets.all(0.0),
                                child: Text('Submit'),
@@ -583,7 +583,6 @@ class _LoginFormState extends State<LoginForm> {
               ),
               onPressed: () {
                 _urlPopUp();
-                //_enterURL();
               },),
 
 
@@ -746,6 +745,7 @@ class _LoginFormState extends State<LoginForm> {
     var _source = urlTextController.text;
     await Validate_pattoo(_source);
     print("validation complete");
+
     print(formKey.currentState.validate());
     if (formKey.currentState.validate()) {
       formKey.currentState.save();
