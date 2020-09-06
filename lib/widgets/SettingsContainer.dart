@@ -208,7 +208,7 @@ class _SettingsContainerState extends State<SettingsContainer> {
     //Pop login information
     if(!result.hasException)
       {
-        getUserInfo(context);
+        //getUserInfo(context);
       }
     setState(() {
       this.inAsyncCall = false;

@@ -277,7 +277,7 @@ class _LoginFormState extends State<LoginForm> {
                   child: Container(
 
                       width: MediaQuery.of(context).size.width - 10,
-                      height: MediaQuery.of(context).size.height -200,
+                      height: MediaQuery.of(context).size.height -400,
                       padding: EdgeInsets.all(20),
                       color: Colors.white,
                       child: Column(
@@ -411,7 +411,7 @@ class _LoginFormState extends State<LoginForm> {
               child: Container(
 
                   width: MediaQuery.of(context).size.width - 10,
-                  height: MediaQuery.of(context).size.height -200,
+                  height: MediaQuery.of(context).size.height -400,
                   padding: EdgeInsets.all(20),
                   color: Colors.white,
                   child: Column(
@@ -608,8 +608,8 @@ class _LoginFormState extends State<LoginForm> {
     var userEmail = username.text;
     var userPassword = password.text;
 
-    print(userEmail);
-    print(userPassword);
+   // print(userEmail);
+//    print(userPassword);
 
 
     if(!Provider.of<AgentsManager>(context, listen: false).loaded){
@@ -617,6 +617,8 @@ class _LoginFormState extends State<LoginForm> {
         _errorMessage = "Please enter the server url first";
       });
       _enterURL();
+      //_urlPopUp();
+
     }else{
 
       setState(() {
@@ -652,7 +654,7 @@ class _LoginFormState extends State<LoginForm> {
           _notInSystem();
         }else{
           String userId =result.data["authenticate"][0]["id"];
-          print("User ID is ${userId}");
+//          print("User ID is ${userId}");
           Navigator.pushReplacementNamed(context, '/HomeScreen');
         }
         // give welcome message?
