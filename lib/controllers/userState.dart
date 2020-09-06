@@ -45,7 +45,7 @@ class UserState with ChangeNotifier {
     for (var node in chart_data) {
       int order = int.parse(node["node"]["order"]);
       String idxFavourite = node["node"]["idxFavorite"];
-
+      //Checks if chart is enabled. If its equal to 1, it is enabled and displayed on the screen, and vice versa
       if (node["node"]["chart"]["name"] != "" &&
           node["node"]["chart"]["enabled"] == "1" &&
           node["node"]["enabled"] == "1") {

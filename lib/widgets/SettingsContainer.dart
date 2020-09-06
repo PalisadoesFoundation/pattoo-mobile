@@ -17,8 +17,14 @@ class SettingsContainer extends StatefulWidget {
 }
 
 class _SettingsContainerState extends State<SettingsContainer> {
+
+
   final formKey = GlobalKey<FormState>();
   final textController = TextEditingController();
+
+  final email = TextEditingController();
+  final password = TextEditingController();
+
   String dropdownValue = 'HTTP';
   String dropdownValue2 = '/pattoo/api/v1/web/graphql';
   bool inAsyncCall = false;
@@ -134,7 +140,8 @@ class _SettingsContainerState extends State<SettingsContainer> {
                         ),
                       )
                     ],
-                  )
+                  ),
+
                 ],
               ),
             ),
@@ -198,11 +205,17 @@ class _SettingsContainerState extends State<SettingsContainer> {
         this.inAsyncCall = false;
       });
     }
+    //Pop login information
+    if(!result.hasException)
+      {
+        //getUserInfo(context);
+      }
     setState(() {
       this.inAsyncCall = false;
     });
   }
 
+  //function to validate url input
   void _submit() async {
     var _source = textController.text;
     await Validate_pattoo(_source);
@@ -210,8 +223,7 @@ class _SettingsContainerState extends State<SettingsContainer> {
     if (formKey.currentState.validate()) {
       formKey.currentState.save();
       print(_source);
-      String uri =
-          "${dropdownValue.toLowerCase()}://${_source.trim()}/pattoo/api/v1/web";
+      String uri = "${dropdownValue.toLowerCase()}://${_source.trim()}/pattoo/api/v1/web";
       Provider.of<AgentsManager>(context, listen: false).setLink(uri);
       Provider.of<AgentsManager>(context, listen: false).loaded = true;
       print(Provider.of<AgentsManager>(context, listen: false).loaded);
@@ -228,5 +240,144 @@ class _SettingsContainerState extends State<SettingsContainer> {
         });
       });
     }
+  }
+
+
+  //Authentication
+  Future ValidateUser(String text) async{
+    var userEmail = email.text;
+    var userPassword = password.text;
+    print(userEmail);
+    print(userPassword);
+    setState(() {
+      this.inAsyncCall = true;
+    });
+    String uri =
+        "${dropdownValue.toLowerCase()}://${text.trim()}/pattoo/api/v1/web/graphql";
+    QueryOptions options = QueryOptions(
+      documentNode: gql(AgentFetch().Authentication),
+      variables: <String, String>{
+        'username': userEmail,
+        'password': userPassword,
+      },
+    );
+    GraphQLClient _client = GraphQLClient(
+      cache: InMemoryCache(),
+      link: new HttpLink(uri: uri),
+    );
+    QueryResult result = await _client.query(options);
+    if (result.loading && result.data == null) {
+      print("loading");
+    }
+    if(!result.hasException)
+      {
+        print(userEmail);
+        print(userPassword);
+        print(result.data["id"]);
+          if(result.data["id"]== null)
+            {
+              print(uri);
+              Navigator.of(context).pop();
+              _notInSystem();
+            }
+          else
+            {
+              print(uri);
+              Navigator.pushNamed(context, '/HomeScreen');
+            }
+          //give welcome message?
+          //Then navigate close and navigate to home
+
+      }
+    else
+      {
+        print(result.exception.toString());
+        print(uri);
+        //Message user not in system
+
+      }
+  }
+
+  Future<void> _notInSystem() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+
+          title: Text('This user is not in the system'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Try re-entering user login details or contact server admin'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Close'),
+              onPressed: () {
+                email.clear();
+                password.clear();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
+    //Getting user info from pop/up login screen
+  getUserInfo(BuildContext context)
+  {
+    var _source = textController.text;
+    MediaQueryData queryData = MediaQuery.of(context);
+
+    return showDialog(context: context, builder: (context)
+    {
+      return AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0))
+          ),
+        title: Text("LOGIN"),
+        content: Container(
+          child: Column(
+            children: <Widget>[
+              TextField(
+                controller: email,
+                decoration: InputDecoration(
+                  icon: Icon(Icons.account_circle),
+                  labelText: 'Username',
+                ),
+              ),
+
+              TextField(
+                obscureText: true,
+                controller: password,
+                decoration: InputDecoration(
+                  icon: Icon(Icons.lock),
+                  labelText: 'Password',
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
+                child: RaisedButton(
+                  elevation: 5.0,
+                  shape: new RoundedRectangleBorder(
+                      borderRadius:
+                      BorderRadius.circular(queryData.size.shortestSide * 0.015)),
+                  onPressed: () {
+                    ValidateUser(_source);
+                  },
+                  child: const Text('Login',
+                      style: TextStyle(fontSize: 20, color: Colors.white)),
+                ),
+              ),
+            ],
+          ),
+        ));
+    });
   }
 }
